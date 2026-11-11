@@ -176,7 +176,8 @@ def scan_prefix(phases,metadata):
 
 
 def append_scan_pan(phases,metadata,kin,scan_target_world_m,body_from_optical,*,
-                    view='target-point',rail_axis_world=(0.,1.,0.)):
+                    view='target-point',rail_axis_world=(0.,1.,0.),
+                    body_path='/World/HarvestRobot/Robot/link1',row_downward_pitch_deg=0.):
     """Plan physical base-yaw aiming at a scan point or normal to the row.
 
     Only the existing base joint moves. The fixed camera attachment is read
@@ -189,6 +190,10 @@ def append_scan_pan(phases,metadata,kin,scan_target_world_m,body_from_optical,*,
     target=np.asarray(scan_target_world_m,float);mount=np.asarray(body_from_optical,float)
     if view not in ('target-point','row-front'):
         raise ValueError('Camera scan view must be target-point or row-front')
+    if not np.isfinite(row_downward_pitch_deg) or not 0<=row_downward_pitch_deg<=30:
+        raise ValueError('Explicit row camera downward pitch must be within 0..30deg')
+    if view!='row-front' and row_downward_pitch_deg:
+        raise ValueError('Downward row pitch requires row-front view')
     axis=np.asarray(rail_axis_world,float)
     if axis.shape!=(3,) or not np.isfinite(axis).all() or np.linalg.norm(axis[:2])<1e-9 or abs(axis[2])>1e-8:
         raise ValueError('Finite horizontal physical rail axis required')
@@ -210,24 +215,26 @@ def append_scan_pan(phases,metadata,kin,scan_target_world_m,body_from_optical,*,
         raise ValueError('Finite bounded scan terminal joint configuration required')
     if not np.isfinite(gap) or abs(gap-.096)>.0005:
         raise ValueError('Camera pan requires the preceding stationary open96mm scan gap')
-    body='/World/HarvestRobot/Robot/link1'
+    body=body_path
     # Choose the crop-facing normal once. Do not aim obliquely along the row
     # or flip sides as the mounted sensor moves around the base joint.
     initial_frames=kin.frames(start)
-    if body not in initial_frames:raise ValueError('FK lacks the mounted link1 body')
+    if body not in initial_frames:raise ValueError('FK lacks the mounted camera body: '+body)
     origin=np.asarray(initial_frames[body],float)@mount
     normal=np.array([-axis[1],axis[0]])
     side=float(np.dot(target[:2]-origin[:2,3],normal))
     if view=='row-front' and abs(side)<1e-8:
         raise ValueError('Scan target must identify one side of the rail')
     normal*=1. if side>=0 else -1.
+    pitch=np.deg2rad(row_downward_pitch_deg)
+    row_forward=np.r_[normal*np.cos(pitch),-np.sin(pitch)]
     def geometry(yaw):
         q=start.copy();q[index]=float(yaw)
         frames=kin.frames(q)
-        if body not in frames:raise ValueError('FK lacks the mounted link1 body')
+        if body not in frames:raise ValueError('FK lacks the mounted camera body: '+body)
         camera=np.asarray(frames[body],float)@mount
         forward=camera[:3,2] if view=='row-front' else camera[:2,2]
-        inward=np.r_[normal,0.] if view=='row-front' else target[:2]-camera[:2,3]
+        inward=row_forward if view=='row-front' else target[:2]-camera[:2,3]
         if not np.isfinite(camera).all() or min(np.linalg.norm(forward),np.linalg.norm(inward))<1e-9:
             raise ValueError('Finite nondegenerate horizontal camera/scan direction required')
         forward=forward/np.linalg.norm(forward);inward=inward/np.linalg.norm(inward)
@@ -275,6 +282,8 @@ def append_scan_pan(phases,metadata,kin,scan_target_world_m,body_from_optical,*,
     result.setdefault('camera_scan',{})['physical_pan']=dict(
         view=view,rail_axis_world=list(rail_axis_world),
         row_normal_world=[*normal.tolist(),0.],
+        row_downward_pitch_deg=float(row_downward_pitch_deg),
+        desired_optical_forward_world=row_forward.tolist() if view=='row-front' else None,
         longitudinal_target_offset_m=float(np.dot(target[:2]-after[:2,3],axis)),
         map_scan_target_world_m=target.tolist(),map_used_for_scan_aim_only=True,
         harvest_region_selected=False,harvest_entry_executed=False,

@@ -1,0 +1,565 @@
+{
+  "schema": "s300-roller-harvest-sample-v1",
+  "date": "2026-11-10",
+  "assets": "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up",
+  "run": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up",
+  "elbow_posture": "up",
+  "sample_completed": true,
+  "completed_harvest_motions": 1,
+  "assumed_harvest_count": 2,
+  "assumed_harvest_keys": [
+    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02"
+  ],
+  "last_station_m": 0.4500022530555725,
+  "harvest_mode": "main_stem_only_geometric_harvest",
+  "actual_gpu_physics": true,
+  "actual_gpu_camera": true,
+  "timing": {
+    "simulated_s": 37.990142822265625,
+    "physics_loop_wall_s": 7.1868531190557405,
+    "physics_rtf": 5.286060838162369,
+    "loop_including_camera_planning_storage_s": 32.85489725100342,
+    "loop_rtf": 1.1563007649066797,
+    "cold_preparation_s": 15.791437100968324,
+    "end_to_end_s": 48.646334351971745,
+    "end_to_end_rtf": 0.7809456422223887
+  },
+  "rows": [
+    {
+      "index": 0,
+      "action": "initial_scan_pose",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.549996852874756,
+      "loop_wall_s": 1.0358593419659883,
+      "realtime_factor": 3.427103187713798,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "states_sha256": "d143119747cbc9b460ebd32e666b8e0f417076c9cb5d896373240c4c755f31d6",
+      "phase_performance": {
+        "settle": {
+          "steps": 3,
+          "simulated_s": 0.05,
+          "wall_s": 0.013349627959541976,
+          "realtime_factor": 3.7454227302462964
+        },
+        "ready_scan": {
+          "steps": 660,
+          "simulated_s": 3.0,
+          "wall_s": 0.9728158848593011,
+          "realtime_factor": 3.0838312230416465
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.04958001978229731,
+          "realtime_factor": 10.084707553475532
+        }
+      },
+      "summary_sha256": "919ff2515926b3da38d6a67ab24349adca3a11b66794a7a4f2bf3359fe9e11e7"
+    },
+    {
+      "index": 1,
+      "action": "move",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.363766670227051,
+      "loop_wall_s": 0.944729843060486,
+      "realtime_factor": 3.560559343960183,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "states_sha256": "76e3e3f40b92f8f1544cc374e2024b563c0461a84a2bcbef73478bf763da3b6f",
+      "phase_performance": {
+        "settle": {
+          "steps": 3,
+          "simulated_s": 0.05,
+          "wall_s": 0.005662322975695133,
+          "realtime_factor": 8.830298132872183
+        },
+        "rail_transfer": {
+          "steps": 619,
+          "simulated_s": 2.813636363636364,
+          "wall_s": 0.8924779663793743,
+          "realtime_factor": 3.1526115709621276
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.0464828530093655,
+          "realtime_factor": 10.756654715218504
+        }
+      },
+      "summary_sha256": "f37f4aaf9b7e93620f494074b1bb6a5b67787bcb5ed77fe9393822b23ed870f5"
+    },
+    {
+      "index": 2,
+      "action": "move",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.3635878562927246,
+      "loop_wall_s": 0.946101514971815,
+      "realtime_factor": 3.5552081917899985,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "states_sha256": "311c1f258bdc9ceabe955ac8ce658c295b3706b8536be6c7e1cba623812e3296",
+      "phase_performance": {
+        "settle": {
+          "steps": 3,
+          "simulated_s": 0.05,
+          "wall_s": 0.005478358012624085,
+          "realtime_factor": 9.12682228594448
+        },
+        "rail_transfer": {
+          "steps": 619,
+          "simulated_s": 2.813636363636364,
+          "wall_s": 0.8949950127862394,
+          "realtime_factor": 3.1437452985096943
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.04552221985068172,
+          "realtime_factor": 10.983647142869115
+        }
+      },
+      "summary_sha256": "88ae48f1e1bfc51854ceb0192e3e7c58870f3a08b30be3ac3a0b6d25d1207a40"
+    },
+    {
+      "index": 3,
+      "action": "move",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.3634777069091797,
+      "loop_wall_s": 0.9348795750411227,
+      "realtime_factor": 3.597765740856227,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "states_sha256": "32dbc019a09099f543cefb4158069ddd7bde9557fb8b71766f02f0c93d6fa55b",
+      "phase_performance": {
+        "settle": {
+          "steps": 3,
+          "simulated_s": 0.05,
+          "wall_s": 0.005595021997578442,
+          "realtime_factor": 8.93651535626496
+        },
+        "rail_transfer": {
+          "steps": 619,
+          "simulated_s": 2.813636363636364,
+          "wall_s": 0.8834616496460512,
+          "realtime_factor": 3.1847860795809475
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.045717639033682644,
+          "realtime_factor": 10.936697750984541
+        }
+      },
+      "summary_sha256": "db81e6f1c41de4cf9d06bdc871efebe0ae9d7aedd566ba8b7dfb6fb6119f343e"
+    },
+    {
+      "index": 4,
+      "action": "harvest",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 24.349313735961914,
+      "loop_wall_s": 3.3252828440163285,
+      "realtime_factor": 7.3224789824352,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "states_sha256": "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844",
+      "phase_performance": {
+        "settle": {
+          "steps": 3,
+          "simulated_s": 0.05,
+          "wall_s": 0.005593789974227548,
+          "realtime_factor": 8.938483609568225
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.04676662012934685,
+          "realtime_factor": 10.69138626261857
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.08349549805279821,
+          "realtime_factor": 11.976693634040629
+        },
+        "prepare_open_hold": {
+          "steps": 31,
+          "simulated_s": 0.5166666666666668,
+          "wall_s": 0.04133298993110657,
+          "realtime_factor": 12.50010385234269
+        },
+        "prepare_joint_branch": {
+          "steps": 359,
+          "simulated_s": 5.983333333333333,
+          "wall_s": 0.43656595854554325,
+          "realtime_factor": 13.705450954690372
+        },
+        "approach": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 1.0184633672470227,
+          "realtime_factor": 3.927485394798517
+        },
+        "geometric_capture_hold": {
+          "steps": 67,
+          "simulated_s": 0.3045454545454547,
+          "wall_s": 0.07954020274337381,
+          "realtime_factor": 3.828824217710775
+        },
+        "withdraw": {
+          "steps": 879,
+          "simulated_s": 3.995454545454546,
+          "wall_s": 1.015319483121857,
+          "realtime_factor": 3.93516977845191
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.43334097508341074,
+          "realtime_factor": 13.845909676196909
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.08006633794866502,
+          "realtime_factor": 12.489643283562632
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.0844269732479006,
+          "realtime_factor": 11.84455585140696
+        }
+      },
+      "summary_sha256": "827cba505751ceb97d73748e60975e667120e35a0bd390092ef54e94ee750d12"
+    }
+  ],
+  "observations": [
+    {
+      "index": 0,
+      "station_m": -7.113437616723672e-11,
+      "physics_clock_s": 3.549996852874756,
+      "campaign_wall_s": 8.67463593708817,
+      "visible_red_fruits": 0,
+      "queued": [],
+      "camera": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_000/camera",
+      "sensor_wall_s": 0.08253080397844315
+    },
+    {
+      "index": 1,
+      "station_m": 0.15000078082084656,
+      "physics_clock_s": 6.913763523101807,
+      "campaign_wall_s": 12.98427320108749,
+      "visible_red_fruits": 0,
+      "queued": [],
+      "camera": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_001/camera",
+      "sensor_wall_s": 0.022219841950573027
+    },
+    {
+      "index": 2,
+      "station_m": 0.3000015318393707,
+      "physics_clock_s": 10.277351379394531,
+      "campaign_wall_s": 17.87617848208174,
+      "visible_red_fruits": 9,
+      "queued": [
+        "/World/Greenhouse/Plants/Plant_17/Truss_02",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01"
+      ],
+      "camera": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_002/camera",
+      "sensor_wall_s": 0.0472276380751282
+    },
+    {
+      "index": 3,
+      "station_m": 0.4500022828578949,
+      "physics_clock_s": 13.640829086303711,
+      "campaign_wall_s": 22.355406507034786,
+      "visible_red_fruits": 14,
+      "queued": [
+        "/World/Greenhouse/Plants/Plant_17/Truss_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02"
+      ],
+      "camera": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_003/camera",
+      "sensor_wall_s": 0.06334499106742442
+    },
+    {
+      "index": 4,
+      "station_m": 0.4500022530555725,
+      "physics_clock_s": 37.990142822265625,
+      "campaign_wall_s": 32.73693533905316,
+      "visible_red_fruits": 12,
+      "queued": [
+        "/World/Greenhouse/Plants/Plant_17/Truss_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02"
+      ],
+      "camera": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_004/camera",
+      "sensor_wall_s": 0.06384165899362415
+    }
+  ],
+  "planning": [
+    {
+      "name": "yaw_0_joint_branch",
+      "yaw_offset_deg": 0.0,
+      "directory": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_003/yaw_0_joint_branch",
+      "planned": true,
+      "planning_wall_s": 1.1229287320747972,
+      "entry_angle": {
+        "passed": true,
+        "samples": 498,
+        "reference_forward_world": [
+          -0.9999999999866533,
+          5.1665582000373124e-06,
+          0.0
+        ],
+        "maximum_allowed_deg": 15.0,
+        "minimum_yaw_deg": 2.8421783443403017e-09,
+        "maximum_yaw_deg": 1.003404304004476e-06,
+        "maximum_absolute_yaw_deg": 1.003404304004476e-06,
+        "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+        "numerical_roundoff_tolerance_deg": 1e-08,
+        "requested_direction": {
+          "passed": true,
+          "samples": 1,
+          "reference_forward_world": [
+            -0.9999999999866533,
+            5.1665582000373124e-06,
+            0.0
+          ],
+          "maximum_allowed_deg": 15.0,
+          "minimum_yaw_deg": 0.0,
+          "maximum_yaw_deg": 0.0,
+          "maximum_absolute_yaw_deg": 0.0,
+          "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+          "numerical_roundoff_tolerance_deg": 1e-08
+        },
+        "elbow_posture": {
+          "required": "up",
+          "minimum_posture_clearance_m": 0.20078859267256433,
+          "passed": true,
+          "minimum_height_above_shoulder_and_tool_m": 0.20078859267256433
+        },
+        "complete": true,
+        "source": "Actual native FK in the same complete60Hz collision pass"
+      },
+      "screen": {
+        "passed": true,
+        "collision_certified": false,
+        "samples": 1462,
+        "elastic_intersections": [],
+        "scope": "Rigid preparation intersections screened; flexible overlap diagnostic only. Actual GPU guard remains authoritative"
+      },
+      "audit_wall_s": 0.5821832369547337,
+      "planning_and_audit_wall_s": 1.7051119690295309
+    }
+  ],
+  "actual_entry_angle": {
+    "passed": true,
+    "samples": 1826,
+    "reference_forward_world": [
+      -0.9999999999866533,
+      5.1665582000373124e-06,
+      0.0
+    ],
+    "maximum_allowed_deg": 15.0,
+    "minimum_yaw_deg": -0.005900396945317685,
+    "maximum_yaw_deg": 0.007922008561818333,
+    "maximum_absolute_yaw_deg": 0.007922008561818333,
+    "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+    "numerical_roundoff_tolerance_deg": 1e-08,
+    "elbow_posture": {
+      "required": "up",
+      "minimum_posture_clearance_m": 0.2007530927658081,
+      "passed": true,
+      "minimum_height_above_shoulder_and_tool_m": 0.2007530927658081
+    },
+    "source": "Recorded actual GPU body poses; no additional physics",
+    "start_timestamp_s": 21.69525146484375,
+    "end_timestamp_s": 29.990262985229492,
+    "maximum_recorded_interval_s": 0.0045452117919921875
+  },
+  "capture_receipt": {
+    "mode": "main_stem_only_geometric_harvest",
+    "reached": true,
+    "timestamp_s": 25.99502182006836,
+    "state_index": 1430,
+    "states_sha256": "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844",
+    "translation_error_m": 1.9816621105218914e-05,
+    "rotation_error_rad": 3.933060546817875e-05,
+    "reach_limits": {
+      "translation_m": 0.005,
+      "rotation_deg": 3.0
+    },
+    "tool_box_min_m": [
+      -0.048,
+      0.0,
+      0.013
+    ],
+    "tool_box_max_m": [
+      0.048,
+      0.158,
+      0.061
+    ],
+    "harvested": [
+      {
+        "name": "Truss_02_Fruit_01",
+        "center_tool_m": [
+          0.017226590163485857,
+          0.13272661958680532,
+          0.06037514786315753
+        ]
+      },
+      {
+        "name": "Truss_02_Fruit_02",
+        "center_tool_m": [
+          -0.012063070819741254,
+          0.14596040913929093,
+          0.03901401121357375
+        ]
+      }
+    ],
+    "physical_detachment_verified": false,
+    "all_colors_inside_counted": true,
+    "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "phases": [
+    {
+      "name": "ready_hold",
+      "duration_s": 0.5
+    },
+    {
+      "name": "prepare_open",
+      "duration_s": 1.0
+    },
+    {
+      "name": "prepare_open_hold",
+      "duration_s": 0.5
+    },
+    {
+      "name": "prepare_joint_branch",
+      "duration_s": 6.0
+    },
+    {
+      "name": "approach",
+      "duration_s": 4.0
+    },
+    {
+      "name": "geometric_capture_hold",
+      "duration_s": 0.3
+    },
+    {
+      "name": "withdraw",
+      "duration_s": 4.0
+    },
+    {
+      "name": "return_joint_branch",
+      "duration_s": 6.0
+    },
+    {
+      "name": "ready_close",
+      "duration_s": 1.0
+    },
+    {
+      "name": "hold",
+      "duration_s": 1.0
+    }
+  ],
+  "source_sha256": {
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/inputs/input_model.mjb": "099b909c4d0ff258bde88dc53502ea4c8c45fb4de39e2605d13b2c28b6a2263a",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/inputs/initial_state.npz": "8bdb0771701691db4104d33e725ca8772fea3be2054736b081260e3a9f9af887",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/patrol_assets.json": "5ab4eecd4aedca5af79767fd6dbef39e945cd10c04d27e5d2a3b485a4cb4624a",
+    "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/invocation.json": "8a4ab2467d5e741d7ac369355f02eeb816fdfa222875f7c16ce01886754f1399",
+    "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/summary.json": "5758d72358ba55c94606cd7f55285527e6352e27c6583958bf88357a47da689a",
+    "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_004/plan.json": "37c969d4d76d0e939b390b0a8d897de41bfb1a6cd8fb9e421353552d46488737"
+  },
+  "videos": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/entrance_to_harvest_actual.mp4",
+      "sha256": "a08d4d4bbff81a50d8a7501a1e4bdf812e82dea22f7fd1f242843e55f30f0592",
+      "format": {
+        "duration": "38.000000",
+        "size": "3973170"
+      },
+      "render": {
+        "renderer_source_sha256": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313",
+        "actual_recorded_states": true,
+        "physics_steps_executed": 0,
+        "geometric_assumed_harvest": true,
+        "fps": 12,
+        "frames": 456,
+        "render_wall_s": 36.30199296900537,
+        "sources": [
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_000/physics/states.npz",
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_001/physics/states.npz",
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_002/physics/states.npz",
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_003/physics/states.npz",
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up/step_004/physics/states.npz"
+        ],
+        "eye_offset": [
+          -0.8,
+          -0.8,
+          1.5
+        ],
+        "look_at_offset": [
+          -0.15,
+          -0.1,
+          1.0
+        ]
+      }
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/harvest_closeup_actual.mp4",
+      "sha256": "5004607f19a2252b1bea7d55a025c9561dfd63b358c26aa15ad7d749857925e4",
+      "format": {
+        "duration": "24.334000",
+        "size": "1611836"
+      },
+      "render": {
+        "renderer_source_sha256": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313",
+        "actual_recorded_states": true,
+        "physics_steps_executed": 0,
+        "geometric_assumed_harvest": true,
+        "fps": 12,
+        "frames": 292,
+        "render_wall_s": 25.005340197938494,
+        "sources": [
+          "/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/harvest_detail/step_004/physics/states.npz"
+        ],
+        "eye_offset": [
+          -0.68,
+          -0.48,
+          1.37
+        ],
+        "look_at_offset": [
+          -0.41,
+          -0.08,
+          1.04
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Geometric volume harvest, not physical detachment; fruit/thin branch collisions disabled per existing user policy",
+    "One camera-selected truss entry in elbow-up mode; no whole-truss/route/other-mode claim",
+    "Camera PIP is timestamped last-stop observation, not a continuous sensor stream",
+    "Timing is headless run; 5905 preview was kept separate and was not a fresh GUI/headless parity trial"
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -14,6 +14,14 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh gpu-fast [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh gpu-realtime [INPUTS] [--gui] [--output OUTPUT] [runner options]' \
     '       run_s300_newton.sh row-realtime [PREPARED_ROUTE] [row runner options]' \
+    '       run_s300_newton.sh standalone [INPUTS] [--headless] [runner options]' \
+    '       run_s300_newton.sh prepare-standalone [OUTPUT] [builder options]' \
+    '       run_s300_newton.sh camera-patrol [ASSETS] [--headless] [patrol options]' \
+    '       run_s300_newton.sh render-patrol RUN --output VIDEO.mp4 [--fps 6]' \
+    '       run_s300_newton.sh prepare-patrol OUTPUT [--end-station METRES]' \
+    '       run_s300_newton.sh prepare-route REFERENCE_ASSETS OUTPUT --end-station METRES' \
+    '       run_s300_newton.sh prepare-scene-stream ASSETS OUTPUT [chunk options]' \
+    '       run_s300_newton.sh prepare-geometric-patrol SOURCE_ASSETS NEW_ASSETS' \
     '       run_s300_newton.sh check' \
     'prepare reuses the existing model and command sampler; it advances zero physics steps.' \
     'run defaults to Newton CPU: contact 400 Hz, free transfer 60 Hz. --gui adds the independent 15 FPS full-farm display.' \
@@ -24,6 +32,8 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     'gpu-realtime is a changed physical approximation, not an identical-model acceleration or real-plant calibration.' \
     'gpu-realtime --gui waits for START after rendering, runs at1x and keeps the final scene open. Add --no-interactive-viewer for an automatic maximum-throughput GUI benchmark.' \
     'row-realtime reuses the one-bed route runner: current plant elastic, other plants fixed with colliders, released fruit dynamic; 220/60 Hz and unchanged contact policy. Segment preparation/loading is separate from loop RTF.' \
+    'standalone uses the same GPU-realtime physics with a live Viser browser at port8091. Press START; repeat without reloading the scene. Minimal logs by default; --recording full enables optional state archives.' \
+    'prepare-standalone rebuilds reusable local inputs from source USD/GLB using .asset-venv. No old trial states or NAS are required.' \
     'Experimental --fused-sparse-factor remains opt-in and is not a GPU-mode default.' \
     'GPU single-world full GUI/headless equivalence passed; the original 400/60 Hz presets remain below the contact-phase realtime target.' \
     'CPU parallel trials use harvest_s300/benchmark_newton.py; see S300_NEWTON.md.' \
@@ -39,6 +49,55 @@ if [[ ! -x "$python" ]]; then
 fi
 export PYTHONNOUSERSITE=1
 case "$mode" in
+  render-patrol)
+    exec env -u PYTHONPATH "$python" -u "$scripts/render_newton_patrol.py" "$@"
+    ;;
+  prepare-geometric-patrol)
+    exec env -u PYTHONPATH "$python" -u "$scripts/newton_geometric_harvest.py" "$@"
+    ;;
+  prepare-patrol)
+    asset_python="${S300_ASSET_PYTHON:-$task_dir/.asset-venv/bin/python}"
+    for option in "$@"; do
+      if [[ "$option" == --remove-lift-braces-from* ]]; then asset_python="$python"; fi
+    done
+    exec env -u PYTHONPATH "$asset_python" -u "$scripts/prepare_newton_patrol.py" "$@"
+    ;;
+  prepare-scene-stream)
+    exec env -u PYTHONPATH "$python" -u "$scripts/newton_scene_chunks.py" "$@"
+    ;;
+  prepare-route)
+    asset_python="${S300_ASSET_PYTHON:-$task_dir/.asset-venv/bin/python}"
+    exec env -u PYTHONPATH "$asset_python" -u "$scripts/prepare_static_patrol_route.py" "$@"
+    ;;
+  camera-patrol)
+    runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"
+    patrol_assets="${S300_NEWTON_PATROL_ASSETS:-$runtime/assets/patrol_current}"
+    if (($#)) && [[ "$1" != -* ]]; then patrol_assets="$1"; shift; fi
+    exec env -u PYTHONPATH "$python" -u "$scripts/run_newton_camera_patrol.py" "$patrol_assets" \
+      --output "$runtime/runs/$(date +%Y%m%d_%H%M%S)_camera_patrol" "$@"
+    ;;
+  prepare-standalone)
+    runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"
+    output_dir="$runtime/assets/$(date +%Y%m%d_%H%M%S)_rebuilt"
+    if (($#)) && [[ "$1" != -* ]]; then output_dir="$1"; shift; fi
+    asset_python="${S300_ASSET_PYTHON:-$task_dir/.asset-venv/bin/python}"
+    exec env -u PYTHONPATH "$asset_python" -u "$scripts/prepare_newton_standalone.py" "$output_dir" "$@"
+    ;;
+  standalone)
+    runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"
+    input_dir="${S300_NEWTON_INPUTS:-$runtime/assets/current/inputs}"
+    if (($#)) && [[ "$1" != -* ]]; then input_dir="$1"; shift; fi
+    display_options=(--gui --interactive-viewer --session)
+    forwarded=()
+    for option in "$@"; do
+      if [[ "$option" == '--headless' ]]; then display_options=()
+      elif [[ "$option" == '--no-interactive-viewer' ]]; then display_options=(--gui --no-interactive-viewer)
+      else forwarded+=("$option"); fi
+    done
+    export S300_NEWTON_OUTPUT="${S300_NEWTON_OUTPUT:-$runtime/runs/$(date +%Y%m%d_%H%M%S)_live}"
+    exec "$task_dir/run_s300_newton.sh" gpu-realtime "$input_dir" \
+      --viewer-backend viser --recording summary "${display_options[@]}" "${forwarded[@]}"
+    ;;
   row-realtime)
     route_dir="${S300_NEWTON_ROUTE:-$data_dir/20261018_010218_newton_same_bed_continuous/native_piece_route}"
     if (($#)) && [[ "$1" != -* ]]; then route_dir="$1"; shift; fi
@@ -96,6 +155,10 @@ case "$mode" in
       exit 1
     fi
     export DISPLAY="${S300_NEWTON_DISPLAY:-:0}"
+    if [[ "${S300_NEWTON_PRINT_ARGS:-0}" == '1' ]]; then
+      exec "$python" -c 'import json,sys; print(json.dumps(sys.argv[1:]))' \
+        "$input_dir" --output "$output_dir" "${runner_options[@]}" "$@"
+    fi
     exec env -u PYTHONPATH "$python" -u "$scripts/run_newton_harvest.py" \
       "$input_dir" --output "$output_dir" "${runner_options[@]}" "$@"
     ;;

@@ -25,7 +25,7 @@ def sha(p):
 
 def export(assembly, trial, output, truss='Truss_00', *, robot=False,
            background=False, excluded_background_roots=(), plant_only=False,
-           ground_collision='source-box', source_plan=None):
+           ground_collision='source-box', source_plan=None, semantic_background=False):
     start = time.perf_counter()
     output.mkdir(parents=True, exist_ok=False)
     (output / 'meshes').mkdir()
@@ -45,9 +45,9 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
         return np.asarray(getattr(j, f'GetLocalPos{i}Attr')().Get(), float)
 
     rods = [b for b in manifest['plant']['bodies']
-            if (b['name'].startswith(('Stem_MainStem_', truss+'_')) or
+            if (b['name'].startswith(('Stem_MainStem_', 'Truss_' if truss == '*' else truss+'_')) or
                 (robot or plant_only) and b['name'].startswith('Leaf_')) and 'Fruit_' not in b['name']]
-    fruits = [f for f in manifest['plant']['fruits'] if f['name'].startswith(truss+'_')]
+    fruits = [f for f in manifest['plant']['fruits'] if truss == '*' or f['name'].startswith(truss+'_')]
     paths = {b['path']: b for b in rods + fruits}
     tools = [] if robot or plant_only else list(manifest['tool']['bodies'].values()) + manifest['tool']['belts']
     names = {p: b['name'] for p, b in paths.items()}
@@ -209,6 +209,8 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
                                 force_n=f['break_force_n'], torque_nm=f['break_torque_nm'],
                                 stiffness=[j.GetPrim().GetAttribute('physxLimit:rot'+a+':stiffness').Get() for a in 'XYZ'],
                                 damping=j.GetPrim().GetAttribute('physxLimit:rotX:damping').Get(), deadband_deg=1.))
+        if not np.isfinite(np.asarray([*attachments[-1]['stiffness'],attachments[-1]['damping']],float)).all():
+            raise ValueError('Fruit attachment is not configured for the elastic adapter: '+f['name'])
     robot_report=None;farm_report=None
     if robot:
         from robot_adapter import add_robot
@@ -220,7 +222,8 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
         world.remove(world.find("geom[@name='CatchFloor']"))
         from farm_adapter import add_background
         farm_report=add_background(stage,manifest,world=world,assets=assets,output=output,
-                                    excluded_roots=excluded_background_roots,ground_collision=ground_collision)
+                                    excluded_roots=excluded_background_roots,ground_collision=ground_collision,
+                                    semantic_groups=semantic_background)
     center = np.mean([transforms[f['path']][:3, 3] for f in fruits], axis=0)
     for name, offset in [('top', [0,-.12,.75]), ('side', [.65,-.5,.28])]:
         eye = center + offset
@@ -268,7 +271,8 @@ def export(assembly, trial, output, truss='Truss_00', *, robot=False,
         report['differences']=report['differences'][1:]
         report['differences']=[s for s in report['differences'] if not s.startswith(('Native surfacevel supplies','Source replay ends'))]
         report['differences']=[s for s in report['differences'] if not s.startswith(('One selected truss','Discrete integrator'))]
-        report['differences'].append('One selected truss, 16-segment stem and 27 leaf bodies per exported target plant; no merging. Leaves retain dynamics/visuals but do not collide.')
+        report['differences'].append(('All authored trusses' if truss == '*' else 'One selected truss')+
+            ', source stem and leaf bodies per exported target plant; no merging. Leaves retain dynamics/visuals but do not collide.')
         report['differences'].append('Native discrete integrator and fixed initial plant gravity preload; bias feedforward through finite robot actuators. Engine contact equivalence remains unverified.')
         report['differences'].append('Rail/lift/arm/jaws use finite source PD actuators; no physical pose playback.')
         plan=json.loads((Path(source_plan) if source_plan is not None else trial/'plan.json').read_text())

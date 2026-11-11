@@ -1,0 +1,63 @@
+{
+  "source_assets": "/root/farmily_runtime/newton/assets/patrol_elbow_up_20261110",
+  "source_visual_sha256": "f6e619a4c71fdb75e6513c1f4a8ddc50cd97beed9f71f02679708d335574e1e2",
+  "visual_xml_sha256": "4b707d34f4378b6bd8e68cd7a4e0a4b0ad52fec7fcf151ee20e86cd00c51dac0",
+  "parts": [
+    {
+      "source_mesh_sha256": "c18b6f4dcd4a72e52962c01de3eb4f826895cf1a80d40a9627787d6c879f4767",
+      "original_triangles": 1960,
+      "remaining_triangles": 1934,
+      "original_volume_m3": 0.0011100228264782042,
+      "remaining_volume_m3": 0.0006781592211116747,
+      "retained_leg_width_m": 0.04,
+      "watertight": true,
+      "source": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_16",
+      "geom": "s300_g0013",
+      "mesh_sha256": "918a65443df55b27ed95105bc4eb9e0d06a2f80d5e6d94cc88ee7b5b356a4b55"
+    },
+    {
+      "source_mesh_sha256": "ee52493ffc14f2dc0e31fcded618e3f87167710222255c7117e7885add3cb294",
+      "original_triangles": 1960,
+      "remaining_triangles": 1928,
+      "original_volume_m3": 0.001110022988317779,
+      "remaining_volume_m3": 0.0006781605598268752,
+      "retained_leg_width_m": 0.04,
+      "watertight": true,
+      "source": "/World/HarvestRobot/Robot/world/visuals/real_lift_fixed/fixed_17",
+      "geom": "s300_g0014",
+      "mesh_sha256": "b6a2dcd95fb80c1dc6afbecbfdb731f06a9dee941520be1bcda29a33be897208"
+    }
+  ],
+  "physics_inputs_unchanged": true,
+  "physical_model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+  "affects": [
+    "browser geometry",
+    "RGB-D occlusion geometry"
+  ],
+  "collision_note": "Both source parts are visual-only; no planner or GPU colliders existed for the removed diagonals",
+  "xml_changes_only_two_mesh_files": true,
+  "physical_model_identical": true,
+  "start_state_identical": true,
+  "fresh_gpu_smoke": {
+    "status": "decision_budget_exhausted",
+    "rows": [
+      {
+        "action": "initial_scan_pose",
+        "status": "completed",
+        "simulated_s": 3.549996852874756,
+        "stop": null
+      }
+    ],
+    "model_counts": {
+      "nq": 10,
+      "nv": 10,
+      "nbody": 787,
+      "ngeom": 1101
+    }
+  },
+  "full_harvest_retested": false,
+  "source_code_sha256": {
+    "nvidia-sim/harvest_s300/prepare_newton_patrol.py": "169892e89e85e7293597c093d4dd5fbb1437c8aa74c8d534e0b488a8d7809902",
+    "nvidia-sim/run_s300_newton.sh": "5ffc86220481f15fec22c16c9480fa230af3cbe8859d5bfca74e3fbcf0943ad1"
+  }
+}

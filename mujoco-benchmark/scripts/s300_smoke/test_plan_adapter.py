@@ -14,7 +14,7 @@ import unittest
 
 import numpy as np
 
-from plan_adapter import DOF_NAMES, sample_plan
+from plan_adapter import DOF_NAMES, sample_plan, PlanningContext
 
 
 REPO = Path(__file__).resolve().parents[3]
@@ -34,6 +34,64 @@ def source_plan(trial):
 
 
 class PlanAdapterTests(unittest.TestCase):
+    def test_hash_allows_access_time_update_without_accepting_content_change(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        from plan_adapter import _sha
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'stage.usdc';path.write_bytes(b'unchanged stage')
+            digest=_sha(path);actual=path.stat()
+            fields={name:getattr(actual,name) for name in
+                    ('st_dev','st_ino','st_size','st_mtime_ns','st_ctime_ns','st_atime_ns')}
+            before=SimpleNamespace(**fields)
+            after=SimpleNamespace(**dict(fields,st_atime_ns=actual.st_atime_ns+1000000000))
+            with mock.patch.object(Path,'stat',side_effect=[before,after,after]):
+                context=PlanningContext()
+                self.assertEqual(context.sha(path),digest)
+                self.assertEqual(context.sha(path),digest)
+
+    def test_content_change_during_first_hash_is_still_rejected(self):
+        from unittest import mock
+        import plan_adapter
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'stage.usdc';path.write_bytes(b'stage v1')
+            original=plan_adapter._sha
+            def changed(source):
+                digest=original(source);source.write_bytes(b'mutated stage v2');return digest
+            with mock.patch.object(plan_adapter,'_sha',side_effect=changed):
+                with self.assertRaisesRegex(ValueError,'changed during hashing'):
+                    PlanningContext().sha(path)
+
+    def test_symlink_retarget_during_first_hash_is_rejected(self):
+        from unittest import mock
+        import plan_adapter
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);one=root/'one';two=root/'two';alias=root/'alias'
+            one.write_bytes(b'stage one');two.write_bytes(b'stage two');alias.symlink_to(one)
+            original=plan_adapter._sha
+            def retarget(source):
+                digest=original(source);alias.unlink();alias.symlink_to(two);return digest
+            with mock.patch.object(plan_adapter,'_sha',side_effect=retarget):
+                with self.assertRaisesRegex(ValueError,'changed during hashing'):
+                    PlanningContext().sha(alias)
+
+    def test_cached_fk_is_cloned_before_station_shift_and_changed_sources_are_rejected(self):
+        from types import SimpleNamespace
+        from unittest.mock import Mock
+        with tempfile.TemporaryDirectory() as directory:
+            directory=Path(directory);manifest=directory/'motion_manifest.json';stage=directory/'scene.usda'
+            manifest.write_text('{}');stage.write_text('zero-frame')
+            template=SimpleNamespace(world=np.eye(4))
+            usd=SimpleNamespace(Stage=SimpleNamespace(Open=Mock(return_value=SimpleNamespace(GetUsedLayers=lambda:[]))))
+            kin=Mock(return_value=template);context=PlanningContext()
+            _,first=context.load(directory,manifest,stage,usd,kin);first.world[1,3]=.7
+            _,second=context.load(directory,manifest,stage,usd,kin)
+            self.assertEqual(second.world[1,3],0.)
+            self.assertEqual(usd.Stage.Open.call_count,1);self.assertEqual(kin.call_count,1)
+            stage.write_text('modified-zero-frame')
+            with self.assertRaisesRegex(ValueError,'changed within session'):
+                context.load(directory,manifest,stage,usd,kin)
+
     def require(self, *paths):
         if not all(Path(path).exists() for path in paths):
             self.skipTest('Preserved server source assets unavailable')

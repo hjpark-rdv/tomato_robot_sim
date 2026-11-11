@@ -159,8 +159,8 @@ def _data(model, state):
 def _window_selection(model, metadata, selected):
     selected = str(selected)
     windows = metadata.get('windows')
-    if not isinstance(windows, list) or len(windows) < 2:
-        raise ValueError('Explicit multiple-window source metadata is required')
+    if not isinstance(windows, list) or not windows:
+        raise ValueError('Explicit nonempty window source metadata is required')
     ids = [str(window['id']) for window in windows]
     if len(set(ids)) != len(ids) or selected not in ids:
         raise ValueError('Unknown or ambiguous active window: ' + selected)
@@ -343,7 +343,8 @@ def _reduced_initial(full, reduced, initial, state, mapping):
     return result
 
 
-def prepare(source, output, active_window_id, *, bank_state=None, pose_tolerance=1e-10):
+def prepare(source, output, active_window_id, *, bank_state=None, pose_tolerance=1e-10,
+            freeze_all_plants=False):
     """Build a new prepared input; ``bank_state`` always uses canonical addresses.
 
     Time may be nonzero. A caller must use the dedicated active-window lineage
@@ -371,6 +372,18 @@ def prepare(source, output, active_window_id, *, bank_state=None, pose_tolerance
     frozen_names, detached_names, active_names = _attachment_state(full, metadata, state, owned, selected)
     frozen_bodies = set().union(*(names for key, names in owned.items() if key != selected)) - set(detached_names)
     dynamic_bodies = owned[selected] | set(detached_names)
+    if freeze_all_plants:
+        # Explicit ideal harvesting has no plant-contact or detachment dynamics.
+        # Keep every body/collider at its measured pose, including thick stems;
+        # only the existing robot coordinates continue to integrate on the GPU.
+        if metadata.get('geometric_harvest', {}).get('mode') != 'main_stem_only_geometric_harvest':
+            raise ValueError('All-plant freezing requires explicit geometric harvest mode')
+        if detached_names:
+            raise ValueError('Cannot freeze an already physically detached fruit')
+        frozen_bodies = set().union(*owned.values())
+        dynamic_bodies = set()
+        frozen_names = [spec['name'] for spec in metadata['attachments']]
+        active_names = []
     for body in frozen_bodies:
         # A dynamic child under a frozen body is supported via its measured
         # parent frame. A frozen child under a moving body is not this model.
@@ -431,7 +444,8 @@ def prepare(source, output, active_window_id, *, bank_state=None, pose_tolerance
         raise ValueError('Measured dynamic coordinates/control/attachment state changed')
     proof = dict(schema=SCHEMA, canonical_inputs=str(source),
         canonical_mjb_sha256=protected['input_model.mjb'], active_window_id=selected,
-        active_body_names=sorted(owned[selected]), frozen_body_names=sorted(frozen_bodies),
+        active_body_names=sorted(dynamic_bodies), frozen_body_names=sorted(frozen_bodies),
+        all_plants_static=bool(freeze_all_plants),
         frozen_attachment_names=frozen_names, detached_dynamic_attachment_names=detached_names,
         active_attachment_names=active_names,
         full_counts=dict(nq=full.nq, nv=full.nv, nbody=full.nbody, ngeom=full.ngeom, neq=full.neq),

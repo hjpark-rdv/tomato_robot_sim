@@ -57,12 +57,14 @@ def _hash_file(path):
     return digest.hexdigest()
 
 
-def verify_manifest_files(root, input_files, workers=8):
+def verify_manifest_files(root, input_files, workers=8, *, verification_context=None):
     """Hash every ``{relative_name: {'sha256': expected}}`` entry; return digests.
 
     At most eight independent file reads run concurrently. Results preserve
     manifest order and exceptions propagate; no digest cache substitutes for
-    reading the original bytes. Source file/directory symlinks are supported.
+    reading the original bytes by default. An explicit caller-owned verification
+    context may reuse original digests only after unchanged file-identity checks.
+    Source file/directory symlinks are supported.
     """
     if type(workers) is not int or not 1 <= workers <= _MAX_WORKERS:
         raise ValueError("Manifest hash workers must be an integer between 1 and 8")
@@ -79,7 +81,8 @@ def verify_manifest_files(root, input_files, workers=8):
 
     def verify(entry):
         name, relative, expected = entry
-        actual = _hash_file(root / relative)
+        actual = (_hash_file(root / relative) if verification_context is None else
+                  verification_context.file_sha256(root / relative))
         if actual != expected:
             raise ValueError(f"Input SHA256 mismatch: {name}")
         return name, actual

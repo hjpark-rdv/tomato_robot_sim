@@ -123,7 +123,12 @@ def identify_geometries(model, metadata):
             roles[g] = 1
         elif any(body.startswith(truss+'_Pedicel_') for truss in target_trusses):
             roles[g] = 2
-    if not ids or not np.any(roles == 1) or not np.any(roles == 2):
+    ideal = metadata.get('geometric_harvest',{}).get('mode') == 'main_stem_only_geometric_harvest'
+    # In the user-authorized ideal experiment these contact roles must be
+    # absent. Keep the common policy/audit and its ordinary 1mm obstacle guard.
+    if ideal and np.any(roles):
+        raise ValueError('Ideal harvest model still has active fruit/pedicel collision geometry')
+    if not ids or (not ideal and (not np.any(roles == 1) or not np.any(roles == 2))):
         raise ValueError('Incomplete belt/fruit/pedicel identification')
     lookup = np.full(model.ngeom, -1, np.int32)
     lookup[ids] = np.arange(len(ids), dtype=np.int32)

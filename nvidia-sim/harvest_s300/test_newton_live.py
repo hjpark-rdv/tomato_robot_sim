@@ -16,6 +16,32 @@ from newton_live import (NewtonLivePublisher, NewtonPoseMapping, NewtonViewerPro
 
 
 class NewtonLiveTests(unittest.TestCase):
+    def test_persistent_display_keeps_process_and_rejects_changed_physics(self):
+        with tempfile.TemporaryDirectory() as root:
+            assembly, poses, mapping = self.fixture(root)
+            pubs = []
+            try:
+                for name, physical in [('first', 'same-model'), ('second', 'same-model'),
+                                       ('changed', 'different-model')]:
+                    pub = NewtonLivePublisher(Path(root)/name, assembly, ['stem', 'tool'],
+                        mapping, physical_model_sha256=physical)
+                    pub.publish(poses, .096, 0.)
+                    pubs.append(pub)
+                with NewtonViewerProcess(pubs[0].output, isaac_python=sys.executable,
+                        viewer_script=self.fake_viewer(root)) as viewer:
+                    viewer.wait_ready(5.)
+                    pid = viewer.process.pid
+                    viewer.switch_trial(pubs[1].output)
+                    self.assertEqual(viewer.process.pid, pid)
+                    pointer = pubs[0].output/'viser_next_trial.json'
+                    self.assertEqual(json.loads(pointer.read_text())['trial'], str(pubs[1].output))
+                    with self.assertRaisesRegex(ValueError, 'physical model'):
+                        viewer.switch_trial(pubs[2].output)
+                    self.assertEqual(json.loads(pointer.read_text())['trial'], str(pubs[1].output))
+            finally:
+                for pub in pubs:
+                    pub.close()
+
     def test_pacing_preserves_sim_clock_and_does_not_catch_up_after_stall(self):
         now=[0.]
         waits=[]
@@ -112,6 +138,24 @@ class NewtonLiveTests(unittest.TestCase):
                 NewtonLivePublisher(Path(root) / 'trial', assembly, ['tool'],
                     {'/World/ActuatedTool/fixed': 'tool'})
             self.assertFalse((Path(root) / 'trial' / 'live.bin').exists())
+
+    def test_batch_rounding_does_not_accumulate_display_delay(self):
+        with tempfile.TemporaryDirectory() as root:
+            assembly, poses, mapping = self.fixture(root)
+            now = [0.]
+            publisher = NewtonLivePublisher(Path(root) / 'trial', assembly,
+                ['stem', 'tool'], mapping, fps=30., clock=lambda: now[0])
+            emitted = []
+            for tick in range(111):
+                now[0] = tick/110.
+                if publisher.due():
+                    publisher.publish(poses, .04, now[0]);emitted.append(now[0])
+            self.assertEqual(len(emitted), 31)
+            self.assertLess(max(np.diff(emitted)), .0455)
+            now[0] = 5.
+            self.assertTrue(publisher.publish(poses, .04, now[0]))
+            self.assertFalse(publisher.due())
+            publisher.close()
 
     def test_explicit_quaternion_conversion_does_not_mutate_input(self):
         mapping = NewtonPoseMapping(['body'], {'/World/body': 0}, quaternion_order='wxyz')
@@ -220,6 +264,18 @@ class NewtonLiveTests(unittest.TestCase):
             viewer.close()
             self.assertEqual(viewer.report['returncode'], 7)
             self.assertEqual(MotionLiveReader(publisher.output).read()['status'], 'running')
+            publisher.close()
+
+    def test_venv_python_symlink_kept_in_launch_command(self):
+        with tempfile.TemporaryDirectory() as root:
+            assembly, poses, mapping = self.fixture(root)
+            publisher = NewtonLivePublisher(Path(root)/'trial', assembly, ['stem','tool'], mapping)
+            publisher.publish(poses,.096,0.)
+            interpreter=Path(root)/'python';interpreter.symlink_to(sys.executable)
+            with NewtonViewerProcess(publisher.output,isaac_python=interpreter,
+                                     viewer_script=self.fake_viewer(root)) as viewer:
+                viewer.wait_ready(5.)
+                self.assertEqual(viewer.report['command'][0],str(interpreter))
             publisher.close()
 
     def test_viewer_readiness_rejects_claimed_physics_steps(self):

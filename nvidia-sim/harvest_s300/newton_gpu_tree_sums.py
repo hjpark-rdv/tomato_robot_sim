@@ -142,6 +142,27 @@ def _plans(parent_ids, body_tree, device, include_world):
     return plans
 
 
+def descendant_csr(parent_ids):
+    """Same ascending descendant IDs without scanning every body pair.
+
+    Visit each child's ancestors once. A child is appended in ascending ID
+    order, exactly preserving the existing float32 reduction order.
+    """
+    parents=np.asarray(parent_ids)
+    if parents.ndim!=1 or not len(parents) or parents.dtype.kind not in 'iu' or parents[0]!=0 or np.any(parents<0) or np.any(parents>=len(parents)):
+        raise ValueError('Invalid body parent topology')
+    descendants=[[] for _ in parents]
+    for child in range(len(parents)):
+        ancestor=child;visited=set()
+        while True:
+            if ancestor in visited:raise ValueError('Cyclic body parent topology')
+            visited.add(ancestor);descendants[ancestor].append(child)
+            if ancestor==0:break
+            ancestor=int(parents[ancestor])
+    offsets=np.r_[0,np.cumsum([len(children) for children in descendants])].astype(np.int32)
+    return offsets,np.asarray([child for children in descendants for child in children],np.int32)
+
+
 class FixedOrderTreeSums:
     """Install before capture/stepping; call ``close`` to restore dispatch.
 
@@ -175,18 +196,7 @@ class FixedOrderTreeSums:
         # Flat mode reads immutable intrinsic values, so every body can sum
         # its descendants independently in one kernel. It changes float32
         # grouping from hierarchical child sums to ascending body-ID sums.
-        descendants = []
-        self.flat_host_offsets = [0]
-        for body in range(self.model.nbody):
-            for child in range(self.model.nbody):
-                ancestor = child
-                while ancestor != body and ancestor != 0:
-                    ancestor = int(parent_ids[ancestor])
-                if ancestor == body:
-                    descendants.append(child)
-            self.flat_host_offsets.append(len(descendants))
-        self.flat_host_offsets = np.asarray(self.flat_host_offsets, np.int32)
-        self.flat_host_descendants = np.asarray(descendants, np.int32)
+        self.flat_host_offsets,self.flat_host_descendants=descendant_csr(parent_ids)
         self.flat_offsets = wp.array(self.flat_host_offsets, dtype=int, device=device)
         self.flat_descendants = wp.array(self.flat_host_descendants, dtype=int, device=device)
         self._rne_scratch = wp.empty((solver.mjw_data.nworld, self.model.nbody),
@@ -221,7 +231,7 @@ class FixedOrderTreeSums:
             sibling_order=("ascending body ID; existing deepest-to-root level order" if mode == "levels"
                            else "intrinsic descendant contributions in ascending body ID order"),
             float32_grouping_changed=mode == "flat",
-            flat_descendant_entries=int(len(descendants)),
+            flat_descendant_entries=int(len(self.flat_host_descendants)),
             com_rne_include_world_parent=True,
             crb_include_world_parent=False,
             body_count=int(self.model.nbody),

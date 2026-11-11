@@ -4,6 +4,7 @@ Unlike the old ring frame, this endpoint is the actual V5.1 CAD origin. Joint
 frames/limits come from the composed USD. No physical body is teleported by FK.
 """
 import numpy as np
+import math
 from numbers import Integral
 from scipy.spatial.transform import Rotation as R
 from scipy.optimize import least_squares
@@ -94,6 +95,8 @@ class ToolKinematics:
         return list(self.frames(q).values())[-1]@self.offset
 
     def ik(self,pose,seed):
+        if getattr(self,'ik_solver','numeric')=='analytic':
+            return self._analytic_ik(pose,seed)
         def residual(q):
             t=self.fk(q)
             return np.r_[(t[:3,3]-pose[:3,3])*5,
@@ -106,6 +109,8 @@ class ToolKinematics:
         """Solve the six arm joints at an explicitly fixed existing lift height."""
         if not np.isfinite(lift_m) or not self.bounds[0,0]<=lift_m<=self.bounds[1,0]:
             raise ValueError('Requested lift branch exceeds the existing joint limits')
+        if getattr(self,'ik_solver','numeric')=='analytic':
+            return self._analytic_ik(pose,seed,lift_m=lift_m)
         seed=np.asarray(seed,float)
         def assemble(arm):return np.r_[float(lift_m),arm]
         def residual(arm):
@@ -116,6 +121,71 @@ class ToolKinematics:
                              bounds=(self.bounds[0,1:],self.bounds[1,1:]),max_nfev=200)
         q=assemble(result.x);t=self.fk(q)
         return q,float(np.linalg.norm(t[:3,3]-pose[:3,3])),float(R.from_matrix(t[:3,:3]@pose[:3,:3].T).magnitude())
+
+    def fk_jacobian(self,q):
+        """World geometric Jacobian of the same authored seven-joint chain.
+
+        No finite-difference FK calls or per-link frame dictionary. The legacy
+        FK/IK path remains available for command regression and comparison.
+        """
+        t=self.world.copy();axes=[];pivots=[];sliders=[]
+        for value,(origin,axis,slider,_) in zip(q,self.chain):
+            t=t@origin
+            axes.append(t[:3,:3]@axis);pivots.append(t[:3,3].copy());sliders.append(slider)
+            if slider:t[:3,3]+=axes[-1]*value
+            else:
+                x,y,z=axis;s=math.sin(value);c=math.cos(value);v=1-c
+                rotation=np.array([[x*x*v+c,x*y*v-z*s,x*z*v+y*s],
+                    [y*x*v+z*s,y*y*v+c,y*z*v-x*s],
+                    [z*x*v-y*s,z*y*v+x*s,z*z*v+c]])
+                t[:3,:3]=t[:3,:3]@rotation
+        t=t@self.offset
+        axes=np.asarray(axes).T;pivots=np.asarray(pivots).T;sliders=np.asarray(sliders)
+        linear=np.cross(axes.T,(t[:3,3,None]-pivots).T).T
+        linear[:,sliders]=axes[:,sliders]
+        angular=axes.copy();angular[:,sliders]=0.
+        return t,linear,angular
+
+    def ik_residual_jacobian(self,pose,q,seed):
+        """Exact derivative of the existing position/SO(3)/seed residual."""
+        t,linear,angular=self.fk_jacobian(q)
+        e=R.from_matrix(pose[:3,:3]@t[:3,:3].T).as_rotvec()
+        x,y,z=e;skew=np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
+        theta=float(np.linalg.norm(e))
+        # Inverse right Jacobian of log(R_goal R_current.T), stable at zero
+        # and pi. Joint angular axes are expressed in world coordinates.
+        a=(1/12+theta*theta/720 if theta<1e-4 else
+           (1-.5*theta/np.tan(theta/2))/(theta*theta))
+        orientation=-(np.eye(3)+.5*skew+a*(skew@skew))@angular
+        return (np.r_[(t[:3,3]-pose[:3,3])*5,e,(q-seed)*.002],
+                np.vstack((linear*5,orientation,np.eye(len(q))*.002)))
+
+    def _analytic_ik(self,pose,seed,*,lift_m=None):
+        seed=np.asarray(seed,float);fixed=lift_m is not None
+        cache=getattr(self,'ik_cache',None)
+        key=(self.world.tobytes(),self.bounds.tobytes(),pose.tobytes(),seed.tobytes(),lift_m)
+        if cache is not None and key in cache:
+            q,pe,re=cache[key]
+            return q.copy(),pe,re
+        columns=np.arange(1 if fixed else 0,len(seed));rows=np.r_[np.arange(6),6+columns]
+        previous=None;cached=None
+        def evaluate(values):
+            nonlocal previous,cached
+            if previous is None or not np.array_equal(values,previous):
+                q=np.r_[float(lift_m),values] if fixed else values
+                residual,jac=self.ik_residual_jacobian(pose,q,seed)
+                cached=(residual[rows],jac[np.ix_(rows,columns)]);previous=values.copy()
+            return cached
+        bounds=self.bounds[:,columns]
+        result=least_squares(lambda q:evaluate(q)[0],np.clip(seed[columns],*bounds),
+            jac=lambda q:evaluate(q)[1],bounds=bounds,max_nfev=200)
+        q=np.r_[float(lift_m),result.x] if fixed else result.x
+        t=self.fk(q)
+        value=(q,float(np.linalg.norm(t[:3,3]-pose[:3,3])),float(R.from_matrix(t[:3,:3]@pose[:3,:3].T).magnitude()))
+        if cache is not None:
+            if len(cache)>=4096:cache.pop(next(iter(cache)))
+            cache[key]=(q.copy(),value[1],value[2])
+        return value
 
 
 def ready_lift_branch(kin,start,offset_m):
@@ -280,6 +350,22 @@ def equivalent_joint_goal_near_start(kin,goal,start):
         scope='Equivalent staging endpoint only; opt-in interpolation and subsequent IK require complete self/environment/native validation')
 
 
+def elbow_up_clearance(kin,q):
+    """Signed elbow height above both shoulder and actual tool, in metres."""
+    frames=kin.frames(q)
+    elbow=frames['/World/HarvestRobot/Robot/link3'][2,3]
+    shoulder=frames['/World/HarvestRobot/Robot/link2'][2,3]
+    return float(elbow-max(shoulder,kin.fk(q)[2,3]))
+
+
+def elbow_posture_clearance(kin,q,posture):
+    if posture=='up':return elbow_up_clearance(kin,q)
+    if posture!='down':raise ValueError('Elbow posture must be up or down')
+    frames=kin.frames(q)
+    return float(min(frames['/World/HarvestRobot/Robot/link2'][2,3],kin.fk(q)[2,3])-
+                 frames['/World/HarvestRobot/Robot/link3'][2,3])
+
+
 def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                 pitch_deg=0.,yaw_offset_deg=0.,recorded_prefix=None,entry_only=False,
                 harvest_profile='legacy',belt_speed_m_s=.15,belt_seconds=2.,close_seconds=3.,belt_ramp_seconds=0.,
@@ -289,7 +375,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
                 preparation_opening='ready',
                 max_grasp_translation_m=.5,allow_measured_ready_start=False,
                 horizontal_ready_connector='cartesian',horizontal_ready_seed_index=None,
-                horizontal_ready_normalize_turns=False,approach_distance_m=.10,
+                horizontal_ready_normalize_turns=False,approach_distance_m=.10,elbow_posture=None,
                 release_relief_before_withdraw=False,release_relief_minimum_gap_m=.090):
     """Plan one fixed entry orientation, without silently changing its pitch.
 
@@ -314,6 +400,8 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     negative offset puts the unchanged fruit farther toward tool +X.
     """
     center=np.asarray(center,dtype=float)
+    if elbow_posture not in (None,'up','down'):
+        raise ValueError('Elbow posture must be None, up or down')
     if not isinstance(release_relief_before_withdraw,(bool,np.bool_)) or (release_relief_before_withdraw and
             (preparation!='horizontal_ready' or harvest_profile!='belt_open_close_cycle' or entry_only)):
         raise ValueError('Release relief requires boolean horizontal-ready belt-open-close harvest')
@@ -439,6 +527,7 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
     for index,seed in enumerate(seeds):
         q,pe,re=solve(prep,seed)
         accepted=bool(np.isfinite(q).all() and np.isfinite([pe,re]).all() and pe<=.002 and re<=.02)
+        if accepted and elbow_posture is not None:accepted=elbow_posture_clearance(kin,q,elbow_posture)>0.
         attempt=dict(seed_index=index,preparation_position_error_m=float(pe),
                      preparation_orientation_error_rad=float(re),
                      status='preparation_feasible_suffix_not_evaluated' if accepted else 'preparation_ik_failed')
@@ -545,6 +634,9 @@ def plan_motion(kin,center,start=None,preparation='fold_then_turn', *,
             if not np.isfinite(q).all() or not np.isfinite([pe,re]).all() or pe>.002 or re>.02:
                 attempts[index].update(status='approach_ik_failed',failed_fraction=tick/60.,
                                        approach_position_error_m=float(pe),approach_orientation_error_rad=float(re))
+                break
+            if elbow_posture is not None and elbow_posture_clearance(kin,q,elbow_posture)<=0.:
+                attempts[index].update(status='approach_elbow_posture_rejected',failed_fraction=tick/60.)
                 break
             branch.append(q.copy());errors.append([float(pe),float(re)])
         else:

@@ -8,6 +8,31 @@ import unittest
 
 
 class LauncherTests(unittest.TestCase):
+    def test_standalone_uses_local_inputs_and_optional_history(self):
+        wrapper=Path(__file__).resolve().parents[1]/'run_s300_newton.sh'
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);inputs=root/'assets/current/inputs'
+            inputs.mkdir(parents=True);(inputs/'inputs.json').write_text('{}')
+            capture=root/'argv.json';python=root/'python'
+            python.write_text('#!/usr/bin/env python3\nimport json,os,sys\n'
+                'open(os.environ["S300_TEST_CAPTURE"],"w").write(json.dumps(sys.argv[1:]))\n')
+            python.chmod(0o755)
+            env=dict(os.environ,S300_NEWTON_PYTHON=str(python),S300_TEST_CAPTURE=str(capture),
+                     S300_NEWTON_RUNTIME=str(root))
+            for variable in ('S300_NEWTON_INPUTS','S300_NEWTON_OUTPUT'):
+                env.pop(variable,None)
+            for headless in (False,True):
+                subprocess.run([str(wrapper),'standalone']+(['--headless'] if headless else []),
+                               env=env,check=True,capture_output=True,text=True)
+                argv=json.loads(capture.read_text())
+                self.assertEqual(argv[2],str(inputs))
+                self.assertEqual(argv[argv.index('--recording')+1],'summary')
+                self.assertEqual(argv[argv.index('--viewer-backend')+1],'viser')
+                self.assertEqual('--gui' in argv,not headless)
+                self.assertEqual('--session' in argv,not headless)
+                self.assertEqual('--interactive-viewer' in argv,not headless)
+                self.assertNotIn('--diagnostic-continue',argv)
+
     def test_row_profile_reuses_existing_orchestrator_and_preserves_overrides(self):
         wrapper = Path(__file__).resolve().parents[1] / 'run_s300_newton.sh'
         with tempfile.TemporaryDirectory() as directory:

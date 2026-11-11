@@ -72,6 +72,15 @@ class FarmAdapterTests(unittest.TestCase):
             self.assertEqual(report['background_plant_dofs'], 0)
             self.assertTrue(all(r['approximation'] == 'exact_source_box' for r in report['structural_inventory']))
 
+    def test_sensor_export_retains_distinct_same_color_object_identities(self):
+        with tempfile.TemporaryDirectory() as directory:
+            _, report = self.export(self.fixture(), directory, semantic_groups=True)
+            plants=[r for r in report['geometry_inventory'] if '/Plants/' in r['source_root']]
+            self.assertEqual(len(plants),4)
+            self.assertTrue(all(len(r['source_paths'])==1 for r in plants))
+            self.assertEqual(len({p for r in plants for p in r['source_paths']}),4)
+            self.assertFalse(report['background_plant_collision'])
+
     def test_authored_house_scope_and_source_remains_unchanged(self):
         stage = self.fixture();before=stage.GetRootLayer().ExportToString()
         with tempfile.TemporaryDirectory() as directory:

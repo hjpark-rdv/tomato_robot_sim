@@ -8,6 +8,7 @@ The resulting plan has no self/environment collision certificate.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -20,6 +21,50 @@ REPO = Path(__file__).resolve().parents[3]
 SOURCE_CODE = REPO / "nvidia-sim/harvest_s300"
 DOF_NAMES = ["root_joint", "farmily_lift_height_joint", "base", "shoulder",
              "elbow", "wrist1", "wrist2", "wrist3", "jaw_L", "jaw_R"]
+
+
+class PlanningContext:
+    """Process-local immutable USD/FK reuse; every request gets independent FK.
+
+    File identities include ctime and the resolved symlink target. Changes are
+    errors rather than silently reusing stale robot geometry or code hashes.
+    """
+    def __init__(self):
+        self.files = {}; self.assemblies = {}; self.ik_caches = {}
+
+    @staticmethod
+    def _identity(resolved, info):
+        # Reading may legitimately update atime (notably the first read after
+        # 24 hours on relatime mounts). Only content/source identity matters.
+        return (str(resolved),info.st_dev,info.st_ino,info.st_size,
+                info.st_mtime_ns,info.st_ctime_ns)
+
+    def sha(self, path):
+        path = Path(path).absolute(); resolved = path.resolve(strict=True); st = resolved.stat()
+        identity = self._identity(resolved,st)
+        key = str(path)
+        if key in self.files:
+            previous,digest = self.files[key]
+            if previous != identity:raise ValueError('Planning source changed within session: '+key)
+            return digest
+        digest = _sha(resolved)
+        if path.resolve(strict=True)!=resolved or self._identity(resolved,resolved.stat())!=identity:
+            raise ValueError('Planning source changed during hashing: '+key)
+        self.files[key] = identity,digest
+        return digest
+
+    def load(self, assembly, manifest_path, stage_path, usd, kinematics):
+        key = str(assembly)
+        self.sha(manifest_path); self.sha(stage_path)
+        if key not in self.assemblies:
+            stage = usd.Stage.Open(str(stage_path))
+            if stage is None:raise ValueError('Could not open the source zero-joint USD')
+            layers = [layer.realPath for layer in stage.GetUsedLayers() if layer.realPath]
+            for path in layers:self.sha(path)
+            self.assemblies[key] = (json.loads(manifest_path.read_text()),kinematics(stage),layers,stage)
+        manifest,kin,layers,_ = self.assemblies[key]
+        for path in layers:self.sha(path)
+        return copy.deepcopy(manifest),copy.deepcopy(kin)
 
 
 def _sha(path):
@@ -95,6 +140,16 @@ def sample_plan(plan, time_s, *, settle_seconds=None):
             weight = f - low
             q = qs[low] * (1. - weight) + qs[low + 1] * weight
             rail_q = rail[low] * (1. - weight) + rail[low + 1] * weight
+            if 'rail_boundary_velocities_m_s' in row:
+                velocity=_vector(row['rail_boundary_velocities_m_s'],2,'rail boundary velocities')
+                if len(rail)!=2:raise ValueError('Cruise rail interpolation requires two endpoints')
+                fraction=float(np.clip(offset/duration,0.,1.))
+                # Cubic Hermite: preserve measured cruise velocity through
+                # camera observation boundaries; no easing to zero per15cm.
+                rail_q=((2*fraction**3-3*fraction**2+1)*rail[0]+
+                        (fraction**3-2*fraction**2+fraction)*duration*velocity[0]+
+                        (-2*fraction**3+3*fraction**2)*rail[1]+
+                        (fraction**3-fraction**2)*duration*velocity[1])
             gap = previous_gap + (next_gap - previous_gap) * u
             speed = _vector(row["belt_local_y_m_s"], 2, "belt_local_y_m_s").copy()
             window = plan.get("belt_cycle")
@@ -115,7 +170,7 @@ def sample_plan(plan, time_s, *, settle_seconds=None):
     raise AssertionError("No phase was sampled")
 
 
-def make_plan(assembly, request, *, source_plan=None):
+def make_plan(assembly, request, *, source_plan=None, context=None):
     """Generate new IK from the measured seven-joint start using source code.
 
     Required request keys: ``measured_joint_q``, ``measured_station_y_m``,
@@ -134,14 +189,26 @@ def make_plan(assembly, request, *, source_plan=None):
 
     assembly = Path(assembly).resolve()
     manifest_path = assembly / "motion_manifest.json"
-    manifest = json.loads(manifest_path.read_text())
     stage_path = assembly / "composed.usdc"
     if not stage_path.exists():
         stage_path = assembly / "scene.usda"
-    stage = Usd.Stage.Open(str(stage_path))
-    if stage is None:
-        raise ValueError("Could not open the source zero-joint USD")
-    kin = ToolKinematics(stage)
+    if context is None:
+        manifest = json.loads(manifest_path.read_text())
+        stage = Usd.Stage.Open(str(stage_path))
+        if stage is None:
+            raise ValueError("Could not open the source zero-joint USD")
+        kin = ToolKinematics(stage)
+    else:
+        manifest,kin = context.load(assembly,manifest_path,stage_path,Usd,ToolKinematics)
+    digest = _sha if context is None else context.sha
+    ik_solver = request.get('ik_solver','numeric')
+    if ik_solver not in ('numeric','analytic'):raise ValueError('Unknown IK solver')
+    kin.ik_solver = ik_solver
+    if ik_solver == 'analytic':
+        # Only exact FK input/seed reuse; every proposed path is still audited
+        # against the current physical state. Geometry lives in an immutable
+        # assembly-specific cache, and the key includes world/limits/pose/seed.
+        kin.ik_cache = {} if context is None else context.ik_caches.setdefault(str(assembly),{})
     measured_q = _vector(request["measured_joint_q"], 7, "measured_joint_q")
     measured_station = float(request["measured_station_y_m"])
     station = float(_request(request, "station_y_m", "target_station_y_m", default=measured_station))
@@ -177,6 +244,8 @@ def make_plan(assembly, request, *, source_plan=None):
                    max_grasp_translation_m=source.get("max_grasp_translation_m", 1.5),
                    approach_distance_m=source.get("approach_distance_m", .1),
                    horizontal_ready_normalize_turns=False)
+    if request.get('elbow_posture') is not None:
+        options['elbow_posture']=request['elbow_posture']
     aliases = {"depth_m": "grasp_depth_m", "height_offset_m": "grasp_height_offset_m",
                "grasp_translation": "grasp_translation_world_m"}
     for key, value in request.items():
@@ -196,6 +265,7 @@ def make_plan(assembly, request, *, source_plan=None):
         approach_direction_world=direction, belt_speed_m_s=0., belt_infeed_speed_m_s=.05,
         close_seconds=6., belt_seconds=2., belt_ramp_seconds=.5, grasp_gap_m=.028,
         **options)
+    if options.get('elbow_posture') is not None:result['elbow_posture']=options['elbow_posture']
     # Existing rail helper produces current-origin-relative coordinates; rebase
     # its command rows once to the shared MJB origin without changing any bodies.
     rail_manifest = dict(manifest)
@@ -221,17 +291,18 @@ def make_plan(assembly, request, *, source_plan=None):
                   rail_origin_station_m=origin_station, measured_station_y_m=measured_station,
                   destination_station_y_m=station, source_station_y_m=source_station,
                   measured_initial_joint_q=measured_q.tolist(), plan_options=options,
+                  ik_solver=ik_solver,
                   truss_entry_yaw_offset_deg=yaw_offset, collision_certified=False,
                   training_eligible=False, harvest_success=None,
                   execution_requirement="New finite-actuator physics; measured opening/arrival guards and collision checks required",
                   belt_sign="Authored PhysX localY +0.05; MuJoCo physical localY -0.05",
                   provenance=dict(assembly=str(assembly), stage=str(stage_path),
-                                  stage_sha256=_sha(stage_path), manifest_sha256=_sha(manifest_path),
+                                  stage_sha256=digest(stage_path), manifest_sha256=digest(manifest_path),
                                   source_plan=None if source_path is None else str(source_path),
-                                  source_plan_sha256=None if source_path is None else _sha(source_path),
-                                  source_code_sha256={name: _sha(SOURCE_CODE / name) for name in
+                                  source_plan_sha256=None if source_path is None else digest(source_path),
+                                  source_code_sha256={name: digest(SOURCE_CODE / name) for name in
                                       ("motion_kinematics.py", "rail_motion.py", "truss_sequence.py")},
-                                  adapter_sha256=_sha(__file__),
+                                  adapter_sha256=digest(__file__),
                                   source_zero_frame_shift_world_m=[0., station - source_station, 0.]))
     # Validate the shared rail/command mapping at both ends while still offline.
     sample_plan(result, 0.)
@@ -240,6 +311,27 @@ def make_plan(assembly, request, *, source_plan=None):
 
 
 def main():
+    if sys.argv[1:] == ['--serve']:
+        import contextlib,traceback
+        context = PlanningContext()
+        for line in sys.stdin:
+            if not line.strip():continue
+            job = json.loads(line)
+            try:
+                output = Path(job['output'])
+                if output.exists():raise FileExistsError(output)
+                with contextlib.redirect_stdout(sys.stderr):
+                    request = json.loads(Path(job['request']).read_text())
+                    result = make_plan(job['assembly'],request,context=context)
+                result['provenance'].update(request=str(Path(job['request']).resolve()),
+                    request_sha256=_sha(job['request']))
+                output.parent.mkdir(parents=True,exist_ok=True)
+                output.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+                response = dict(ok=True)
+            except Exception as error:
+                response = dict(ok=False,traceback=traceback.format_exc())
+            print(json.dumps(response),flush=True)
+        return
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("assembly", type=Path)
     parser.add_argument("request", type=Path)

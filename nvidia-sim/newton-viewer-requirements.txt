@@ -1,0 +1,4 @@
+# Optional independent browser viewer. Physics versions remain constrained by
+# newton-requirements.lock.txt; install via setup_s300_newton.sh --viewer.
+viser==1.1.1
+trimesh==4.9.0

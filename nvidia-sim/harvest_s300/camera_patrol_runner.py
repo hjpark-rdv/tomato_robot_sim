@@ -612,7 +612,7 @@ def _active_collision_target_key(manifest,inventory):
     return manifest['plant']['source_plant']+'/'+scope['target_truss_window']['target_truss']
 
 
-def ready_camera_service_calibration(assembly,manifest,arguments,bed_gutter_center_x):
+def ready_camera_service_calibration(assembly,manifest,arguments,bed_gutter_center_x,*,mounted_camera=None):
     """Derive camera-to-grasp offsets from this exact robot's ready FK.
 
     The synthetic point supplies only the already selected row side to the
@@ -633,12 +633,14 @@ def ready_camera_service_calibration(assembly,manifest,arguments,bed_gutter_cent
         return value
     lift_offset=argument('--ready-lift-offset-mm',0.)/1000
     if lift_offset:q=ready_lift_branch(kin,q,lift_offset)[0][-1]
-    mounted=manifest['mounted_rgbd'];mount=np.asarray(mounted['body_from_camera_optical'],float)
+    mounted=manifest['mounted_rgbd'] if mounted_camera is None else mounted_camera
+    mount=np.asarray(mounted['body_from_camera_optical'],float)
     phases=[('calibration_pose',.5,np.array([q,q]),.096,0.,0.)]
     meta=dict(phases=[dict(name='calibration_pose',duration_s=.5,waypoint_q=[q.tolist(),q.tolist()],end_gap_m=.096)])
     target=np.array([bed_gutter_center_x,kin.world[1,3],kin.fk(q)[2,3]])
     phases,_=append_scan_pan(phases,meta,kin,target,mount,view='row-front',
-        rail_axis_world=manifest['rail'].get('axis_world',[0.,1.,0.]))
+        rail_axis_world=manifest['rail'].get('axis_world',[0.,1.,0.]),body_path=mounted['body_path'],
+        row_downward_pitch_deg=mounted.get('downward_tilt_at_reference_deg',0.))
     q=np.asarray(phases[-1][2])[-1]
     camera=kin.frames(q)[mounted['body_path']]@mount
     depth=argument('--grasp-depth-mm',65.)/1000

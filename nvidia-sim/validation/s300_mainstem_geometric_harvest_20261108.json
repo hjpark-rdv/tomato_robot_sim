@@ -1,0 +1,348 @@
+{
+  "schema": "s300-mainstem-ideal-harvest-validation-v1",
+  "passed": true,
+  "run": "/root/farmily_runtime/newton/runs/patrol_mainstem_ideal_v6",
+  "mode": "main_stem_only_geometric_harvest",
+  "actual_gpu_segments": [
+    {
+      "step": "step_000",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.549996852874756,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.5799003648048595
+    },
+    {
+      "step": "step_001",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.363766670227051,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.6073474412548885
+    },
+    {
+      "step": "step_002",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.3635878562927246,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.6197270017418965
+    },
+    {
+      "step": "step_003",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 3.3634777069091797,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.6173724385976456
+    },
+    {
+      "step": "step_004",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 26.354291915893555,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.6188061217842882
+    },
+    {
+      "step": "step_005",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 20.358932495117188,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.4316050300727237
+    },
+    {
+      "step": "step_007",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 1.5503578186035156,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.6544266110009798
+    },
+    {
+      "step": "step_008",
+      "status": "completed",
+      "backend": "gpu",
+      "simulated_s": 20.359390258789062,
+      "max_penetration_m": 0.0,
+      "realtime_factor": 1.3977792909160562
+    }
+  ],
+  "harvest_motions": 3,
+  "assumed_harvest_count": 9,
+  "unique_harvest_count": 9,
+  "collected_red_proxy": 8,
+  "collected_non_red_proxy": 1,
+  "capture_receipts": [
+    {
+      "step": 4,
+      "mode": "main_stem_only_geometric_harvest",
+      "reached": true,
+      "timestamp_s": 26.99322509765625,
+      "state_index": 2607,
+      "states_sha256": "406d1e521e85aceaef0ec4412f48efbb2d6d0464f3f05dabeda98c52906aa820",
+      "translation_error_m": 3.463297869602139e-05,
+      "rotation_error_rad": 7.316563505461706e-05,
+      "reach_limits": {
+        "translation_m": 0.005,
+        "rotation_deg": 3.0
+      },
+      "tool_box_min_m": [
+        -0.048,
+        0.0,
+        0.013
+      ],
+      "tool_box_max_m": [
+        0.048,
+        0.158,
+        0.061
+      ],
+      "harvested": [
+        {
+          "name": "Truss_02_Fruit_01",
+          "center_tool_m": [
+            0.0038966580378830707,
+            0.11313273108170693,
+            0.04857416062065819
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_02",
+          "center_tool_m": [
+            -0.014465074665640636,
+            0.13979007689271172,
+            0.02697611778401416
+          ]
+        }
+      ],
+      "physical_detachment_verified": false,
+      "all_colors_inside_counted": true,
+      "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "step": 5,
+      "mode": "main_stem_only_geometric_harvest",
+      "reached": true,
+      "timestamp_s": 50.35115432739258,
+      "state_index": 1947,
+      "states_sha256": "a4118faeb6aff870f6352967e0d54d869965dacf7d58e6ffb88e346e32fb0740",
+      "translation_error_m": 3.821856151793662e-05,
+      "rotation_error_rad": 8.273371880640003e-05,
+      "reach_limits": {
+        "translation_m": 0.005,
+        "rotation_deg": 3.0
+      },
+      "tool_box_min_m": [
+        -0.048,
+        0.0,
+        0.013
+      ],
+      "tool_box_max_m": [
+        0.048,
+        0.158,
+        0.061
+      ],
+      "harvested": [
+        {
+          "name": "Truss_02_Fruit_03",
+          "center_tool_m": [
+            0.004700840428699704,
+            0.12958079975837447,
+            0.05900940035972038
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_04",
+          "center_tool_m": [
+            -0.018451764546187386,
+            0.15129493756755508,
+            0.03903835044198076
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_05",
+          "center_tool_m": [
+            0.006008467593187933,
+            0.12951312654603386,
+            0.025670053821184098
+          ]
+        }
+      ],
+      "physical_detachment_verified": false,
+      "all_colors_inside_counted": true,
+      "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+      "training_eligible": false,
+      "harvest_success": null
+    },
+    {
+      "step": 8,
+      "mode": "main_stem_only_geometric_harvest",
+      "reached": true,
+      "timestamp_s": 72.26044464111328,
+      "state_index": 1947,
+      "states_sha256": "5ebecbb467ef83c411b6baafac383ac1ed3fe7fa958fd625d692dbef0e104530",
+      "translation_error_m": 3.058225117728544e-05,
+      "rotation_error_rad": 7.037053826955311e-05,
+      "reach_limits": {
+        "translation_m": 0.005,
+        "rotation_deg": 3.0
+      },
+      "tool_box_min_m": [
+        -0.048,
+        0.0,
+        0.013
+      ],
+      "tool_box_max_m": [
+        0.048,
+        0.158,
+        0.061
+      ],
+      "harvested": [
+        {
+          "name": "Truss_01_Fruit_01",
+          "center_tool_m": [
+            0.036878538266372274,
+            0.11842841338314636,
+            0.013831164994501802
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_07",
+          "center_tool_m": [
+            0.009144461853018477,
+            0.13069665977429476,
+            0.05537893981670481
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "center_tool_m": [
+            -0.016749044384992307,
+            0.1524776781845544,
+            0.04110855236768683
+          ]
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "center_tool_m": [
+            0.003305570016275525,
+            0.1276564779252128,
+            0.025483964528889468
+          ]
+        }
+      ],
+      "physical_detachment_verified": false,
+      "all_colors_inside_counted": true,
+      "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+      "training_eligible": false,
+      "harvest_success": null
+    }
+  ],
+  "post_capture_camera_checks": [
+    {
+      "step": "step_000",
+      "collected_instances_absent": true,
+      "cumulative_count": 0
+    },
+    {
+      "step": "step_001",
+      "collected_instances_absent": true,
+      "cumulative_count": 0
+    },
+    {
+      "step": "step_002",
+      "collected_instances_absent": true,
+      "cumulative_count": 0
+    },
+    {
+      "step": "step_003",
+      "collected_instances_absent": true,
+      "cumulative_count": 0
+    },
+    {
+      "step": "step_004",
+      "collected_instances_absent": true,
+      "cumulative_count": 2
+    },
+    {
+      "step": "step_005",
+      "collected_instances_absent": true,
+      "cumulative_count": 5
+    },
+    {
+      "step": "step_006",
+      "collected_instances_absent": true,
+      "cumulative_count": 5
+    },
+    {
+      "step": "step_007",
+      "collected_instances_absent": true,
+      "cumulative_count": 5
+    },
+    {
+      "step": "step_008",
+      "collected_instances_absent": true,
+      "cumulative_count": 9
+    }
+  ],
+  "disabled_plant_geoms": 657,
+  "main_stem_geoms": 48,
+  "unchanged_numeric_arrays_checked": 477,
+  "physical_release_events": 0,
+  "initial_states_unchanged": true,
+  "original_assets_preserved": true,
+  "prepared_plants": [
+    17,
+    18,
+    19
+  ],
+  "tests": {
+    "native": 70,
+    "policy": 43,
+    "passed": true
+  },
+  "training_eligible": false,
+  "harvest_success": null,
+  "limitations": [
+    "Ideal geometric credit, no physical release/collection verification",
+    "Only prepared 0..0.85m route; three attempts, not whole farm",
+    "Segment preparation and planning pauses remain",
+    "Original 0/-25/+25degree 35mm proposals blocked; 15mm and wider yaw alternatives preserve main-stem obstacles"
+  ],
+  "source_model_sha256": "287020291df4cf9cdccff1e840f21287a3a07face2e1574859b3c5c0c1e02b77",
+  "canonical_model_sha256": "25e55e465fa92d60c888adffd7ff149889780ea592a1bb78e72027cc5e230659",
+  "invocation_source_sha256": {
+    "run_newton_camera_patrol.py": "174423043d40c30dc00e08ba958c27aa8ddf95ec035b2b260d83986854b660b2",
+    "newton_mounted_camera.py": "d2024205b4efc6b4ffa71561457209591382da3c27b399c5f7fe2883af8980f4",
+    "camera_patrol.py": "4e16c7e5d801b0475ed4c03b997c600d8c318e2efdf1e8d0d044efa19fbdbcdb",
+    "camera_region_policy.py": "50481cdbb2b06c82ab4f64a92f8597ad0b6292e9d8e3c68863e5fcb28da55515",
+    "harvest_group_policy.py": "08c3048770e43900a25b0dc35aec91370062cd799c5d39fcdbdd96e0ada51cb8",
+    "newton_geometric_harvest.py": "e37989f9bb8e58b1b9bab96965584dc573d2de9f3cbb8f6b441f1636e0cd8eac",
+    "newton_kernels.py": "3ca8e957b324d4944652055648113470e0b5db1e536bf691487d7ef860714df0",
+    "newton_contact_policy.py": "46fe54deceb024934a78eafa2972698227b1d221a9f0e8781ff97c2621775794",
+    "newton_patrol_viewer.py": "33762b9e05aa219a3c8fff4bbc7d8183d9f081b7946a4571cd8e6dfb1a6f415d"
+  },
+  "reviewed_code_sha256": {
+    "run_newton_camera_patrol.py": "1d94e6c7780dd02539bbac53834a6466ccbe928b30c58349332a49e0242e3867",
+    "newton_mounted_camera.py": "d2024205b4efc6b4ffa71561457209591382da3c27b399c5f7fe2883af8980f4",
+    "camera_patrol.py": "4e16c7e5d801b0475ed4c03b997c600d8c318e2efdf1e8d0d044efa19fbdbcdb",
+    "camera_region_policy.py": "50481cdbb2b06c82ab4f64a92f8597ad0b6292e9d8e3c68863e5fcb28da55515",
+    "harvest_group_policy.py": "08c3048770e43900a25b0dc35aec91370062cd799c5d39fcdbdd96e0ada51cb8",
+    "newton_geometric_harvest.py": "e37989f9bb8e58b1b9bab96965584dc573d2de9f3cbb8f6b441f1636e0cd8eac",
+    "newton_kernels.py": "3ca8e957b324d4944652055648113470e0b5db1e536bf691487d7ef860714df0",
+    "newton_contact_policy.py": "46fe54deceb024934a78eafa2972698227b1d221a9f0e8781ff97c2621775794",
+    "newton_patrol_viewer.py": "33762b9e05aa219a3c8fff4bbc7d8183d9f081b7946a4571cd8e6dfb1a6f415d"
+  },
+  "report_wall_s": 475.2792367360089,
+  "physics_clock_s": 82.26380157470703,
+  "last_station_m": 0.5000032782554626,
+  "video": "/root/farmily_runtime/newton/runs/patrol_mainstem_ideal_v6/geometric_harvest_01.mp4",
+  "video_scope": "First insertion only; recorded actual poses, 1x, geometric credit overlay. Not whole patrol.",
+  "video_sha256": "6d052ffcc9030a65314df4cbbc61e3d0a4433bac230632eee441c13c5bed998d",
+  "video_duration_s": 26.417,
+  "video_render_physics_steps": 0,
+  "browser_js_errors": []
+}

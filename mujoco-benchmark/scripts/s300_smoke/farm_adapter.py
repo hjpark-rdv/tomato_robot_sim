@@ -113,7 +113,7 @@ def add_background(stage, manifest, *, world, assets, output,
                    structural_collision='gutter-ground', structural_geom_attrs=None,
                    ground_collision='source-box',
                    greenhouse_root='/World/Greenhouse', ground_path='/World/Ground',
-                   prefix='farm'):
+                   prefix='farm', semantic_groups=False):
     """Append greenhouse geometry and return an auditable inventory.
 
     ``world`` and ``assets`` are the caller's worldbody/asset XML elements.
@@ -238,7 +238,11 @@ def add_background(stage, manifest, *, world, assets, output,
             vertices = vertices @ local[:3, :3].T + local[:3, 3]
             if (mesh.GetOrientationAttr().Get() == 'leftHanded') != (np.linalg.det(local[:3, :3]) < 0):
                 faces = faces[:, ::-1]
-            key = _material(prim, stage, material_cache)
+            material = _material(prim, stage, material_cache)
+            # Optional sensor export: preserve object identity across material
+            # batching. The ordinary physics/visual export remains unchanged.
+            source_name = str(prim.GetCustomDataByKey('sourceName') or prim.GetName())
+            key = (material, source_name) if semantic_groups else material
             group = groups.setdefault(key, dict(vertices=[], faces=[], offsets=0, source=[]))
             group['vertices'].append(vertices)
             group['faces'].append(faces + group['offsets'])
@@ -246,7 +250,7 @@ def add_background(stage, manifest, *, world, assets, output,
             row = dict(relative_path=str(prim.GetPath())[len(str(root.GetPath())):],
                        vertices=len(vertices), triangles=len(faces))
             group['source'].append(row); paths_local.append(row)
-        return [(key, np.concatenate(g['vertices']), np.concatenate(g['faces']), g['source'])
+        return [(key[0] if semantic_groups else key, np.concatenate(g['vertices']), np.concatenate(g['faces']), g['source'])
                 for key, g in groups.items()], paths_local
 
     def emit_group(root):
@@ -287,6 +291,8 @@ def add_background(stage, manifest, *, world, assets, output,
                                   triangles=len(faces), position_world_m=pos.tolist(),
                                   quaternion_wxyz=quaternion.tolist(),
                                   residual_affine=residual.tolist(), collision=False))
+            if semantic_groups:
+                inventory[-1]['source_paths'] = [root_path + r['relative_path'] for r in source_rows_group]
             counts['visual_geoms'] += 1
         sources.append(dict(root=root_path, prototype=prototype,
                             source_meshes=len(source_rows), source_geometry=source_rows))

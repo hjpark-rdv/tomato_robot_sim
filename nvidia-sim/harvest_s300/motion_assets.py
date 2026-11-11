@@ -356,8 +356,15 @@ def build_plant(stage, plant_path, report, output):
 
 
 def select_build_target(fruits,target=None):
-    """Keep the existing default or choose one exact active fruit identity."""
+    """Pick an existing diagnostic reference; explicit targets remain exact.
+
+    A source plant can have only Truss_00/01. Keep the legacy reference where
+    present, otherwise choose a stable existing identity. This does not select
+    online harvest targets or alter the plant's fruit inventory.
+    """
     name='Truss_02_Fruit_02' if target is None else target
+    if target is None and fruits and not any(f['name']==name for f in fruits):
+        name=min(f['name'] for f in fruits)
     choices=[f for f in fruits if f['name']==name]
     if len(choices)!=1:raise ValueError('Target must match exactly one existing active fruit: '+str(name))
     return choices[0]
@@ -463,7 +470,7 @@ def revise_belt_tread(assembly,output,thickness_mm):
 
 
 def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_index=-1, target=None,
-                                grasp_fruits=None, grasp_height_offset_m=0.):
+                                grasp_fruits=None, grasp_height_offset_m=0., *, hardware_only=False):
     """User-requested hardware/initial-state revision of an existing assembly.
 
     Retains the existing farm and motion runner. The receiver and its dedicated
@@ -531,6 +538,19 @@ def revise_for_horizontal_ready(assembly, output, distance=.30, yaw=30., seed_in
         j.CreateLocalRot0Attr(Gf.Quatf(float(rot[3]),Gf.Vec3f(*map(float,rot[:3]))))
         tool_joint_revisions.append(dict(joint=str(j.GetPath()),old_body0=previous,new_body0=new,
             world_frame_max_abs_error=float(np.max(np.abs(new_pose@changed-old_pose@local)))))
+    if hardware_only:
+        # A fresh side-mounted robot needs its own checked start, not an upright
+        # shelf IK pose. Reuse the exact receiver/jaw correction above only.
+        attr(s.GetPrimAtPath(ROBOT+'/root_joint'),'physxArticulation:enabledSelfCollisions',Sdf.ValueTypeNames.Bool,True)
+        report['tool_joint_parent_revision']=tool_joint_revisions
+        report['robot_self_collision_enabled']=True
+        report['ready_revision']=dict(source_assembly=str(assembly.resolve()),
+            source_scene_sha256=sha(source),removed_parts=previous_removed if already_removed else removed,
+            removed_mass_kg=removed_mass,hardware_only=True,initialization='pending side-mount checked start')
+        s.GetRootLayer().Save();report['scene_sha256']=sha(output/'scene.usda')
+        (output/'motion_manifest.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        shutil.copy2(assembly/'skin.npz',output/'skin.npz')
+        return
     kin=ToolKinematics(s);center=np.array(report.get('grasp_reference',report['target'])['center'])
     direction=center-np.r_[kin.world[:2,3],center[2]]
     direction=R.from_euler('z',yaw,degrees=True).apply(direction)

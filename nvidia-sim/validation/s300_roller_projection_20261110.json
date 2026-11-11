@@ -1,0 +1,164 @@
+{
+  "schema": "s300-roller-projection-revision-v1",
+  "date": "2026-11-10",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "assets": "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110",
+  "run": "/root/farmily_runtime/newton/runs/20261110_roller_projection",
+  "geometry": {
+    "camera_extrinsic_exactly_unchanged": true,
+    "translation_in_old_tool_m": [
+      -2.3463335394473033e-17,
+      0.05000000000000002,
+      -8.302024025923574e-17
+    ],
+    "old_inset_m": 0.12,
+    "new_inset_m": 0.07,
+    "flange_to_tool_forward_m": 0.08,
+    "rigid_tool_owners_preserved": [
+      "/World/ActuatedTool/fixed",
+      "/World/ActuatedTool/L",
+      "/World/ActuatedTool/R",
+      "/World/ActuatedTool/L_belt",
+      "/World/ActuatedTool/R_belt"
+    ],
+    "cad_part_tool_bounds_m": {
+      "L_C06_drive_drum_inner": [
+        [
+          -0.03974999859929085,
+          -0.003998263739049435,
+          0.006000000052154064
+        ],
+        [
+          -0.02201434038579464,
+          0.03199826553463936,
+          0.06400000303983688
+        ]
+      ],
+      "L_C06_drive_drum_outer": [
+        [
+          -0.057985659688711166,
+          -0.003998263739049435,
+          0.006000000052154064
+        ],
+        [
+          -0.04024999961256981,
+          0.03199826553463936,
+          0.06400000303983688
+        ]
+      ],
+      "L_C08_nose_roller": [
+        [
+          -0.04800000041723251,
+          0.1450025737285614,
+          0.006000000052153953
+        ],
+        [
+          -0.022010277956724167,
+          0.17099742591381073,
+          0.06400000303983677
+        ]
+      ],
+      "L_C11_rear_motor_bracket": [
+        [
+          -0.0689999982714653,
+          -0.11349999904632568,
+          0.061000000685453415
+        ],
+        [
+          -0.014000000432133675,
+          0.01899999938905239,
+          0.10199999809265137
+        ]
+      ]
+    }
+  },
+  "generation": {
+    "source": "/root/farmily_runtime/newton/assets/patrol_no_lift_diagonals_20261110",
+    "compact_cache": "/root/farmily_runtime/newton/assets/patrol_entry_three_plants",
+    "ready_solutions": "/root/farmily_runtime/newton/runs/20261110_roller_projection/ready_solutions.json",
+    "plate_drop_m": 0.3,
+    "gripper_inset_m": 0.07,
+    "camera_mount": "wrist-top",
+    "camera_down_tilt_deg": 15
+  },
+  "tests": {
+    "passed": 10,
+    "skipped": 1,
+    "reason": "Legacy platform camera not applicable to wrist camera",
+    "log_sha256": "b070cc164e1f47dfce6add85d121fc0a001e6814ec5fff0f4415a63d42b1c197"
+  },
+  "gpu": {
+    "status": "completed",
+    "physics_engine": "Newton SolverMuJoCo",
+    "backend": "gpu",
+    "physics_hz": 220.0,
+    "simulated_s": 16.499786376953125,
+    "loop_wall_s": 4.43797669489868,
+    "setup_wall_s": 7.6905772279715165,
+    "realtime_factor": 3.7178623303540848,
+    "max_active_penetration_m": 0.0,
+    "finite_all_steps": true,
+    "solver_capacity_valid": true,
+    "active_contact_criterion_passed": true,
+    "states_sha256": "d248bb714d760ec8dced32d1e02caee4f2c95be9f6669b85fe22de699e0fc9b0"
+  },
+  "input_sha256": {
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/inputs/input_model.mjb": "099b909c4d0ff258bde88dc53502ea4c8c45fb4de39e2605d13b2c28b6a2263a",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/inputs/initial_state.npz": "8bdb0771701691db4104d33e725ca8772fea3be2054736b081260e3a9f9af887",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/down/inputs/initial_state.npz": "35ed6e62e0bfd3286f81fbabd1079827d9d540aefba68349a3e70c73e8932ccf",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/model/scene.xml": "d0f1bc87f9c0adc723bbba034589129df503065edc0b6f46d27ab543aac56533",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/plant_17/assembly/motion_manifest.json": "0a4977e785f1e8584c52ebffe05202f04800c427796b0670e54a8c000bce6ca0",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/up/patrol_assets.json": "5ab4eecd4aedca5af79767fd6dbef39e945cd10c04d27e5d2a3b485a4cb4624a",
+    "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110/down/patrol_assets.json": "c57917ad13bc5b135ca2409304dac33485fefe9b0ebaca706b7ffbd12bb8092c"
+  },
+  "code_sha256": {
+    "upright_yaw_mount.py": "b57058e740b9c63a5f2ea703213117a2dc3a17a3f2d75cc3c88c01b7d00fa009",
+    "test_upright_yaw_mount.py": "f396291d729c5ba83920f0b31f0fcf5588ce238b5a0b5ac82f2b2c7a7212237e"
+  },
+  "default_asset_change": {
+    "previous": "/root/farmily_runtime/newton/assets/patrol_inset_wrist_camera_v3_20261110",
+    "current": "/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110",
+    "reason": "User requested forward correction; 50mm forward from prior120mm inset"
+  },
+  "gui": {
+    "url": "http://192.168.222.27:5905",
+    "pid": 183012,
+    "preview": "/root/farmily_runtime/newton/runs/20261110_roller_projection/gui_preview.png",
+    "physics_started_by_agent": false
+  },
+  "videos": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_roller_projection/roller_projection_actual.mp4",
+      "sha256": "8b6135f08d4b0e4708da31510d22e881307422707d824ea8eeaa90cabb59facf",
+      "render": {
+        "renderer_source_sha256": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313",
+        "actual_recorded_states": true,
+        "physics_steps_executed": 0,
+        "geometric_assumed_harvest": true,
+        "fps": 12,
+        "frames": 198,
+        "render_wall_s": 14.603644586983137,
+        "sources": [
+          "/root/farmily_runtime/newton/runs/20261110_roller_projection/lift_yaw_gpu/step_000/physics/states.npz"
+        ],
+        "eye_offset": [
+          -0.8,
+          -0.8,
+          1.5
+        ],
+        "look_at_offset": [
+          0.0,
+          -0.1,
+          0.95
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Capture-based 50mm mechanical placement correction; no hardware strength or fastener validation",
+    "Short lift/yaw GPU sequence and ready CAD checks only; full harvest patrol not revalidated",
+    "Existing mainstem-only collision and geometric harvest policy unchanged"
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

@@ -15,5 +15,6 @@ PyOpenGL==3.1.10
 scipy==1.18.1
 typing_extensions==4.16.0
 warp-lang==1.17.0
-websockets==17.2
+# Viser 1.1 requires websockets <17; transport only, no solver dependency change.
+websockets==15.0.1
 zipp==4.1.1

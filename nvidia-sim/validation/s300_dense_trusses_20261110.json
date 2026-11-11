@@ -1,0 +1,90 @@
+{
+  "schema": "s300-dense-cherry-trusses-validation-v1",
+  "date": "2026-11-10",
+  "profile": "dense_cherry_v1",
+  "assets": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol",
+  "evidence": "/root/farmily_runtime/newton/runs/20261110_dense_trusses",
+  "full_report": "/root/farmily_runtime/newton/runs/20261110_dense_trusses/validation.json",
+  "farm_plants": 68,
+  "farm_trusses": 106,
+  "farm_fruits": 1060,
+  "fruit_size_preserved_mm": [
+    20,
+    27
+  ],
+  "conservative_min_fruit_clearance_m": 0.002,
+  "actual_nearest_surface_gap_minmax_m": [
+    0.0023021707859368612,
+    0.005455152737232636
+  ],
+  "source_geometry_unchanged": [
+    "main stem",
+    "leaves",
+    "house",
+    "robot",
+    "camera mount"
+  ],
+  "representative_straight_truss": {
+    "fruit_center_height_span_before_m": 0.19006823035637344,
+    "fruit_center_height_span_after_m": 0.12721731412888124,
+    "rachis_length_before_m": 0.25136692588031984,
+    "rachis_length_after_m": 0.1629539303041495,
+    "peduncle_length_before_m": 0.10965966789019926,
+    "peduncle_length_after_m": 0.07676176752313948
+  },
+  "gpu": {
+    "run": "/root/farmily_runtime/newton/runs/20261110_dense_trusses/headless_reacquisition_fixed",
+    "status": "harvest_attempt_budget_exhausted",
+    "completed_harvest_motions": 6,
+    "assumed_harvest_count": 21,
+    "distinct_trusses": 3,
+    "distinct_plants": 2,
+    "physics_segments": 16,
+    "recorded_states": 22273,
+    "simulated_s": 175.22320556640625,
+    "wall_s": 114.75511273299344,
+    "cold_preparation_wall_s": 15.715591465006582,
+    "overall_rtf": 1.5269315797206091,
+    "max_active_penetration_m": 0.0,
+    "peak_broadphase_candidates": 572,
+    "all_segments_finite_capacity_contact_and_entry_checks_passed": true
+  },
+  "tests": {
+    "cases": 56,
+    "passed": 55,
+    "skipped": 1
+  },
+  "reacquisition": {
+    "fix": "Reuse existing finite forward-view recovery after a fresh unsuccessful scan; preserve invisible targets and grant no harvest credit",
+    "initial_diagnostic_intentionally_interrupted": true,
+    "pre_fix_physics_prefix_arrays_exact": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      12
+    ]
+  },
+  "image": "/root/farmily_runtime/newton/runs/20261110_dense_trusses/truss_before_after.png",
+  "videos": [
+    "/root/farmily_runtime/newton/runs/20261110_dense_trusses/dense_trusses_harvest_actual.mp4"
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "video_sha256": "96b2c613840bef2681a34afc5c3f12b0c57b759dc0aead5929f4a960ac8e088b",
+  "video_frames": 2103,
+  "video_fps": 12,
+  "video_duration_s": 175.25,
+  "gui_preview": {
+    "port": 5905,
+    "start_not_clicked": true,
+    "script_errors": [],
+    "screenshot": "/root/farmily_runtime/newton/runs/20261110_dense_trusses/ready_gui_dense.png"
+  }
+}

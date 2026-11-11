@@ -9,6 +9,17 @@ from harvest_group_policy import HarvestGroupSelector,harvest_group_outcome,load
 
 
 class GroupPolicyTests(unittest.TestCase):
+    def test_geometric_height_override_fits_one_tall_group_and_reports_same_interval(self):
+        self.fixture([[0,0,1.],[0,0,1.037],[0,0,1.074]],minimum=3)
+        self.assertIsNone(self.select())
+        policy=dict(self.policy,harvest_mode='main_stem_only_geometric_harvest',
+                    tool_height_interval_m=[-.005,.079])
+        self.selector=HarvestGroupSelector(policy,lambda *_:[0,1,0])
+        selected=self.select();self.assertEqual(len(selected['fruits']),3)
+        self.assertEqual(selected['group_selection']['tool_height_interval_m'],[-.005,.079])
+        self.assertTrue(np.all(np.asarray(selected['group_selection']['fruit_centers_tool_m'])[:,2]>=-.005-1e-10))
+        self.assertTrue(np.all(np.asarray(selected['group_selection']['fruit_centers_tool_m'])[:,2]<=.079+1e-10))
+
     def fixture(self, centers, eligible=None, minimum=3):
         self.fruits=[dict(name=f'Truss_02_Fruit_{i+1:02d}',path=f'/f/{i}',joint=f'/j/{i}',
                           dimensions_m=[.023]*3) for i in range(len(centers))]
@@ -99,6 +110,20 @@ class GroupPolicyTests(unittest.TestCase):
         self.fixture([[-.016,0,1],[.019,0,1],[.025,0,1],[.044,0,1]],eligible=[0,1,2])
         self.assertIsNone(self.select())
         self.assertGreater(self.selector.last_decision['lateral_centering_rejections']['ineligible_fruit_inside'],0)
+
+    def test_explicit_ideal_mode_allows_ineligible_fruit_in_the_capture_volume(self):
+        self.fixture([[-.016,0,1],[.019,0,1],[.025,0,1],[.044,0,1]],eligible=[0,1,2])
+        self.assertIsNone(self.select())
+        self.policy['harvest_mode']='main_stem_only_geometric_harvest'
+        self.selector=HarvestGroupSelector(self.policy,lambda *args:[0,1,0],height_offset_m=.0075)
+        self.assertIsNotNone(self.select())
+
+    def test_ideal_selection_uses_same_center_only_width_as_capture_receipt(self):
+        self.fixture([[-.045,0,1],[.045,0,1]],minimum=2)
+        self.assertIsNone(self.select())
+        self.policy['harvest_mode']='main_stem_only_geometric_harvest'
+        self.selector=HarvestGroupSelector(self.policy,lambda *args:[0,1,0],height_offset_m=.0075)
+        self.assertEqual(len(self.select()['fruits']),2)
 
     def test_centering_uses_latest_measured_state_without_moving_fruit(self):
         self.fixture([[0,0,1],[.03,.01,.99],[.03,.02,.98]])

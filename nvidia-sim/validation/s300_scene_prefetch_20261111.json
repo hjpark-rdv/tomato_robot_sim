@@ -1,0 +1,1264 @@
+{
+  "schema": "s300-scene-prefetch-validation-v1",
+  "date": "2026-11-11",
+  "runs": {
+    "full_baseline": {
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "wall_s": 54.46352502703667,
+      "cold_preparation_wall_s": 15.601400104002096,
+      "camera_setup_wall_s": 12.727934680064209,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "last_station_m": 0.8501196503639221,
+      "scene_stream": null
+    },
+    "stream_headless_v2": {
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "wall_s": 55.34400043694768,
+      "cold_preparation_wall_s": 20.435266790911555,
+      "camera_setup_wall_s": 17.545163701986894,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "last_station_m": 0.8501196503639221,
+      "scene_stream": {
+        "schema": "s300-visual-stream-evidence-v1",
+        "events": [
+          {
+            "event": "prefetch_start",
+            "index": 0,
+            "wall_s": 1026876.394768138
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 0,
+            "wall_s": 1026884.811633785,
+            "load_wall_s": 8.780213778023608
+          },
+          {
+            "event": "prefetch_start",
+            "index": 1,
+            "wall_s": 1026885.146808408
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 1,
+            "wall_s": 1026893.575264673,
+            "load_wall_s": 8.76346066989936
+          },
+          {
+            "event": "switch",
+            "previous": 0,
+            "index": 1,
+            "station_m": 0.30057287216186523,
+            "wall_s": 1026904.155785372,
+            "switch_wall_s": 4.521699156612158e-05,
+            "load_wait_s": 0.0
+          },
+          {
+            "event": "prefetch_start",
+            "index": 2,
+            "wall_s": 1026907.050243913
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 2,
+            "wall_s": 1026915.639346709,
+            "load_wall_s": 8.95569691201672
+          },
+          {
+            "event": "switch",
+            "previous": 1,
+            "index": 2,
+            "station_m": 0.6493607759475708,
+            "wall_s": 1026915.639372018,
+            "switch_wall_s": 0.00010505295358598232,
+            "load_wait_s": 0.0
+          }
+        ],
+        "switches": 2,
+        "runtime_load_wait_s": 0.0,
+        "deadline_misses": 0,
+        "max_resident_workers": 2,
+        "scope": "Visual camera/display sections only; physics, prepared route and harvest ledger unchanged",
+        "initial_preparation_wall_s": 17.545163701986894
+      }
+    },
+    "stream_gui": {
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "wall_s": 97.45103386393748,
+      "cold_preparation_wall_s": 20.936258455971256,
+      "camera_setup_wall_s": 17.724413443007506,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "last_station_m": 0.8501196503639221,
+      "scene_stream": {
+        "schema": "s300-visual-stream-evidence-v1",
+        "events": [
+          {
+            "event": "prefetch_start",
+            "index": 0,
+            "wall_s": 1027077.028602695
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 0,
+            "wall_s": 1027085.625958966,
+            "load_wall_s": 8.594749873969704
+          },
+          {
+            "event": "prefetch_start",
+            "index": 1,
+            "wall_s": 1027085.988446692
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 1,
+            "wall_s": 1027094.381712926,
+            "load_wall_s": 8.38529002002906
+          },
+          {
+            "event": "switch",
+            "previous": 0,
+            "index": 1,
+            "station_m": 0.30057287216186523,
+            "wall_s": 1027148.648380972,
+            "switch_wall_s": 0.041659896960482,
+            "load_wait_s": 0.0,
+            "reused_gpu_scene": false
+          },
+          {
+            "event": "prefetch_start",
+            "index": 2,
+            "wall_s": 1027150.619333999
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 2,
+            "wall_s": 1027164.75487742,
+            "load_wall_s": 8.693639498902485
+          },
+          {
+            "event": "switch",
+            "previous": 1,
+            "index": 2,
+            "station_m": 0.6493607759475708,
+            "wall_s": 1027176.77994521,
+            "switch_wall_s": 0.04231730196624994,
+            "load_wait_s": 0.0,
+            "reused_gpu_scene": false
+          }
+        ],
+        "switches": 2,
+        "runtime_load_wait_s": 0.0,
+        "deadline_misses": 0,
+        "max_resident_workers": 2,
+        "scope": "Visual camera/display sections only; physics, prepared route and harvest ledger unchanged",
+        "initial_preparation_wall_s": 17.724413443007506
+      },
+      "display": {
+        "frames": 1207,
+        "median_interval_s": 0.028159532987046987,
+        "p95_interval_s": 0.045569421991240235,
+        "max_interval_s": 0.5612293439917266,
+        "scope": "Server applied measured frames, including synchronous camera exposure; not browser refresh"
+      }
+    },
+    "final_default": {
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "wall_s": 55.388245948939584,
+      "cold_preparation_wall_s": 11.879487104015425,
+      "camera_setup_wall_s": 8.971540857921354,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "last_station_m": 0.8501196503639221,
+      "scene_stream": {
+        "schema": "s300-visual-stream-evidence-v1",
+        "events": [
+          {
+            "event": "prefetch_start",
+            "index": 0,
+            "wall_s": 1027277.609496816
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 0,
+            "wall_s": 1027286.199159762,
+            "load_wall_s": 8.583518016966991
+          }
+        ],
+        "manifest": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111/up/scene_stream/manifest.json",
+        "manifest_sha256": "8bc80cf8c85853e00dc6326883456e07c6f55049bdef0bd8f65652bb4258d5d7",
+        "source_hashes": {
+          "patrol_assets.json": "49e851e766717cfea5b8389c8bb74ec6c9b45b123bf50715189258f6bb22b531",
+          "model/scene.xml": "5a75ac629633ff16d02685936d742e7354a83703d8bf3e1e8345a62e49532325",
+          "sensor_catalog.json": "370865e40f39e89a128627ef12bda23d594d0bde701c68f7322d47d66f0a66dc",
+          "inputs/input_model.mjb": "fc2001dc4ddf62d5226179683f5b7767ce4e8cc3f629f06da29c82b1f399a641"
+        },
+        "switches": 0,
+        "runtime_load_wait_s": 0.0,
+        "deadline_misses": 0,
+        "max_resident_workers": 1,
+        "scope": "Visual camera/display sections only; physics, prepared route and harvest ledger unchanged",
+        "initial_preparation_wall_s": 8.971540857921354
+      }
+    },
+    "final_gui": {
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "wall_s": 98.1952967409743,
+      "cold_preparation_wall_s": 20.980053642997518,
+      "camera_setup_wall_s": 9.438130164053291,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "last_station_m": 0.8501196503639221,
+      "scene_stream": {
+        "schema": "s300-visual-stream-evidence-v1",
+        "events": [
+          {
+            "event": "prefetch_start",
+            "index": 0,
+            "wall_s": 1027389.539774978
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 0,
+            "wall_s": 1027398.217153074,
+            "load_wall_s": 8.669996210024692
+          },
+          {
+            "event": "prefetch_start",
+            "index": 1,
+            "wall_s": 1027398.578148309
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 1,
+            "wall_s": 1027412.290400025,
+            "load_wall_s": 8.512421034974977
+          },
+          {
+            "event": "switch",
+            "previous": 0,
+            "index": 1,
+            "station_m": 0.30057287216186523,
+            "wall_s": 1027417.123373151,
+            "switch_wall_s": 0.0004718099953606725,
+            "load_wait_s": 0.0,
+            "reused_gpu_scene": false
+          },
+          {
+            "event": "prefetch_start",
+            "index": 2,
+            "wall_s": 1027419.118340898
+          },
+          {
+            "event": "prefetch_ready",
+            "index": 2,
+            "wall_s": 1027433.390653506,
+            "load_wall_s": 8.743423260981217
+          },
+          {
+            "event": "switch",
+            "previous": 1,
+            "index": 2,
+            "station_m": 0.6493607759475708,
+            "wall_s": 1027445.340654243,
+            "switch_wall_s": 0.0003073420375585556,
+            "load_wait_s": 0.0,
+            "reused_gpu_scene": false
+          }
+        ],
+        "manifest": "/root/farmily_runtime/newton/runs/20261111_scene_prefetch/test_assets_up/scene_stream/manifest.json",
+        "manifest_sha256": "e602479c4d3874e7ae00babb17166ca82854a59aaf24c2e4a6cb20b032b4ccd3",
+        "source_hashes": {
+          "patrol_assets.json": "49e851e766717cfea5b8389c8bb74ec6c9b45b123bf50715189258f6bb22b531",
+          "model/scene.xml": "5a75ac629633ff16d02685936d742e7354a83703d8bf3e1e8345a62e49532325",
+          "sensor_catalog.json": "370865e40f39e89a128627ef12bda23d594d0bde701c68f7322d47d66f0a66dc",
+          "inputs/input_model.mjb": "fc2001dc4ddf62d5226179683f5b7767ce4e8cc3f629f06da29c82b1f399a641"
+        },
+        "switches": 2,
+        "runtime_load_wait_s": 0.0,
+        "deadline_misses": 0,
+        "max_resident_workers": 2,
+        "scope": "Visual camera/display sections only; physics, prepared route and harvest ledger unchanged",
+        "initial_preparation_wall_s": 9.438130164053291
+      },
+      "display": {
+        "frames": 1209,
+        "median_interval_s": 0.028068143466953188,
+        "p95_interval_s": 0.044937925616977736,
+        "max_interval_s": 0.5879556179279462,
+        "scope": "Server applied measured frames, including synchronous camera exposure; not browser refresh"
+      }
+    }
+  },
+  "comparisons": {
+    "stream_headless_v2": {
+      "left": "full_baseline",
+      "right": "stream_headless_v2",
+      "passed": true,
+      "segments": [
+        {
+          "step": 0,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 1,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 2,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 3,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 4,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 5,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 6,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 8,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 9,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 11,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 12,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 13,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 16,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 18,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 19,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        }
+      ],
+      "camera_frames": [
+        {
+          "path": "step_000/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_002/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_003/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_002/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_003/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_004/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_006/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_007/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_008/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_009/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_010/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_011/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_012/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_013/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_014/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_015/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_016/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_017/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_018/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_019/camera/observation.json",
+          "passed": true
+        }
+      ],
+      "captures_equal": true
+    },
+    "stream_gui": {
+      "left": "full_baseline",
+      "right": "stream_gui",
+      "passed": true,
+      "segments": [
+        {
+          "step": 0,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 1,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 2,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 3,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 4,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 5,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 6,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 8,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 9,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 11,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 12,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 13,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 16,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 18,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 19,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        }
+      ],
+      "camera_frames": [
+        {
+          "path": "step_000/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_002/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_003/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_002/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_003/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_004/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_006/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_007/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_008/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_009/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_010/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_011/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_012/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_013/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_014/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_015/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_016/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_017/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_018/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_019/camera/observation.json",
+          "passed": true
+        }
+      ],
+      "captures_equal": true
+    },
+    "final_default": {
+      "left": "full_baseline",
+      "right": "final_default",
+      "passed": true,
+      "segments": [
+        {
+          "step": 0,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 1,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 2,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 3,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 4,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 5,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 6,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 8,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 9,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 11,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 12,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 13,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 16,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 18,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 19,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        }
+      ],
+      "camera_frames": [
+        {
+          "path": "step_000/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_002/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_003/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_002/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_003/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_004/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_006/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_007/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_008/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_009/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_010/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_011/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_012/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_013/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_014/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_015/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_016/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_017/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_018/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_019/camera/observation.json",
+          "passed": true
+        }
+      ],
+      "captures_equal": true
+    },
+    "final_gui": {
+      "left": "full_baseline",
+      "right": "final_gui",
+      "passed": true,
+      "segments": [
+        {
+          "step": 0,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 1,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 2,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 3,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 4,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 5,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 6,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 8,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 9,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 11,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 12,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 13,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 16,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 18,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        },
+        {
+          "step": 19,
+          "action_same": true,
+          "states.npz": true,
+          "physics_metrics.npz": true,
+          "contact_policy_metrics.npz": true,
+          "executed_commands.npz": true
+        }
+      ],
+      "camera_frames": [
+        {
+          "path": "step_000/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_002/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_001/rolling_camera/frame_003/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_002/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_003/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_004/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_005/rolling_camera/frame_001/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_006/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_007/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_008/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_009/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_010/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_011/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_012/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_013/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_014/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_015/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_016/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_017/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_018/camera/observation.json",
+          "passed": true
+        },
+        {
+          "path": "step_019/camera/observation.json",
+          "passed": true
+        }
+      ],
+      "captures_equal": true
+    }
+  },
+  "tests": {
+    "passed": 37,
+    "failed": 0,
+    "log": "/root/farmily_runtime/newton/runs/20261111_scene_prefetch/tests_final.log"
+  },
+  "activation": {
+    "previous": "/root/farmily_runtime/newton/assets/patrol_capture_height84_20261110",
+    "current": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111",
+    "physical_inputs_changed": false
+  },
+  "mechanics_changed": false,
+  "physics_model_changed": false,
+  "collision_policy_changed": false,
+  "harvest_policy_changed": false,
+  "harvest_policy": "Reached tool-volume geometric harvest credit; not physical fruit detachment",
+  "scope": "Visual camera/display streaming only; same prepared physical3plants and0..0.85m route",
+  "current_farm_geometry_all_in_range": true,
+  "current_visual_geoms": 31468,
+  "synthetic_spatial_growth_test": {
+    "total_plants": [
+      10,
+      100
+    ],
+    "first_section_geoms": [
+      4,
+      4
+    ]
+  },
+  "cold_start_only_waits_for_current_scene": true,
+  "next_scene_preparation_is_not_startup_barrier": true,
+  "preload_stress": "30cm chunks, identical geometry reuse disabled so each actual GPU sensor is loaded/warmed; not a larger-farm benchmark",
+  "videos": [
+    "/root/farmily_runtime/newton/runs/20261111_scene_prefetch/prefetch_live.mp4",
+    "/root/farmily_runtime/newton/runs/20261111_scene_prefetch/prefetch_final_live.mp4"
+  ],
+  "video_semantics": "Live browser wall-clock capture including planning/camera/loading preparation; no state replay or removed waits; 13px caption",
+  "limitations": [
+    "First current-camera/physics preparation still takes time",
+    "Existing synchronous observation, planning and segment recording pauses remain",
+    "Far RGB outside valid depth range may change with spatial cropping",
+    "Offline chunk generation still parses the full authored visual scene once",
+    "Full large-farm physical-window migration and whole-rail harvest are not implemented by this change",
+    "Full physical qualification used elbow-up; both profiles have prepared visual chunks",
+    "If the next scene misses the entire overlap budget, an explicit coverage error stops instead of fake observations"
+  ],
+  "source_sha256": {
+    "nvidia-sim/harvest_s300/newton_scene_chunks.py": "5e13135b8a05d668c6df6d2fe11876e4dd1b21b1604f23b6431cb8a394669669",
+    "nvidia-sim/harvest_s300/newton_scene_stream.py": "a14e49a459a3c195c625ab1248fba57a9ef21dd659d945b35d15bd5e5ea1d957",
+    "nvidia-sim/harvest_s300/newton_mounted_camera.py": "5a3f7daaef2b5611f6740089a246dcb973b745e5624d7d4948529d73b8b6e9f4",
+    "nvidia-sim/harvest_s300/newton_patrol_viewer.py": "e5a959f526df3fbbf3b0293e1eeccfd962f5abba56cdf6a34a6a5142598994ac",
+    "nvidia-sim/harvest_s300/newton_viser.py": "49e82dd19f617e69945474bd722bfe61044e5c028f7a93e08d64571117e4126c",
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "efdf8accebdcdd6b099246ba0bdc3696f174c2fc75eeb4f76817df42bf9688bb",
+    "nvidia-sim/harvest_s300/test_newton_scene_stream.py": "24d2e1a1043f2623910ae32da3add068b4d836a480bd67afe2bc3206d14ddf2a"
+  }
+}

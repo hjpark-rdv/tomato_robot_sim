@@ -17,6 +17,34 @@ class CartesianRobot:
 
 
 class ReadyTests(unittest.TestCase):
+    def test_elbow_up_selects_other_joint_branch_without_changing_tool_goal(self):
+        class BranchRobot(CartesianRobot):
+            def ik(self,pose,seed):
+                q,pe,re=super().ik(pose,seed)
+                q[6]=seed[6] if abs(seed[6])==1 else (1. if seed[3]<0 else -1.)
+                return q,pe,re
+            def frames(self,q):
+                elbow=np.eye(4);elbow[2,3]=self.fk(q)[2,3]+q[6]*.2
+                shoulder=np.eye(4);shoulder[2,3]=self.fk(q)[2,3]
+                return {'/World/HarvestRobot/Robot/link3':elbow,'/World/HarvestRobot/Robot/link2':shoulder}
+        kin=BranchRobot();start=self.q.copy();start[6]=1.
+        legacy,old=plan_motion(kin,self.center,start,'horizontal_ready')
+        phases,actual=plan_motion(kin,self.center,start,'horizontal_ready',elbow_posture='up')
+        np.testing.assert_array_equal(actual['goal_pose'],old['goal_pose'])
+        entry=next(p for p in phases if p[0]=='approach')
+        self.assertTrue(np.all(entry[2][:,6]==1.))
+        from motion_kinematics import elbow_up_clearance
+        self.assertGreater(elbow_up_clearance(kin,entry[2][0]),0.)
+        down=entry[2][0].copy();down[6]=-1.
+        self.assertLess(elbow_up_clearance(kin,down),0.)
+        lower_start=start.copy();lower_start[6]=-1.
+        lower,lower_meta=plan_motion(kin,self.center,lower_start,'horizontal_ready',elbow_posture='down')
+        np.testing.assert_array_equal(lower_meta['goal_pose'],old['goal_pose'])
+        lower_entry=next(p for p in lower if p[0]=='approach')
+        self.assertTrue(np.all(lower_entry[2][:,6]==-1.))
+        with self.assertRaisesRegex(ValueError,'Elbow posture'):
+            plan_motion(kin,self.center,start,'horizontal_ready',elbow_posture='anything')
+
     def setUp(self):
         self.kin=CartesianRobot();self.center=np.array([.4,1.,1.2])
         self.pose=grasp_pose(self.center,self.center.copy())

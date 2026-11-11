@@ -1,0 +1,565 @@
+{
+  "schema": "s300-planner-latency-20261110",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "base_head": "f984e6ecf918fb939e073afa79a6f9f1f6f84dda",
+  "working_tree_changes_not_committed": true,
+  "changes": [
+    "opt-in analytic position/SO3 Jacobian, unchanged residual/limits/tolerances/200-iteration cap",
+    "assembly-scoped bounded exact IK cache keyed by world, limits, target, seed and fixed-lift request; fresh collision audit each plan",
+    "joint connector first; original per-target heading/view schedule and Cartesian fallbacks retained",
+    "single native60Hz FK/contact/posture pass, original full mj_fwdPosition and1mm collision criterion"
+  ],
+  "physical_model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+  "same_request_comparison": {
+    "request_count": 12,
+    "planned_before_after": [
+      3,
+      3
+    ],
+    "ik_or_connector_rejections_before_after": [
+      9,
+      9
+    ],
+    "before_s": 62.033710873220116,
+    "after_s": 6.608762437128462,
+    "speedup": 9.386585077519301,
+    "cases": [
+      {
+        "step": "step_003",
+        "name": "yaw_0_combined_cartesian",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 2.629051533062011,
+        "after_s": 1.2863856069743633,
+        "request_sha256": "0104431b6b4b022f6e65790787cdf5ea58b516b73df40fcd7ae3ed319636d9e4"
+      },
+      {
+        "step": "step_003",
+        "name": "yaw_0_joint_branch",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 1.4507301710546017,
+        "after_s": 0.18788503005634993,
+        "request_sha256": "342b849c9cd4dad404700884087b0597311c472a7a6777a8593d638ffa1871c1"
+      },
+      {
+        "step": "step_003",
+        "name": "yaw_0_level_then_translate",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 3.5749502470716834,
+        "after_s": 0.649292052956298,
+        "request_sha256": "b84ae24af412e169d2daa7fbb1aade02857b74ce9ebccb692f3f527f2bcf7362"
+      },
+      {
+        "step": "step_005",
+        "name": "yaw_-7.5_combined_cartesian",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 4 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 5.921350024989806,
+        "after_s": 0.5846307360334322,
+        "request_sha256": "f71bb6ed5405a800ed84c3e6b1aa03385842b7f878f48944d1cd8cb7224cf5c7"
+      },
+      {
+        "step": "step_005",
+        "name": "yaw_-7.5_joint_branch",
+        "same_outcome": true,
+        "outcome": "planned",
+        "before_s": 1.8610759469447657,
+        "after_s": 0.1959329330129549,
+        "request_sha256": "086fa80e0989efe2fe36eb29ad8a6b8152b7f656a1eeea3f94415a508bb7be88",
+        "selected_seed_before": 6,
+        "selected_seed_after": 6,
+        "max_joint_command_abs_difference": 1.7449887868004055e-07
+      },
+      {
+        "step": "step_005",
+        "name": "yaw_-7.5_level_then_translate",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 4 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 10.921244662022218,
+        "after_s": 0.5942505979910493,
+        "request_sha256": "5303cb5ccd246ee7df8e2771894b956d8ccc4b536efaeecdad592465557749ce"
+      },
+      {
+        "step": "step_006",
+        "name": "yaw_0_combined_cartesian",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 2.787728229071945,
+        "after_s": 0.6437062179902568,
+        "request_sha256": "b690ce797d23c22196e2b0b6ca654922b1fbebdc16e22d132a362216e3729906"
+      },
+      {
+        "step": "step_006",
+        "name": "yaw_0_joint_branch",
+        "same_outcome": true,
+        "outcome": "planned",
+        "before_s": 1.7961109830066562,
+        "after_s": 0.1766654410166666,
+        "request_sha256": "657824da14922eac4234247aabf0d6bac0e28abeff66d7220db065092feaffc5",
+        "selected_seed_before": 5,
+        "selected_seed_after": 5,
+        "max_joint_command_abs_difference": 3.0491909008903417e-06
+      },
+      {
+        "step": "step_006",
+        "name": "yaw_0_level_then_translate",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 1 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 4.619806917035021,
+        "after_s": 0.7447902279673144,
+        "request_sha256": "44a4f1bce6a8285c2a8e0991fe86d8ff1cea6bb1a0f5017079dc7d5706631b3d"
+      },
+      {
+        "step": "step_008",
+        "name": "yaw_-7.5_combined_cartesian",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 5 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 8.587491572950967,
+        "after_s": 0.6170203210785985,
+        "request_sha256": "226325c09dd05665fc6480d0dba3a781cec987b89583471de02a64dcb586f73d"
+      },
+      {
+        "step": "step_008",
+        "name": "yaw_-7.5_joint_branch",
+        "same_outcome": true,
+        "outcome": "planned",
+        "before_s": 1.8435085930395871,
+        "after_s": 0.21314271399751306,
+        "request_sha256": "6168ab7fcfa51e699687c5f8fa82b7737945bb9ec293996e0d8b214483a11d77",
+        "selected_seed_before": 6,
+        "selected_seed_after": 6,
+        "max_joint_command_abs_difference": 5.0092597958517615e-08
+      },
+      {
+        "step": "step_008",
+        "name": "yaw_-7.5_level_then_translate",
+        "same_outcome": true,
+        "outcome": "Fixed entry approach IK not found for 5 preparation branches (pitch=0.0, yaw_offset=0.0); pitch was not relaxed",
+        "before_s": 16.040661992970854,
+        "after_s": 0.7150605580536649,
+        "request_sha256": "dfadc287378d2781ed67a3920feb009b7511e31b8345981d76afa749f383fdb8"
+      }
+    ],
+    "measurement": "One unprofiled resident-process replay per variant, immutable saved requests, geometry unchanged. Includes cold first request and exact-request reuse; not a repeated statistical benchmark."
+  },
+  "audit_validation": {
+    "model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+    "rows": [
+      {
+        "plan": "step_005_yaw_-7.5_joint_branch.json",
+        "old_new_audit_wall_s": [
+          0.3256553920218721,
+          0.1724909299518913
+        ],
+        "exact_collision_report": true,
+        "complete": false,
+        "first_hit": [
+          "Robot_link2",
+          "Robot_link4"
+        ],
+        "samples": 435,
+        "angle": {
+          "passed": false,
+          "complete": false,
+          "reason": "Forbidden collision stopped path audit",
+          "samples": 0
+        },
+        "old_numeric_path_same_collision_decision": true
+      },
+      {
+        "plan": "step_006_yaw_0_joint_branch.json",
+        "old_new_audit_wall_s": [
+          0.22202808398287743,
+          0.07378799095749855
+        ],
+        "exact_collision_report": true,
+        "complete": false,
+        "first_hit": [
+          "Robot_link3",
+          "Tool_fixed"
+        ],
+        "samples": 183,
+        "angle": {
+          "passed": false,
+          "complete": false,
+          "reason": "Forbidden collision stopped path audit",
+          "samples": 0
+        },
+        "old_numeric_path_same_collision_decision": true
+      },
+      {
+        "plan": "step_008_yaw_-7.5_joint_branch.json",
+        "old_new_audit_wall_s": [
+          0.7727568370755762,
+          0.5858670029556379
+        ],
+        "exact_collision_report": true,
+        "complete": true,
+        "first_hit": null,
+        "samples": 1462,
+        "angle": {
+          "passed": true,
+          "samples": 498,
+          "reference_forward_world": [
+            -0.9999999975015126,
+            -7.068928449586269e-05,
+            0.0
+          ],
+          "maximum_allowed_deg": 15.0,
+          "minimum_yaw_deg": -7.500025331268904,
+          "maximum_yaw_deg": -7.500000084289894,
+          "maximum_absolute_yaw_deg": 7.500025331268904,
+          "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+          "numerical_roundoff_tolerance_deg": 1e-08,
+          "requested_direction": {
+            "passed": true,
+            "samples": 1,
+            "reference_forward_world": [
+              -0.9999999975015126,
+              -7.068928449586269e-05,
+              0.0
+            ],
+            "maximum_allowed_deg": 15.0,
+            "minimum_yaw_deg": -7.500000000000001,
+            "maximum_yaw_deg": -7.500000000000001,
+            "maximum_absolute_yaw_deg": 7.500000000000001,
+            "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+            "numerical_roundoff_tolerance_deg": 1e-08
+          },
+          "elbow_posture": {
+            "required": "up",
+            "minimum_posture_clearance_m": 0.007454733375486522,
+            "passed": true,
+            "minimum_height_above_shoulder_and_tool_m": 0.007454733375486522
+          },
+          "complete": true,
+          "source": "Actual native FK in the same complete60Hz collision pass"
+        },
+        "old_numeric_path_same_collision_decision": true
+      }
+    ]
+  },
+  "legacy_numeric_regression": [
+    {
+      "step": "step_005",
+      "name": "yaw_-7.5_joint_branch",
+      "legacy_commands_bitwise_equal": true
+    },
+    {
+      "step": "step_006",
+      "name": "yaw_0_joint_branch",
+      "legacy_commands_bitwise_equal": true
+    },
+    {
+      "step": "step_008",
+      "name": "yaw_-7.5_joint_branch",
+      "legacy_commands_bitwise_equal": true
+    }
+  ],
+  "tests": {
+    "passed": 52,
+    "skipped": 2,
+    "skip_reason": "Two older source-trial asset regressions unavailable locally; fresh server-path tests recorded separately",
+    "diff_check": "passed"
+  },
+  "gpu_trials": [
+    {
+      "mode": "up",
+      "directory": "/root/farmily_runtime/newton/runs/20261110_planner_latency/up_final",
+      "status": "harvest_attempt_budget_exhausted",
+      "completed_harvest_motions": 1,
+      "assumed_harvest_count": 4,
+      "physics_segments": [
+        {
+          "index": 0,
+          "action": "initial_scan_pose",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 1,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 2,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 3,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 5,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 8,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 9,
+          "action": "harvest",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": {
+            "passed": true,
+            "samples": 1826,
+            "reference_forward_world": [
+              -0.9999999975015126,
+              -7.068928449586269e-05,
+              0.0
+            ],
+            "maximum_allowed_deg": 15.0,
+            "minimum_yaw_deg": -7.5250945105290175,
+            "maximum_yaw_deg": -7.479482890066729,
+            "maximum_absolute_yaw_deg": 7.5250945105290175,
+            "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+            "numerical_roundoff_tolerance_deg": 1e-08,
+            "elbow_posture": {
+              "required": "up",
+              "minimum_posture_clearance_m": 0.007444620132446289,
+              "passed": true,
+              "minimum_height_above_shoulder_and_tool_m": 0.007444620132446289
+            },
+            "source": "Recorded actual GPU body poses; no additional physics",
+            "start_timestamp_s": 24.795127868652344,
+            "end_timestamp_s": 33.09059524536133,
+            "maximum_recorded_interval_s": 0.004547119140625
+          },
+          "first_active_violations": []
+        }
+      ],
+      "candidate_count": 10,
+      "total_planning_wall_s": 5.648136917967349,
+      "candidate_latencies_s": [
+        1.1200166159542277,
+        0.6493245139718056,
+        0.3867474269354716,
+        0.6306208319729194,
+        0.6158659150823951,
+        0.3222222049953416,
+        0.5201473230263218,
+        0.7731674809474498,
+        0.40209672099445015,
+        1.0484133140416816
+      ],
+      "views": [
+        {
+          "step": "step_003",
+          "candidates": 3,
+          "planning_plus_audit_wall_s": 2.156088556861505
+        },
+        {
+          "step": "step_005",
+          "candidates": 3,
+          "planning_plus_audit_wall_s": 1.568708952050656
+        },
+        {
+          "step": "step_006",
+          "candidates": 3,
+          "planning_plus_audit_wall_s": 1.6954115249682218
+        },
+        {
+          "step": "step_008",
+          "candidates": 1,
+          "planning_plus_audit_wall_s": 1.0484133140416816
+        }
+      ],
+      "run_wall_s": 49.49534922000021,
+      "cold_preparation_wall_s": 15.598073699977249
+    },
+    {
+      "mode": "down",
+      "directory": "/root/farmily_runtime/newton/runs/20261110_planner_latency/down_final",
+      "status": "harvest_attempt_budget_exhausted",
+      "completed_harvest_motions": 1,
+      "assumed_harvest_count": 4,
+      "physics_segments": [
+        {
+          "index": 0,
+          "action": "initial_scan_pose",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 1,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 2,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 3,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 5,
+          "action": "move",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": null,
+          "first_active_violations": []
+        },
+        {
+          "index": 7,
+          "action": "harvest",
+          "status": "completed",
+          "stop": null,
+          "entry_angle": {
+            "passed": true,
+            "samples": 1826,
+            "reference_forward_world": [
+              -0.9999999999999857,
+              -1.693867679033515e-07,
+              0.0
+            ],
+            "maximum_allowed_deg": 15.0,
+            "minimum_yaw_deg": -0.010040336549592587,
+            "maximum_yaw_deg": 0.022558641212903643,
+            "maximum_absolute_yaw_deg": 0.022558641212903643,
+            "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+            "numerical_roundoff_tolerance_deg": 1e-08,
+            "elbow_posture": {
+              "required": "down",
+              "minimum_posture_clearance_m": 0.04363828897476196,
+              "passed": true,
+              "minimum_depth_below_shoulder_and_tool_m": 0.04363828897476196
+            },
+            "source": "Recorded actual GPU body poses; no additional physics",
+            "start_timestamp_s": 23.245189666748047,
+            "end_timestamp_s": 31.54020118713379,
+            "maximum_recorded_interval_s": 0.0045452117919921875
+          },
+          "first_active_violations": []
+        }
+      ],
+      "candidate_count": 7,
+      "total_planning_wall_s": 4.272780079045333,
+      "candidate_latencies_s": [
+        1.2495512230088934,
+        0.6272294480586424,
+        0.4032725030556321,
+        0.8054484620224684,
+        0.5781529039377347,
+        0.34984939196147025,
+        1.070641342899762
+      ],
+      "views": [
+        {
+          "step": "step_003",
+          "candidates": 3,
+          "planning_plus_audit_wall_s": 2.280053174123168
+        },
+        {
+          "step": "step_005",
+          "candidates": 3,
+          "planning_plus_audit_wall_s": 1.7334507579216734
+        },
+        {
+          "step": "step_006",
+          "candidates": 1,
+          "planning_plus_audit_wall_s": 1.070641342899762
+        }
+      ],
+      "run_wall_s": 42.46734460897278,
+      "cold_preparation_wall_s": 15.585596114979126
+    }
+  ],
+  "gui": {
+    "url": "http://127.0.0.1:5905/",
+    "errors": [],
+    "mode": "",
+    "mode_enabled": true,
+    "buttons": [
+      "",
+      "",
+      "",
+      "순회 시작",
+      "순회 중지 / 화면 닫기"
+    ],
+    "body": "Farmily camera patrol\n\n시작 자세: 엘보우 위\n\n자세를 선택한 뒤 순회 시작을 누르세요.\n\n시작 자세\n\n순회 시작\n순회 중지 / 화면 닫기"
+  },
+  "deployment": {
+    "pid": 104534,
+    "command": [
+      "/root/farmily_tomato/nvidia-sim/run_s300_newton.sh",
+      "camera-patrol",
+      "--output",
+      "/root/farmily_runtime/newton/runs/20261110_planner_latency/gui"
+    ],
+    "log": "/root/farmily_runtime/newton/runs/20261110_planner_latency/gui.log",
+    "port": 5905
+  },
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "e77a5b545b9507effc7c9640ac4aeaeac7ed340c1f8ae812699817c82c44dce2",
+    "mujoco-benchmark/scripts/s300_smoke/plan_adapter.py": "31d67c667298648d4c5696faf60dbd04bf0b7b7f1e9b2d1d4296e29855e452c4",
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "2935dab9fcc7aa55dc3387bdb3266108f1ac1850239f8b6c7b779c81e20e2928",
+    "nvidia-sim/harvest_s300/test_motion_analytic_ik.py": "ca8b7a971eda0425bcda94c7c9db7c7efbdd25fa21d895a2d143897a909007ab",
+    "nvidia-sim/harvest_s300/test_newton_camera_patrol.py": "21121478329eeb82921f59333fa0535f4269b9dd89574be0b3018b9df4a99770"
+  },
+  "baseline_code_sha256": {
+    "plan_adapter.py": "55aab2f3bfd23129450aef7cb8ed1accb3172c6a1297834c399748f02d05784b",
+    "run_newton_camera_patrol.py": "6d4b057a99b0ee0f896e0dd6e370ca1cf67167f97c9d0cc764ffc58f50e1191e",
+    "motion_kinematics.py": "246fa5ce8d2d4550b4fd7c7d7423cfc9548880e39566698231918e805e8aebee"
+  },
+  "discarded_experiments": [
+    {
+      "name": "all joint headings before Cartesian fallbacks",
+      "directory": "/root/farmily_runtime/newton/runs/20261110_planner_latency/up_live",
+      "reason": "Changed view scheduling missed the formerly feasible0.55m request; zero harvests in18 decisions. Reverted to original heading schedule."
+    },
+    {
+      "name": "kinematics plus collision only",
+      "evidence": "/root/farmily_runtime/newton/runs/20261110_planner_latency/collision_only_compare.json",
+      "reason": "No convincing speed evidence from exploratory timing; full mj_fwdPosition retained."
+    }
+  ],
+  "limitations": [
+    "Near-instant response is not a universal guarantee: validated successful full-path decisions about1.05..1.07s; blocked views1.57..2.28s including cold first planning.",
+    "Full-farm viewer/camera cold load is separate and unchanged.",
+    "One completed harvest per posture, not a new full-row completion test.",
+    "Geometric credit, not physical fruit detachment. No new MP4; saved physics states retained."
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "evidence_root": "/root/farmily_runtime/newton/runs/20261110_planner_latency"
+}

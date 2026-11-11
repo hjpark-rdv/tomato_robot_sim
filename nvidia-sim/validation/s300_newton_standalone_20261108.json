@@ -1,0 +1,993 @@
+{
+  "schema": "s300-newton-standalone-validation-v1",
+  "date": "2026-11-08",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "base_commit": "f984e6ecf918fb939e073afa79a6f9f1f6f84dda",
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/build_scene.py": "e061357b60bcb40f5f6f08313918f587e4f493184dd65cb3df7d0cfae11d44a5",
+    "nvidia-sim/harvest_s300/motion_assets.py": "a63aab569082faa99dab8237157aeb6e9e906edbb9e291816c7223f80baea72e",
+    "nvidia-sim/harvest_s300/newton_live.py": "f213259c607010735779b6f415f8050c6eeeeb1ae38bc9b6cc6295f2ac7002fe",
+    "nvidia-sim/harvest_s300/newton_viser.py": "58330d13276cc08b579812f85972beee74667a3460f0ac54aecb032a502c5c38",
+    "nvidia-sim/harvest_s300/prepare_newton_standalone.py": "21edf264ce4486718663921a82448e07620c2e8921bee7eccce6d661f5a36933",
+    "nvidia-sim/harvest_s300/run_newton_harvest.py": "42bac289457b486872b104fdb45c8b08304fe2fd4f8af9cef7e84c7f733189fd",
+    "nvidia-sim/harvest_s300/test_newton_live.py": "5e572fe662c5df0cb0168549c10e3364f8306dc5eb852bfc3dd6504776eae041",
+    "nvidia-sim/harvest_s300/test_newton_viser.py": "d64479f03882e8a34c420b75da250e0f285e79d9ad833218d8275e1fba184205",
+    "nvidia-sim/harvest_s300/test_standalone_sources.py": "8742b8c9502e43b8f0102460a798266585b778c6be7986e592ece6f7d63681c8",
+    "nvidia-sim/harvest_s300/test_newton_launcher.py": "b163b1cb765392c8e07223c9e37f94102a195b16bc2c2e8dc837bb4e958cbea1",
+    "nvidia-sim/run_s300_newton.sh": "d5763101ad478a66592cb0bddf665462a5ffdd2ebd0e32d342e384fb3bfc6a0a",
+    "nvidia-sim/setup_s300_newton.sh": "3794849fb5464224e68e9e75e4735463c054e5b7c40fa0cfa11eaa6836ec201a",
+    "nvidia-sim/newton-requirements.lock.txt": "db774daba34699eed7854b95892da32f40dbe74fee43f740cb2d5559709f3d39",
+    "nvidia-sim/newton-viewer-requirements.txt": "54e6e216e73565fb133ed5de0f12e441148f2cb7fa90f81a5c619e9b4ffe9210"
+  },
+  "architecture": "Local source USD/GLB -> existing Newton preparation/control -> Newton SolverMuJoCo -> MuJoCo Warp CUDA; separate Viser live measured-state consumer",
+  "input_root": "/root/farmily_runtime/newton/assets/harvest_floor_20261108/inputs",
+  "input_sha256": "6d490e5def4bbba0e3afd3869ed7c5e797dca0e96f42757d291cf92a745cef80",
+  "physical_model_sha256": "6cfcfbd921ecc2af55c7908e77a306a2ecd8a753a36701f525e549e192a7e2cd",
+  "build": {
+    "assembly": "/root/farmily_runtime/newton/assets/side_20261108",
+    "inputs": "/root/farmily_runtime/newton/assets/harvest_floor_20261108/inputs",
+    "old_trial_data_required": false,
+    "smoke_only": false,
+    "plant": 22,
+    "target": "Truss_02_Fruit_01",
+    "scene_regenerated": true,
+    "identical_to_lost_experiment": false,
+    "ground_collision": "top-plane",
+    "collision_scope": "target truss/main stem, robot, gutter and ground; background plants visual only",
+    "approximation": "existing coarse4/fruit proxy; chassis recovered from merged local visual GLB requires collision review",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "hardware": "NVIDIA GeForce RTX 3090 Ti, driver 570.211.01",
+  "solvers": {
+    "newton": "1.7.0",
+    "mujoco": "3.15.0",
+    "mujoco-warp": "3.15.0",
+    "warp-lang": "1.17.0"
+  },
+  "display": {
+    "viser": "1.1.1",
+    "websockets": "15.0.1",
+    "physics_packages_changed": false
+  },
+  "runs": {
+    "floor_headless": {
+      "status": "completed",
+      "stop": null,
+      "simulated_s": 44.000186920166016,
+      "loop_wall_s": 19.31583890900947,
+      "setup_wall_s": 6.9419353500707075,
+      "realtime_factor": 2.2779330024150823,
+      "actual_steps": 6800,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.2839815430343151,
+          "realtime_factor": 7.042711222110405
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06298844306729734,
+          "realtime_factor": 7.937964103443486
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.12809235777240247,
+          "realtime_factor": 7.806866993398807
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06395390082616359,
+          "realtime_factor": 7.818131396849051
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7615388790145516,
+          "realtime_factor": 7.878783559631432
+        },
+        "approach": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 2.322826283867471,
+          "realtime_factor": 1.7220400973507413
+        },
+        "belt_start_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.5430424886289984,
+          "realtime_factor": 1.841476534413849
+        },
+        "close": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 4.062904502381571,
+          "realtime_factor": 1.4767760346035586
+        },
+        "cycle_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.7078165669227019,
+          "realtime_factor": 1.4127954144215538
+        },
+        "cycle_open_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.3356859519844875,
+          "realtime_factor": 1.4894874123987938
+        },
+        "cycle_reclose": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 3.9597602681024,
+          "realtime_factor": 1.515243245489537
+        },
+        "belt_finish": {
+          "steps": 440,
+          "simulated_s": 2.0,
+          "wall_s": 1.9329255389748141,
+          "realtime_factor": 1.0347010061550332
+        },
+        "cycle_open_final": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.650489044142887,
+          "realtime_factor": 1.5373049077523573
+        },
+        "cycle_open_final_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.26523773407097906,
+          "realtime_factor": 1.8851013101559573
+        },
+        "withdraw": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 2.0551331721944734,
+          "realtime_factor": 1.9463458884899394
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.7665349568706006,
+          "realtime_factor": 7.827431673168775
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.12763766199350357,
+          "realtime_factor": 7.834678137953494
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.1281725758453831,
+          "realtime_factor": 7.801980988556538
+        }
+      },
+      "detached_per_world": [
+        5
+      ],
+      "finite_all_steps": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "max_active_penetration_m": 0.000920359103474766,
+      "gpu_timestamp_drift_s": 0.000186920166015625,
+      "display_health_passed": true,
+      "recording": "full",
+      "gpu_session": {},
+      "path": "/root/farmily_runtime/newton/runs/floor_headless",
+      "exact_final_state_vs_headless": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "ctrl": true,
+        "runtime_dof_damping": true,
+        "qacc_warmstart": true,
+        "body_names": true,
+        "attachment_equality_ids": true
+      },
+      "exact_physical_break_events_vs_headless": true,
+      "file_bytes": 20201824
+    },
+    "floor_viser": {
+      "status": "completed",
+      "stop": null,
+      "simulated_s": 44.000186920166016,
+      "loop_wall_s": 24.606780502013862,
+      "setup_wall_s": 17.343769242987037,
+      "realtime_factor": 1.7881326212734316,
+      "actual_steps": 6800,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 0.31226998066995293,
+          "realtime_factor": 6.404714265870651
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.0858016749843955,
+          "realtime_factor": 5.827392065375571
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.17252967099193484,
+          "realtime_factor": 5.796104485974164
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.06775352288968861,
+          "realtime_factor": 7.379690068870129
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.9838491677073762,
+          "realtime_factor": 6.098495782622408
+        },
+        "approach": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 2.9271740259137005,
+          "realtime_factor": 1.3665057029711185
+        },
+        "belt_start_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.6641178178833798,
+          "realtime_factor": 1.505756920040356
+        },
+        "close": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 5.133525656419806,
+          "realtime_factor": 1.1687873795851418
+        },
+        "cycle_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.931369072641246,
+          "realtime_factor": 1.0736882181025458
+        },
+        "cycle_open_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.42365908611100167,
+          "realtime_factor": 1.1801942089564827
+        },
+        "cycle_reclose": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 5.071539438678883,
+          "realtime_factor": 1.18307272822135
+        },
+        "belt_finish": {
+          "steps": 440,
+          "simulated_s": 2.0,
+          "wall_s": 2.459925516275689,
+          "realtime_factor": 0.8130327470353602
+        },
+        "cycle_open_final": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 0.8332169100176543,
+          "realtime_factor": 1.2001676729998336
+        },
+        "cycle_open_final_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.3121812309836969,
+          "realtime_factor": 1.6016337639020701
+        },
+        "withdraw": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 2.656563695985824,
+          "realtime_factor": 1.5057045332826626
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 0.9668805527035147,
+          "realtime_factor": 6.205523508796692
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.16452324809506536,
+          "realtime_factor": 6.078168353582327
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 0.15820946299936622,
+          "realtime_factor": 6.320734430430409
+        }
+      },
+      "detached_per_world": [
+        5
+      ],
+      "finite_all_steps": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "max_active_penetration_m": 0.000920359103474766,
+      "gpu_timestamp_drift_s": 0.000186920166015625,
+      "display_health_passed": true,
+      "recording": "full",
+      "gpu_session": {},
+      "path": "/root/farmily_runtime/newton/runs/floor_viser",
+      "exact_final_state_vs_headless": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "ctrl": true,
+        "runtime_dof_damping": true,
+        "qacc_warmstart": true,
+        "body_names": true,
+        "attachment_equality_ids": true
+      },
+      "exact_physical_break_events_vs_headless": true,
+      "file_bytes": 20244175,
+      "viewer_pid": 33075
+    },
+    "floor_session/run_000": {
+      "status": "completed",
+      "stop": null,
+      "simulated_s": 44.000186920166016,
+      "loop_wall_s": 45.65240812301636,
+      "setup_wall_s": 16.947486546006985,
+      "realtime_factor": 0.9638086736104212,
+      "actual_steps": 6800,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 2.001496624783613,
+          "realtime_factor": 0.9992522471609091
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.5002483099233359,
+          "realtime_factor": 0.9995036266621791
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.000391976092942,
+          "realtime_factor": 0.9996081774921137
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.5002667289227247,
+          "realtime_factor": 0.9994668265800943
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 5.932880234904587,
+          "realtime_factor": 1.0113131838900995
+        },
+        "approach": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 4.029106279020198,
+          "realtime_factor": 0.9927759962124216
+        },
+        "belt_start_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.001466866931878,
+          "realtime_factor": 0.9985352816150853
+        },
+        "close": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 6.330399058642797,
+          "realtime_factor": 0.9478075464781784
+        },
+        "cycle_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.0546752251684666,
+          "realtime_factor": 0.9481591831649092
+        },
+        "cycle_open_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.5056187881855294,
+          "realtime_factor": 0.988887303405609
+        },
+        "cycle_reclose": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 6.317381606437266,
+          "realtime_factor": 0.949760577053971
+        },
+        "belt_finish": {
+          "steps": 440,
+          "simulated_s": 2.0,
+          "wall_s": 2.5258186761057004,
+          "realtime_factor": 0.7918224767755673
+        },
+        "cycle_open_final": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.0553541055414826,
+          "realtime_factor": 0.9475492583476696
+        },
+        "cycle_open_final_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.5022829330991954,
+          "realtime_factor": 0.9954548861831535
+        },
+        "withdraw": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 3.9840820760000497,
+          "realtime_factor": 1.003995380540938
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 5.924636374344118,
+          "realtime_factor": 1.0127203799345788
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.0005177739076316,
+          "realtime_factor": 0.9994824940434497
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.0003762460546568,
+          "realtime_factor": 0.9996238954531951
+        }
+      },
+      "detached_per_world": [
+        5
+      ],
+      "finite_all_steps": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "max_active_penetration_m": 0.000920359103474766,
+      "gpu_timestamp_drift_s": 0.000186920166015625,
+      "display_health_passed": true,
+      "recording": "summary",
+      "operator_wait_s": 17.586209636065178,
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": false,
+        "acquisition": 1,
+        "signature_sha256": "2435a53b311db972359af1f727494ec18733a67316181ab2b593b9652800d871",
+        "initial_state_sha256": "4f866b36092d5a73897dcfbc48cf92e54126e3fc29c372604a683b3eee5d3d4a",
+        "model_load_wall_s": 3.6548046899260953,
+        "reset_wall_s": 0.010924226022325456,
+        "acquisition_wall_s": 3.6658238590462133,
+        "initial_buffer_snapshot_bytes": 319698,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "path": "/root/farmily_runtime/newton/runs/floor_session/run_000",
+      "exact_final_state_vs_headless": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "ctrl": true,
+        "runtime_dof_damping": true,
+        "qacc_warmstart": true,
+        "body_names": true,
+        "attachment_equality_ids": true
+      },
+      "exact_physical_break_events_vs_headless": true,
+      "file_bytes": 511609,
+      "viewer_pid": 34761
+    },
+    "floor_session/run_001": {
+      "status": "completed",
+      "stop": null,
+      "simulated_s": 44.000186920166016,
+      "loop_wall_s": 45.55750242306385,
+      "setup_wall_s": 3.4303932409966365,
+      "realtime_factor": 0.9658164864167481,
+      "actual_steps": 6800,
+      "phase_performance": {
+        "settle": {
+          "steps": 120,
+          "simulated_s": 2.0,
+          "wall_s": 2.00168443180155,
+          "realtime_factor": 0.9991584928299442
+        },
+        "ready_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.5002989141503349,
+          "realtime_factor": 0.9994025288844719
+        },
+        "prepare_open": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.0004940168000758,
+          "realtime_factor": 0.9995062271320164
+        },
+        "prepare_open_hold": {
+          "steps": 30,
+          "simulated_s": 0.5,
+          "wall_s": 0.5002529320772737,
+          "realtime_factor": 0.999494391614611
+        },
+        "prepare_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 5.952330233994871,
+          "realtime_factor": 1.008008588927556
+        },
+        "approach": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 4.004859576234594,
+          "realtime_factor": 0.9987865801179568
+        },
+        "belt_start_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.001250135828741,
+          "realtime_factor": 0.9987514250595271
+        },
+        "close": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 6.2530360877281055,
+          "realtime_factor": 0.9595338833523284
+        },
+        "cycle_open": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.0563409120077267,
+          "realtime_factor": 0.9466640822415533
+        },
+        "cycle_open_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.5139644589507952,
+          "realtime_factor": 0.9728299132214274
+        },
+        "cycle_reclose": {
+          "steps": 1320,
+          "simulated_s": 6.0,
+          "wall_s": 6.308806346147321,
+          "realtime_factor": 0.9510515414162453
+        },
+        "belt_finish": {
+          "steps": 440,
+          "simulated_s": 2.0,
+          "wall_s": 2.525385071989149,
+          "realtime_factor": 0.7919584312837792
+        },
+        "cycle_open_final": {
+          "steps": 220,
+          "simulated_s": 1.0,
+          "wall_s": 1.048262506024912,
+          "realtime_factor": 0.9539595227841098
+        },
+        "cycle_open_final_hold": {
+          "steps": 110,
+          "simulated_s": 0.5,
+          "wall_s": 0.5003432827070355,
+          "realtime_factor": 0.999313905634591
+        },
+        "withdraw": {
+          "steps": 880,
+          "simulated_s": 4.0,
+          "wall_s": 4.0041171258781105,
+          "realtime_factor": 0.9989717768614954
+        },
+        "return_joint_branch": {
+          "steps": 360,
+          "simulated_s": 6.0,
+          "wall_s": 5.952089999103919,
+          "realtime_factor": 1.008049273600247
+        },
+        "ready_close": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.0007337951101363,
+          "realtime_factor": 0.9992667429503013
+        },
+        "hold": {
+          "steps": 60,
+          "simulated_s": 1.0,
+          "wall_s": 1.00018304400146,
+          "realtime_factor": 0.9998169894975146
+        }
+      },
+      "detached_per_world": [
+        5
+      ],
+      "finite_all_steps": true,
+      "qacc_finite": true,
+      "solver_capacity_valid": true,
+      "max_active_penetration_m": 0.000920359103474766,
+      "gpu_timestamp_drift_s": 0.000186920166015625,
+      "display_health_passed": true,
+      "recording": "summary",
+      "operator_wait_s": 0.00022976391483098269,
+      "gpu_session": {
+        "schema": "s300-newton-gpu-session-v1",
+        "reused": true,
+        "acquisition": 2,
+        "signature_sha256": "2435a53b311db972359af1f727494ec18733a67316181ab2b593b9652800d871",
+        "initial_state_sha256": "4f866b36092d5a73897dcfbc48cf92e54126e3fc29c372604a683b3eee5d3d4a",
+        "model_load_wall_s": 0.0,
+        "reset_wall_s": 0.8795522599248216,
+        "acquisition_wall_s": 0.879648866946809,
+        "initial_buffer_snapshot_bytes": 319698,
+        "reset_api": "mujoco_warp.reset_data",
+        "initial_derived_buffers_restored": true,
+        "qacc_and_warmstart_cleared": true,
+        "mutable_damping_and_surface_velocity_restored": true,
+        "callbacks_restored_before_new_controller": true,
+        "physical_time_advanced": false
+      },
+      "path": "/root/farmily_runtime/newton/runs/floor_session/run_001",
+      "exact_final_state_vs_headless": {
+        "time": true,
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "ctrl": true,
+        "runtime_dof_damping": true,
+        "qacc_warmstart": true,
+        "body_names": true,
+        "attachment_equality_ids": true
+      },
+      "exact_physical_break_events_vs_headless": true,
+      "file_bytes": 511246,
+      "viewer_pid": 34761
+    }
+  },
+  "full_step_gui_equivalence": {
+    "states.npz": {
+      "time": true,
+      "scheduled_time": true,
+      "solver_step": true,
+      "qpos": true,
+      "qvel": true,
+      "eq_active": true,
+      "poses": true,
+      "body_paths": true,
+      "robot_q": true,
+      "phase": true,
+      "command": true,
+      "belt_surface_velocity_local_y_m_s": true
+    },
+    "physics_metrics.npz": {
+      "active_penetration_m": true,
+      "released_penetration_m": true,
+      "max_contact_force_n": true,
+      "released_gutter_penetration_m": true,
+      "released_gutter_force_n": true,
+      "released_gutter_contact_pair_steps": true,
+      "attachment_force_n": true,
+      "attachment_torque_nm": true,
+      "break_step": true,
+      "first_event": true,
+      "nonfinite_step": true,
+      "qacc_nonfinite_step": true,
+      "capacity_overflow_step": true,
+      "nacon": true,
+      "ncollision": true,
+      "nefc": true,
+      "overflow": true,
+      "qacc_abs_max": true,
+      "time": true
+    },
+    "final_states.npz": {
+      "time": true,
+      "qpos": true,
+      "qvel": true,
+      "eq_active": true,
+      "ctrl": true,
+      "runtime_dof_damping": true,
+      "qacc_warmstart": true,
+      "body_names": true,
+      "attachment_equality_ids": true
+    },
+    "executed_commands.npz": {
+      "time": true,
+      "time_edges": true,
+      "dt": true,
+      "source_sample_time_s": true,
+      "source_command_record_time_s": true,
+      "command": true,
+      "phase": true,
+      "authored_belt_speed": true,
+      "belt_surface_velocity_local_y_m_s": true,
+      "dof_names": true,
+      "time_edges_master_ticks": true,
+      "master_hz": true
+    },
+    "solver_iterations.npy": true,
+    "break_events.json": true,
+    "physics_steps": 6800,
+    "every_step_recorded": true,
+    "browser": {
+      "renderer": "ANGLE (NVIDIA, Vulkan 1.4.303 (NVIDIA NVIDIA GeForce RTX 3090 Ti (0x00002203)), NVIDIA)",
+      "page_errors": [],
+      "camera_dragged_during_physics": true,
+      "status": "completed"
+    }
+  },
+  "persistent_browser": {
+    "page_errors": [],
+    "start_wait_verified": true,
+    "camera_dragged_during_physics": true,
+    "browser_context_reused": true
+  },
+  "summary_event_comparison": "Exclude full-only display aliases joint/timestamp_scope/display_world/t; every physical event field must match exactly",
+  "floor_change": {
+    "physical_fields": {
+      "actuator_acc0": true,
+      "actuator_actadr": true,
+      "actuator_actearly": true,
+      "actuator_actlimited": true,
+      "actuator_actnum": true,
+      "actuator_actrange": true,
+      "actuator_armature": true,
+      "actuator_biasprm": true,
+      "actuator_biastype": true,
+      "actuator_cranklength": true,
+      "actuator_ctrladr": true,
+      "actuator_ctrllimited": true,
+      "actuator_ctrlnum": true,
+      "actuator_ctrlrange": true,
+      "actuator_ctrlspec": true,
+      "actuator_damping": true,
+      "actuator_dampingpoly": true,
+      "actuator_delay": true,
+      "actuator_dynprm": true,
+      "actuator_dyntype": true,
+      "actuator_forcelimited": true,
+      "actuator_forcerange": true,
+      "actuator_gainprm": true,
+      "actuator_gaintype": true,
+      "actuator_gear": true,
+      "actuator_group": true,
+      "actuator_history": true,
+      "actuator_historyadr": true,
+      "actuator_length0": true,
+      "actuator_lengthrange": true,
+      "actuator_outadr": true,
+      "actuator_outnum": true,
+      "actuator_plugin": true,
+      "actuator_trnid": true,
+      "actuator_trntype": true,
+      "actuator_user": true,
+      "body_conaffinity": true,
+      "body_contype": true,
+      "body_dofadr": true,
+      "body_dofnum": true,
+      "body_geomadr": true,
+      "body_geomnum": true,
+      "body_gravcomp": true,
+      "body_inertia": true,
+      "body_invweight0": true,
+      "body_ipos": true,
+      "body_iquat": true,
+      "body_jntadr": true,
+      "body_jntnum": true,
+      "body_margin": true,
+      "body_mass": true,
+      "body_mocapid": true,
+      "body_parentid": true,
+      "body_plugin": true,
+      "body_pos": true,
+      "body_quat": true,
+      "body_rootid": true,
+      "body_sameframe": true,
+      "body_simple": true,
+      "body_subtreemass": true,
+      "body_treeid": true,
+      "body_user": true,
+      "body_weldid": true,
+      "dof_M0": true,
+      "dof_Madr": true,
+      "dof_armature": true,
+      "dof_bodyid": true,
+      "dof_damping": true,
+      "dof_dampingpoly": true,
+      "dof_frictionloss": true,
+      "dof_invweight0": true,
+      "dof_jntid": true,
+      "dof_length": true,
+      "dof_parentid": true,
+      "dof_simplenum": true,
+      "dof_solimp": true,
+      "dof_solref": true,
+      "dof_treeid": true,
+      "eq_active0": true,
+      "eq_data": true,
+      "eq_obj1id": true,
+      "eq_obj2id": true,
+      "eq_objtype": true,
+      "eq_solimp": true,
+      "eq_solref": true,
+      "eq_type": true,
+      "jnt_actfrclimited": true,
+      "jnt_actfrcrange": true,
+      "jnt_actgravcomp": true,
+      "jnt_actuatorid": true,
+      "jnt_axis": true,
+      "jnt_bodyid": true,
+      "jnt_dofadr": true,
+      "jnt_group": true,
+      "jnt_limited": true,
+      "jnt_margin": true,
+      "jnt_pos": true,
+      "jnt_qposadr": true,
+      "jnt_range": true,
+      "jnt_solimp": true,
+      "jnt_solref": true,
+      "jnt_stiffness": true,
+      "jnt_stiffnesspoly": true,
+      "jnt_type": true,
+      "jnt_user": true,
+      "qpos0": true,
+      "qpos_spring": true
+    },
+    "non_ground_geoms": {
+      "geom_aabb": true,
+      "geom_adhesion": true,
+      "geom_bodyid": true,
+      "geom_conaffinity": true,
+      "geom_condim": true,
+      "geom_contype": true,
+      "geom_dataid": true,
+      "geom_fluid": true,
+      "geom_friction": true,
+      "geom_gap": true,
+      "geom_group": true,
+      "geom_margin": true,
+      "geom_matid": true,
+      "geom_plugin": true,
+      "geom_pos": true,
+      "geom_priority": true,
+      "geom_quat": true,
+      "geom_rbound": true,
+      "geom_rgba": true,
+      "geom_sameframe": true,
+      "geom_size": true,
+      "geom_solimp": true,
+      "geom_solmix": true,
+      "geom_solref": true,
+      "geom_surfacevel": true,
+      "geom_type": true,
+      "geom_user": true
+    },
+    "input_arrays": {
+      "initial_state.npz": {
+        "qpos": true,
+        "qvel": true,
+        "eq_active": true,
+        "ctrl": true,
+        "robot_qpos_addresses": true,
+        "robot_dof_addresses": true,
+        "actuator_ids": true,
+        "plant_dofs": true,
+        "plant_preload": true,
+        "runtime_dof_damping": true,
+        "runtime_dof_length": true,
+        "body_positions": true,
+        "body_quaternions_wxyz": true,
+        "body_names": true,
+        "actuator_kp": true
+      },
+      "commands.npz": {
+        "time": true,
+        "time_edges": true,
+        "dt": true,
+        "source_sample_time_s": true,
+        "source_command_record_time_s": true,
+        "command": true,
+        "phase": true,
+        "authored_belt_speed": true,
+        "belt_surface_velocity_local_y_m_s": true,
+        "dof_names": true
+      }
+    },
+    "changed_floor": {
+      "old_type": 6,
+      "new_type": 0,
+      "old_pos": [
+        0.0,
+        4.0,
+        -0.12
+      ],
+      "new_pos": [
+        0.0,
+        4.0,
+        -0.100000000447
+      ]
+    },
+    "geometry_change": "existing source-box -> top-plane option; infinite collision plane at same authored floor top; visual box retained"
+  },
+  "floor_lifecycle": {
+    "floor_z_m": -0.100000000447,
+    "minimum_fruit_center_z_m": -0.09990576654672623,
+    "all_samples_above_floor": true,
+    "sample_count": 6801,
+    "fruit_count": 10,
+    "final_fruit_centers_z_m": [
+      -0.08811508119106293,
+      -0.08717967569828033,
+      -0.08833546191453934,
+      -0.08810392767190933,
+      -0.08893643319606781,
+      1.0604881048202515,
+      1.0526750087738037,
+      1.0399327278137207,
+      1.0236563682556152,
+      1.002814531326294
+    ],
+    "scope": "Center-height/no-fall-through check, not a contact penetration or capture success claim"
+  },
+  "initial_attempt": {
+    "path": "/root/farmily_runtime/newton/runs/equivalence_headless",
+    "environment_accepted": false,
+    "reason": "Thin source-box floor crossed by released fruits 08/10/11. Original records retained; guard completion did not establish whole-scene validity.",
+    "superseded_by": "/root/farmily_runtime/newton/assets/harvest_floor_20261108/inputs",
+    "detached_count_not_accepted_as_harvest_success": 8
+  },
+  "tests": {
+    "newton_viewer_launcher": {
+      "passed": 46,
+      "log": "/root/farmily_runtime/newton/runs/offline_tests_final.log"
+    },
+    "glb_and_actual_side_mount": {
+      "passed": 9,
+      "log": "/root/farmily_runtime/newton/runs/asset_tests.log"
+    },
+    "farm_adapter": {
+      "passed": 8,
+      "log": "/root/farmily_runtime/newton/runs/farm_adapter_tests.log"
+    },
+    "runtime_package_check": {
+      "passed": true,
+      "log": "/root/farmily_runtime/newton/runs/runtime_check.log"
+    }
+  },
+  "limitations": [
+    "Fresh scene; not identical to deleted experiment or a continuation of its checkpoint.",
+    "Static chassis from checked-in merged GLB: old per-part collision equivalence unverified.",
+    "Target truss/main stem collision only; full farm visuals do not imply all-neighbor collisions/dynamics.",
+    "GUI belt_finish minimum RTF 0.813; all-phase realtime target is not achieved.",
+    "Five detachments include one during approach; not full-truss harvest or capture success.",
+    "Independent RGB-D/GT, ROS2, adaptive multi-truss harvest and GPU batch performance remain untested."
+  ],
+  "artifacts": {
+    "ready_image": "/root/farmily_runtime/newton/runs/newton_live_ready.png",
+    "finished_image": "/root/farmily_runtime/newton/runs/newton_live_finished.png",
+    "videos": []
+  },
+  "training_eligible": false,
+  "harvest_success": null
+}

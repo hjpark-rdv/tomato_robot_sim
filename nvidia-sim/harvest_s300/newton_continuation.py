@@ -27,7 +27,7 @@ def file_sha256(path, *, context=None):
 
 
 class VerificationContext:
-    """One-call verified digest and read-only MjModel reuse, never a global cache.
+    """Caller-owned verified digest/read-only model reuse, never a global cache.
 
     Each distinct resolved source is hashed once from its original bytes. A
     repeated request rechecks device/inode/size/mtime/ctime and symlink identity
@@ -35,7 +35,9 @@ class VerificationContext:
     Models are shared only by the read-only verification functions, keyed by
     that exact stable source rather than by a digest of another mutable file.
     """
-    def __init__(self, *, local_model_cache=None):
+    def __init__(self, *, local_model_cache=None, scope='call'):
+        if scope not in ('call','patrol'):raise ValueError('Unknown verification lifetime')
+        self.scope=scope
         self._local_model_cache = None if local_model_cache is None else Path(local_model_cache)
         self._guard = threading.RLock()
         self._files = {}
@@ -126,6 +128,21 @@ class VerificationContext:
                 with self._guard: self._model_hits += 1
             return entry['model']
 
+    def readonly_json(self,path):
+        """Reuse parsed immutable input metadata after the same file checks.
+
+        Internal callers must not mutate nested values; take a top-level copy
+        for runtime flags. This never caches changing summaries/checkpoints.
+        """
+        self.file_sha256(path)
+        resolved,entry=self._entry(path)
+        with entry['lock']:
+            self._stable(resolved,entry)
+            if 'json_value' not in entry:
+                entry['json_value']=json.loads(resolved.read_text())
+                self._stable(resolved,entry)
+            return entry['json_value']
+
     def evidence(self):
         with self._guard:
             for requested, resolved in self._aliases.items():
@@ -133,12 +150,13 @@ class VerificationContext:
                     raise ValueError('Verification source changed within scope: ' + requested)
             for path, entry in self._files.items(): self._stable(path, entry)
             return dict(schema='s300-call-scoped-file-model-verification-v1',
-                unique_file_sha_reads=self._hash_reads, stable_sha_reuses=self._hash_hits,
+                scope=self.scope,unique_file_sha_reads=self._hash_reads, stable_sha_reuses=self._hash_hits,
                 unique_read_only_model_loads=self._model_reads, stable_read_only_model_reuses=self._model_hits,
                 verified_local_model_loads=sum(bool(e.get('verified_local_model_cache_used')) for e in self._files.values()),
                 original_bytes_hashed=self._bytes_read, repeated_hash_bytes_avoided=self._bytes_avoided,
                 original_file_sha_checks_preserved=True, file_identity_change_rejected=True,
-                global_or_cross_call_cache=False, models_used_only_by_read_only_verification=True,
+                global_or_cross_call_cache=self.scope!='call',global_cache=False,
+                models_used_only_by_read_only_verification=True,
                 sources=[dict(path=path, sha256=entry['sha256'],
                     identity=list(entry['identity']), read_only_model_loaded=entry['model'] is not None,
                     model_read_path=entry.get('model_read_path'),
@@ -201,6 +219,19 @@ def load_resume(previous, inputs, initial, metadata, *, worlds=1, policy=None, v
     with np.load(commands_path, allow_pickle=False) as archive:
         if len(archive['time']) != summary['actual_steps']:
             raise ValueError('Continuation parent stopped before its complete command timeline')
+        online=summary.get('online_camera_boundary')
+        if online is not None:
+            proposed=previous/'proposed_commands.npz'
+            if (online.get('completion_kind')!='online_observation_endpoint' or
+                    online.get('executed_steps')!=summary['actual_steps'] or
+                    checked_sha(proposed)!=online.get('proposed_commands_sha256')):
+                raise ValueError('Online observation endpoint certificate differs')
+            with np.load(proposed,allow_pickle=False) as full:
+                if len(full['time'])!=online.get('maximum_planned_steps'):
+                    raise ValueError('Online proposed timeline length differs')
+                for field in ('command','phase','time','dt','belt_surface_velocity_local_y_m_s'):
+                    if not np.array_equal(archive[field],full[field][:summary['actual_steps']]):
+                        raise ValueError('Online executed schedule is not the exact proposed prefix: '+field)
     parent_inputs = Path(summary['input'])
     parent_proof = _checked_json(parent_inputs / 'inputs.json', summary['input_sha256'], context=verification_context)
     source_sha = checked_sha(inputs / 'input_model.mjb')

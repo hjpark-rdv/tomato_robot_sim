@@ -1,0 +1,1250 @@
+{
+  "schema": "s300-mainstem-patrol-speed-v1",
+  "mode": "main_stem_only_geometric_harvest",
+  "training_eligible": false,
+  "physical_harvest_success": null,
+  "comparison_warning": "Authorized static-plant approximation and changed plan ordering/paths; task-level comparison, not an identical-model engine speedup.",
+  "canonical_dof_before": 1045,
+  "previous_active_dof": 355,
+  "robot_only_dof": 10,
+  "baseline": {
+    "run": "/root/farmily_runtime/newton/runs/patrol_mainstem_ideal_v6",
+    "status": "harvest_attempt_budget_exhausted",
+    "reason": null,
+    "harvest_motions": 3,
+    "assumed_fruits": 9,
+    "simulated_s": 82.26380157470703,
+    "physics_loop_wall_s": 54.499707456096075,
+    "physics_rtf": 1.5094356541450646,
+    "campaign_wall_s": 475.2792367360089,
+    "cold_preparation_wall_s": null,
+    "end_to_end_wall_s": null,
+    "input_preparation_wall_s": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "completed_segments": 8,
+    "finite_states": true,
+    "capacity_valid": true,
+    "max_active_penetration_m": 0.0,
+    "physical_detachments": 0,
+    "phase_performance": {
+      "settle": {
+        "simulated_s": 0.39999999999999997,
+        "wall_s": 0.11651612783316523,
+        "rtf": 3.4330011427494735
+      },
+      "ready_scan": {
+        "simulated_s": 2.9999999999999996,
+        "wall_s": 2.1094169239513576,
+        "rtf": 1.4221939560342594
+      },
+      "ready_hold": {
+        "simulated_s": 4.0,
+        "wall_s": 0.9507385805482045,
+        "rtf": 4.20725537160127
+      },
+      "rail_transfer": {
+        "simulated_s": 9.440909090909091,
+        "wall_s": 6.688335937797092,
+        "rtf": 1.411548280276514
+      },
+      "prepare_open": {
+        "simulated_s": 3.0,
+        "wall_s": 0.6872695356141776,
+        "rtf": 4.365099636373455
+      },
+      "prepare_open_hold": {
+        "simulated_s": 1.5500000000000005,
+        "wall_s": 0.35057191795203835,
+        "rtf": 4.421346721251232
+      },
+      "prepare_height": {
+        "simulated_s": 2.986363636363636,
+        "wall_s": 2.097352156182751,
+        "rtf": 1.4238732525485442
+      },
+      "prepare_horizontal": {
+        "simulated_s": 11.972727272727273,
+        "wall_s": 9.245469986228272,
+        "rtf": 1.2949830879945992
+      },
+      "approach": {
+        "simulated_s": 12.0,
+        "wall_s": 9.256335706682876,
+        "rtf": 1.2964093330513344
+      },
+      "geometric_capture_hold": {
+        "simulated_s": 0.9000000000000021,
+        "wall_s": 0.6949203540571034,
+        "rtf": 1.295112446693491
+      },
+      "withdraw": {
+        "simulated_s": 11.999999999999998,
+        "wall_s": 9.21265412971843,
+        "rtf": 1.302556226580793
+      },
+      "return_ready": {
+        "simulated_s": 11.999999999999996,
+        "wall_s": 9.263857064419426,
+        "rtf": 1.2953567738096408
+      },
+      "return_height": {
+        "simulated_s": 3.0,
+        "wall_s": 2.0992522382875904,
+        "rtf": 1.429080291202724
+      },
+      "ready_close": {
+        "simulated_s": 3.0,
+        "wall_s": 0.667565492913127,
+        "rtf": 4.493941091695107
+      },
+      "hold": {
+        "simulated_s": 3.0,
+        "wall_s": 0.679439734085463,
+        "rtf": 4.415402646473199
+      }
+    }
+  },
+  "release": {
+    "run": "/root/farmily_runtime/newton/runs/patrol_static_speed_release",
+    "status": "harvest_attempt_budget_exhausted",
+    "reason": null,
+    "harvest_motions": 3,
+    "assumed_fruits": 9,
+    "simulated_s": 78.70648193359375,
+    "physics_loop_wall_s": 21.48689971200656,
+    "physics_rtf": 3.6629985241478895,
+    "campaign_wall_s": 74.46029570803512,
+    "cold_preparation_wall_s": 15.25764695298858,
+    "end_to_end_wall_s": 89.7179426610237,
+    "input_preparation_wall_s": [
+      0.5016355080297217,
+      0.18993382493499666,
+      0.18776956596411765,
+      0.1894359819125384,
+      0.6371427129488438,
+      0.644152730004862,
+      0.43548028194345534
+    ],
+    "completed_segments": 7,
+    "finite_states": true,
+    "capacity_valid": true,
+    "max_active_penetration_m": 0.0,
+    "physical_detachments": 0,
+    "phase_performance": {
+      "settle": {
+        "simulated_s": 0.35,
+        "wall_s": 0.048343950998969376,
+        "rtf": 7.2397889036306005
+      },
+      "ready_scan": {
+        "simulated_s": 3.0,
+        "wall_s": 1.0395850131753832,
+        "rtf": 2.8857668800328167
+      },
+      "ready_hold": {
+        "simulated_s": 3.5,
+        "wall_s": 0.35390351398382336,
+        "rtf": 9.889701180418294
+      },
+      "rail_transfer": {
+        "simulated_s": 8.440909090909091,
+        "wall_s": 2.8973639641189948,
+        "rtf": 2.913306438349291
+      },
+      "prepare_open": {
+        "simulated_s": 3.0,
+        "wall_s": 0.28739310475066304,
+        "rtf": 10.43866380372189
+      },
+      "prepare_open_hold": {
+        "simulated_s": 1.5500000000000005,
+        "wall_s": 0.14835291425697505,
+        "rtf": 10.44805899340211
+      },
+      "prepare_horizontal": {
+        "simulated_s": 7.972727272727272,
+        "wall_s": 2.884693545405753,
+        "rtf": 2.76380390056506
+      },
+      "approach": {
+        "simulated_s": 12.0,
+        "wall_s": 4.425737665966153,
+        "rtf": 2.7114124030169693
+      },
+      "geometric_capture_hold": {
+        "simulated_s": 0.9045454545454561,
+        "wall_s": 0.32351797190494835,
+        "rtf": 2.7959666327631942
+      },
+      "withdraw": {
+        "simulated_s": 11.995454545454546,
+        "wall_s": 4.413158109528013,
+        "rtf": 2.7181112137261407
+      },
+      "return_ready": {
+        "simulated_s": 7.9999999999999964,
+        "wall_s": 2.8887849512975663,
+        "rtf": 2.769330405299504
+      },
+      "ready_close": {
+        "simulated_s": 3.0,
+        "wall_s": 0.2771613347576931,
+        "rtf": 10.824020611037737
+      },
+      "hold": {
+        "simulated_s": 3.0,
+        "wall_s": 0.2775724647799507,
+        "rtf": 10.80798847385057
+      },
+      "prepare_joint_branch": {
+        "simulated_s": 5.983333333333333,
+        "wall_s": 0.5582102210028097,
+        "rtf": 10.718781398492553
+      },
+      "return_joint_branch": {
+        "simulated_s": 6.0,
+        "wall_s": 0.5641651204787195,
+        "rtf": 10.635184243415704
+      }
+    }
+  },
+  "full_headless": {
+    "run": "/root/farmily_runtime/newton/runs/patrol_static_speed_final",
+    "status": "stopped",
+    "reason": "configured_route_budget_end_reached",
+    "harvest_motions": 5,
+    "assumed_fruits": 15,
+    "simulated_s": 137.2462921142578,
+    "physics_loop_wall_s": 33.34885187004693,
+    "physics_rtf": 4.115472779964843,
+    "campaign_wall_s": 275.48860455700196,
+    "cold_preparation_wall_s": 15.28667034197133,
+    "end_to_end_wall_s": 290.7752748989733,
+    "input_preparation_wall_s": [
+      1.8193820939632133,
+      1.473873509094119,
+      1.4545199599815533,
+      1.4466375529300421,
+      2.3312302191043273,
+      1.9095498120877892,
+      1.6428653280017897,
+      1.662054926971905,
+      1.4021990490145981,
+      1.4035587600665167,
+      1.3966902499087155,
+      1.3872770599555224,
+      2.108255799044855
+    ],
+    "completed_segments": 13,
+    "finite_states": true,
+    "capacity_valid": true,
+    "max_active_penetration_m": 0.0,
+    "physical_detachments": 0,
+    "phase_performance": {
+      "settle": {
+        "simulated_s": 0.65,
+        "wall_s": 0.08426846470683813,
+        "rtf": 7.713443009330803
+      },
+      "ready_scan": {
+        "simulated_s": 3.0,
+        "wall_s": 1.0422343070385978,
+        "rtf": 2.8784314426610975
+      },
+      "ready_hold": {
+        "simulated_s": 6.5,
+        "wall_s": 0.6622643102891743,
+        "rtf": 9.814812453296492
+      },
+      "rail_transfer": {
+        "simulated_s": 16.06818181818182,
+        "wall_s": 5.566711789811961,
+        "rtf": 2.886476330172033
+      },
+      "prepare_open": {
+        "simulated_s": 5.0,
+        "wall_s": 0.4810464915353805,
+        "rtf": 10.394005752003817
+      },
+      "prepare_open_hold": {
+        "simulated_s": 2.583333333333334,
+        "wall_s": 0.24890909262467176,
+        "rtf": 10.378621793574748
+      },
+      "prepare_horizontal": {
+        "simulated_s": 7.972727272727272,
+        "wall_s": 2.906772968126461,
+        "rtf": 2.7428104499905386
+      },
+      "approach": {
+        "simulated_s": 20.0,
+        "wall_s": 7.306804987136275,
+        "rtf": 2.7371744606856567
+      },
+      "geometric_capture_hold": {
+        "simulated_s": 1.5136363636363654,
+        "wall_s": 0.5441116826841608,
+        "rtf": 2.7818486752010845
+      },
+      "withdraw": {
+        "simulated_s": 19.986363636363638,
+        "wall_s": 7.27785654948093,
+        "rtf": 2.7461881806105537
+      },
+      "return_ready": {
+        "simulated_s": 7.9999999999999964,
+        "wall_s": 2.9078117543831468,
+        "rtf": 2.75120973286563
+      },
+      "ready_close": {
+        "simulated_s": 5.0,
+        "wall_s": 0.4655072847381234,
+        "rtf": 10.740970472272648
+      },
+      "hold": {
+        "simulated_s": 5.0,
+        "wall_s": 0.4646409066626802,
+        "rtf": 10.760998285563991
+      },
+      "prepare_joint_branch": {
+        "simulated_s": 17.95,
+        "wall_s": 1.6435259374557063,
+        "rtf": 10.921640839929706
+      },
+      "return_joint_branch": {
+        "simulated_s": 18.0,
+        "wall_s": 1.647825358202681,
+        "rtf": 10.923487680534903
+      }
+    }
+  },
+  "full_gui": {
+    "run": "/root/farmily_runtime/newton/runs/patrol_static_speed_gui",
+    "status": "stopped",
+    "reason": "configured_route_budget_end_reached",
+    "harvest_motions": 5,
+    "assumed_fruits": 15,
+    "simulated_s": 137.2462921142578,
+    "physics_loop_wall_s": 67.22490982699674,
+    "physics_rtf": 2.04159875360876,
+    "campaign_wall_s": 281.1161876929691,
+    "cold_preparation_wall_s": 15.35272158891894,
+    "end_to_end_wall_s": 296.46890928188805,
+    "input_preparation_wall_s": [
+      0.5479280150029808,
+      0.15964597195852548,
+      0.5377176849870011,
+      0.19409283006098121,
+      0.6445427190046757,
+      0.6460871580056846,
+      0.4360507760429755,
+      0.439672703971155,
+      0.180059525067918,
+      0.19145916402339935,
+      0.19338277308270335,
+      0.18023299099877477,
+      0.4421057580038905
+    ],
+    "completed_segments": 13,
+    "finite_states": true,
+    "capacity_valid": true,
+    "max_active_penetration_m": 0.0,
+    "physical_detachments": 0,
+    "phase_performance": {
+      "settle": {
+        "simulated_s": 0.65,
+        "wall_s": 0.09203621000051498,
+        "rtf": 7.062437707901737
+      },
+      "ready_scan": {
+        "simulated_s": 3.0,
+        "wall_s": 1.9702300825156271,
+        "rtf": 1.5226648027673717
+      },
+      "ready_hold": {
+        "simulated_s": 6.5,
+        "wall_s": 1.0339330635033548,
+        "rtf": 6.286673895479801
+      },
+      "rail_transfer": {
+        "simulated_s": 16.06818181818182,
+        "wall_s": 9.676333529641852,
+        "rtf": 1.6605651065002665
+      },
+      "prepare_open": {
+        "simulated_s": 5.0,
+        "wall_s": 0.5575464119901881,
+        "rtf": 8.967863288999144
+      },
+      "prepare_open_hold": {
+        "simulated_s": 2.583333333333334,
+        "wall_s": 0.2531670379685238,
+        "rtf": 10.204066667061607
+      },
+      "prepare_horizontal": {
+        "simulated_s": 7.972727272727272,
+        "wall_s": 5.891721313702874,
+        "rtf": 1.3532084849608257
+      },
+      "approach": {
+        "simulated_s": 20.0,
+        "wall_s": 15.78857168450486,
+        "rtf": 1.2667390312214435
+      },
+      "geometric_capture_hold": {
+        "simulated_s": 1.5136363636363654,
+        "wall_s": 1.1581905892817304,
+        "rtf": 1.3068974809880558
+      },
+      "withdraw": {
+        "simulated_s": 19.986363636363638,
+        "wall_s": 15.604841830325313,
+        "rtf": 1.2807796358130075
+      },
+      "return_ready": {
+        "simulated_s": 7.9999999999999964,
+        "wall_s": 6.169863593066111,
+        "rtf": 1.2966251002681244
+      },
+      "ready_close": {
+        "simulated_s": 5.0,
+        "wall_s": 1.0081286636414006,
+        "rtf": 4.959684393795333
+      },
+      "hold": {
+        "simulated_s": 5.0,
+        "wall_s": 1.023472308064811,
+        "rtf": 4.885330028571107
+      },
+      "prepare_joint_branch": {
+        "simulated_s": 17.95,
+        "wall_s": 3.009166332310997,
+        "rtf": 5.965107281462456
+      },
+      "return_joint_branch": {
+        "simulated_s": 18.0,
+        "wall_s": 3.4032625015825033,
+        "rtf": 5.289042497200869
+      }
+    }
+  },
+  "gui_full_state_comparison": {
+    "headless": "/root/farmily_runtime/newton/runs/patrol_static_speed_final",
+    "all_saved_states_final_states_and_commands_equal": true,
+    "segments": [
+      {
+        "step": "step_000",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_001",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_002",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_003",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_004",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_005",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_006",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_007",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_009",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_011",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_012",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_017",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      },
+      {
+        "step": "step_018",
+        "files": {
+          "states.npz": {
+            "time": true,
+            "scheduled_time": true,
+            "solver_step": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "poses": true,
+            "body_paths": true,
+            "robot_q": true,
+            "phase": true,
+            "command": true,
+            "belt_surface_velocity_local_y_m_s": true
+          },
+          "final_states.npz": {
+            "time": true,
+            "qpos": true,
+            "qvel": true,
+            "eq_active": true,
+            "ctrl": true,
+            "runtime_dof_damping": true,
+            "qacc_warmstart": true,
+            "body_names": true,
+            "attachment_equality_ids": true
+          },
+          "executed_commands.npz": {
+            "time": true,
+            "time_edges": true,
+            "dt": true,
+            "source_sample_time_s": true,
+            "source_command_record_time_s": true,
+            "command": true,
+            "phase": true,
+            "authored_belt_speed": true,
+            "belt_surface_velocity_local_y_m_s": true,
+            "dof_names": true,
+            "time_edges_master_ticks": true,
+            "master_hz": true
+          }
+        }
+      }
+    ]
+  },
+  "release_gui_comparison": {
+    "all_saved_fields_equal": true,
+    "gui": "/root/farmily_runtime/newton/runs/patrol_static_speed_gui",
+    "segments": [
+      {
+        "step": "step_000",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_001",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_002",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_003",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_004",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_005",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      },
+      {
+        "step": "step_006",
+        "fields": {
+          "time": true,
+          "scheduled_time": true,
+          "solver_step": true,
+          "qpos": true,
+          "qvel": true,
+          "eq_active": true,
+          "poses": true,
+          "body_paths": true,
+          "robot_q": true,
+          "phase": true,
+          "command": true,
+          "belt_surface_velocity_local_y_m_s": true
+        }
+      }
+    ]
+  },
+  "browser": {
+    "completed": true,
+    "errors": [],
+    "camera_orbit_during_physics": true
+  },
+  "descendant_csr": {
+    "exact_same_csr": true,
+    "bodies": 787,
+    "old_wall_s": 2.306542932987213,
+    "new_wall_s": 0.0038314489647746086,
+    "speedup": 602.0027812435966
+  },
+  "planner_cache": {
+    "cold_and_cached_plans_exact": true,
+    "wall_s": [
+      4.864230038016103,
+      4.307762054959312,
+      4.0241688679670915
+    ],
+    "all_fields_compared": true
+  },
+  "gpu_batch_state_comparison": {
+    "4": {
+      "qpos": true,
+      "qvel": true,
+      "poses": true,
+      "time": true,
+      "phase": true
+    },
+    "10": {
+      "qpos": true,
+      "qvel": true,
+      "poses": true,
+      "time": true,
+      "phase": true
+    }
+  },
+  "task_speedup": 6.3829888428004296,
+  "current_code_sha256": {
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "cc1bd9ecf3beaab0061e8c8671b77eb5310ad3d923f06d112fe3573f58fa2795",
+    "nvidia-sim/harvest_s300/newton_active_window.py": "af7aa4dcede0b3d46a7bc62ed18568c33c6fb1a52b8afd1a4916ccaeea57c64a",
+    "nvidia-sim/harvest_s300/newton_continuation.py": "60661a7e12c069f370f7d331df7ebce97b61c47bec863ed6ecaeb4c2607cd13a",
+    "nvidia-sim/harvest_s300/newton_gpu_tree_sums.py": "4ac451cebd471b7db2e404a4a24642d7bc1b15ebddc6246ccb8516a46d952ddc",
+    "nvidia-sim/harvest_s300/newton_geometric_harvest.py": "f8f0f9dd142ad5a11dc4d145af95c2422a7264a88fb05fdb363a381f56aa5bfa",
+    "nvidia-sim/harvest_s300/newton_prepared_assets.py": "87b7b7fbf50a70f0b70849d7fd15c3237e48f3b543a78f2f01fd7d15f5fb1edc",
+    "nvidia-sim/harvest_s300/run_newton_harvest.py": "23228b4014b41e8ff4f12869eb382f889590319880581c301f821fc41f46f32d",
+    "nvidia-sim/harvest_s300/newton_mounted_camera.py": "d2024205b4efc6b4ffa71561457209591382da3c27b399c5f7fe2883af8980f4",
+    "nvidia-sim/harvest_s300/render_newton_patrol.py": "f506ba10796202fefd6b6e8e5173c6a0e997f80f740f5b843c417afa52f20fd7",
+    "mujoco-benchmark/scripts/s300_smoke/plan_adapter.py": "aba811ef4e4b02fb83674eb2c037678fdbb83cdda51207e6693eb67155113c4f",
+    "nvidia-sim/run_s300_newton.sh": "facde4731d6a3f1d3afb332befa2586806482db0e1f4ecd830bae03bacac9661"
+  },
+  "test_logs": [
+    "/root/farmily_runtime/newton/static_speed_release_native_tests.log",
+    "/root/farmily_runtime/newton/static_speed_tree_cuda_tests.log",
+    "/root/farmily_runtime/newton/static_speed_policy_tests.log",
+    "/root/farmily_runtime/newton/static_speed_plan_tests.log"
+  ],
+  "tests": {
+    "native": 143,
+    "additional_cuda_tree_checks": 9,
+    "asset_policy": 43,
+    "planner_adapter_passed": 3,
+    "planner_adapter_skipped_missing_legacy_assets": 2
+  },
+  "harvest_visibility": {
+    "unique_harvested_names": 15,
+    "count": 15,
+    "last_observation": "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_019/camera",
+    "removed_instance_count": 15,
+    "remaining_collected_instance_ids": [],
+    "same_sensor_ray_geometry_used": true
+  },
+  "video_render": {
+    "renderer_source_sha256": "f506ba10796202fefd6b6e8e5173c6a0e997f80f740f5b843c417afa52f20fd7",
+    "actual_recorded_states": true,
+    "physics_steps_executed": 0,
+    "geometric_assumed_harvest": true,
+    "fps": 6,
+    "frames": 824,
+    "render_wall_s": 53.65260080900043,
+    "sources": [
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_000/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_001/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_002/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_003/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_004/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_005/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_006/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_007/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_009/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_011/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_012/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_017/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/step_018/physics/states.npz"
+    ]
+  },
+  "input_proof": "/root/farmily_runtime/newton/assets/patrol_mainstem_static_v1/inputs/inputs.json",
+  "videos": [
+    "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/patrol_actual.mp4",
+    "/root/farmily_runtime/newton/runs/patrol_static_speed_gui/first_harvest.mp4"
+  ],
+  "remaining_limits": [
+    "0..0.85m prepared route with three plants; other full-farm plants remain visual background",
+    "Full route still spends substantial time rejecting self-colliding or unfound IK proposals; five motions/15 assumed fruit, not six guaranteed harvests",
+    "The camera is sampled at stops; PIP during motion is the most recent observation",
+    "Geometric volume credit is not force-based detachment or actual fruit collection",
+    "Cold camera setup remains about 15 seconds; warm execution metrics exclude this separately reported cost"
+  ]
+}

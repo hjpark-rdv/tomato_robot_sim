@@ -63,6 +63,9 @@ def _chain_union_width(model):
             chain.add(dof)
             dof = int(model.dof_parentid[dof])
         chains.append(chain)
+    # Welded/static bodies repeat the same support. The maximum over unique
+    # sets is exactly the same bound without the full body-pair Cartesian set.
+    chains=set(map(frozenset,chains))
     return max((len(a | b) for a in chains for b in chains), default=1)
 
 

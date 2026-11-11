@@ -1,0 +1,665 @@
+{
+  "schema": "s300-lowered-platform-camera-validation-v1",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "parent_head": "f984e6ecf918fb939e073afa79a6f9f1f6f84dda",
+  "uncommitted_work_preserved": true,
+  "assets": "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110",
+  "run": "/root/farmily_runtime/newton/runs/20261110_lower_plate_camera",
+  "layout": {
+    "schema": "s300-upright-wrist-yaw-v1",
+    "link6_from_tool": [
+      [
+        1.0,
+        -0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        2.220446049250313e-16,
+        1.0,
+        -0.21669999999999995
+      ],
+      [
+        -0.0,
+        -1.0,
+        2.220446049250313e-16,
+        -0.15000000000000002
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "flange_in_link6_m": [
+      0.0,
+      -0.0967,
+      0.0
+    ],
+    "flange_in_tool_m": [
+      0.0,
+      -0.15,
+      0.12
+    ],
+    "parts": [
+      {
+        "name": "flange_plate",
+        "center_tool_m": [
+          0.0,
+          -0.15,
+          0.114
+        ],
+        "dimensions_m": [
+          0.09,
+          0.1,
+          0.012
+        ],
+        "mass_kg": 0.29159999999999997
+      },
+      {
+        "name": "rear_plate",
+        "center_tool_m": [
+          0.0,
+          -0.2,
+          0.034
+        ],
+        "dimensions_m": [
+          0.17,
+          0.012,
+          0.148
+        ],
+        "mass_kg": 0.815184
+      }
+    ],
+    "adapter_mass_kg": 1.106784,
+    "previous_fixed_tool_mass_kg": 1.2266255617141724,
+    "fixed_tool_mass_kg": 2.3334095617141726,
+    "density_kg_m3": 2700.0,
+    "fixed_attachment": true,
+    "extra_actuated_axes": 0,
+    "gripper_entry_axis": "Tool_fixed +Y",
+    "wrist3_axis": "Tool_fixed +Z",
+    "dimensions_are_assumed": true,
+    "strength_and_bolt_pattern_validated": false,
+    "tool_inertia": "Existing native CAD-bounds estimate, recomputed with adapter",
+    "old_link6_from_tool": [
+      [
+        -1.0,
+        -1.2246467991473532e-16,
+        0.0,
+        0.0
+      ],
+      [
+        1.2246467991473532e-16,
+        -1.0,
+        0.0,
+        -0.3026999977827072
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.018000000000000238
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "training_eligible": false,
+    "initial_station_rebase": {
+      "schema": "s300-fresh-initial-station-rebase-v1",
+      "old_station_y_m": 1.6,
+      "new_station_y_m": 0.0,
+      "world_translation_m": [
+        0.0,
+        -1.6,
+        0.0
+      ],
+      "world_anchor_joint_frames_changed": [
+        {
+          "joint": "/World/HarvestRobot/Robot/rail_world_fixed",
+          "slot": 0
+        }
+      ],
+      "physical_rail_limits_world_y_m": [
+        0.0,
+        5.0
+      ],
+      "fresh_initial_scenario": true,
+      "runtime_teleport": false,
+      "old_execution_reused": false,
+      "farm_geometry_changed": false
+    },
+    "base_mount": "Upright RB5 on lowered flat plate at carriage foot; triangular cantilever removed; original real-lift prismatic joint",
+    "lowered_platform": {
+      "schema": "s300-lowered-flat-platform-v1",
+      "drop_m": 0.3,
+      "plate_path": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/mounting_plate",
+      "plate_collider": "/World/HarvestRobot/Robot/farmily_lift_platform/collisions/real_mounting_plate",
+      "removed_triangle": "/World/HarvestRobot/Robot/farmily_lift_platform/visuals/real_lift_carriage/cantilever_bracket",
+      "plate_world_bounds_zero_lift_m": [
+        [
+          -0.11461495608091354,
+          -0.49659113228321083,
+          0.34619313647363864
+        ],
+        [
+          0.11587854474782944,
+          0.16340849161148063,
+          0.35619313647363865
+        ]
+      ],
+      "plate_dimensions_m": [
+        0.23049350082874298,
+        0.6599996238946915,
+        0.010000000000000009
+      ],
+      "plate_flat": true,
+      "plate_extended_to_retained_carriage": true,
+      "moving_rigid_bodies": [
+        "/World/HarvestRobot/Robot/link1",
+        "/World/HarvestRobot/Robot/link2",
+        "/World/HarvestRobot/Robot/link3",
+        "/World/HarvestRobot/Robot/link4",
+        "/World/HarvestRobot/Robot/link5",
+        "/World/HarvestRobot/Robot/link6",
+        "/World/ActuatedTool/fixed",
+        "/World/ActuatedTool/L",
+        "/World/ActuatedTool/R",
+        "/World/ActuatedTool/L_belt",
+        "/World/ActuatedTool/R_belt"
+      ],
+      "platform_mass": {
+        "mass_kg": 11.592802925712794,
+        "carriage_mass_kg": 8.092802925712794,
+        "base_mass_kg": 3.5,
+        "removed_mass_kg": 6.907197074287206,
+        "center_of_mass_local_m": [
+          -0.0002698022781190197,
+          0.24639637484527918,
+          -0.19224309940053752
+        ],
+        "diagonal_inertia_kg_m2": [
+          0.14976621372508903,
+          0.7652355347394435,
+          0.8338373406146098
+        ],
+        "principal_axes_xyzw": [
+          -0.5620133106701788,
+          0.4265417416529419,
+          0.5629410945513271,
+          -0.4304654519500653
+        ],
+        "model": "Original 15kg carriage estimate allocated by closed CAD volume; retained back carriage + replacement flat plate, removed triangular bracket; original 3.5kg RB5 base estimate translated with its mounting plane",
+        "source_urdf": "/root/farmily_tomato/nvidia-sim/robot_usd/rb5_farmily.urdf",
+        "source_urdf_sha256": "f9479dcfdddff94c9d22b021ab6f9a142c59090389d228bcca74917bbdd2ea6d",
+        "hardware_mass_calibrated": false
+      },
+      "lift_axis_limits_drives_unchanged": true,
+      "base_joint_parent_frame_changed": true,
+      "source_plate_hole_pattern_replaced": true,
+      "fabrication_and_load_strength_verified": false
+    },
+    "preserved_diagonal_removal": true
+  },
+  "camera": {
+    "schema": "s300-mounted-rgbd-v1",
+    "body_path": "/World/HarvestRobot/Robot/farmily_lift_platform",
+    "root_path": "/World/HarvestRobot/Robot/farmily_lift_platform/PlatformRGBD",
+    "camera_path": "/World/HarvestRobot/Robot/farmily_lift_platform/PlatformRGBD/Camera",
+    "body_from_camera_optical": [
+      [
+        0.0,
+        0.0,
+        -1.0,
+        -0.14961495608091355
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.17340867966413498
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0,
+        -0.2924999998137355
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "resolution_wh": [
+      480,
+      640
+    ],
+    "K": [
+      [
+        462.1386898729645,
+        0.0,
+        240.0
+      ],
+      [
+        0.0,
+        462.1386898729645,
+        320.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "depth_units": "m",
+    "exposure_ev": 2.0,
+    "depth_definition": "optical +Z distance_to_image_plane, not radial distance",
+    "depth_range_m": [
+      0.1,
+      5.0
+    ],
+    "invalid_depth": "NaN",
+    "camera_model": "D435-style ideal aligned RGB-D; existing 69.4deg landscape FOV rotated to portrait",
+    "sensor_model_limit": "No stereo matching, holes/noise, exposure or real-device calibration",
+    "housing_source": "/root/farmily_tomato/nvidia-sim/robot_usd/rb5_farmily.usd",
+    "housing_source_sha256": "bb4c228e91333800f3be0e8030b6a03a9fbefaf36efde301ee5cc3b67c8ececb",
+    "housing_source_prim": "/rb5_farmily/link6/visuals/d435/ID1",
+    "housing_size_m": [
+      0.025,
+      0.02505,
+      0.09
+    ],
+    "mount_description": "Portrait RGB-D centered on crop-facing long edge of lowered lift plate; rigid to carriage, independent of arm joints",
+    "housing_and_bracket_collision": false,
+    "physical_payload_changed": false,
+    "segmentation_saved": false,
+    "training_eligible": false,
+    "reference_ready_q": [
+      0.18,
+      -1.8927722951639818,
+      1.032421816446927,
+      -2.2287360470498703,
+      -0.37447924037747593,
+      -1.5707857186856857,
+      -1.2488255250269382
+    ],
+    "mount_calibration_revision": "20261110 lowered flat plate central portrait camera",
+    "optical_world_zero_lift": [
+      [
+        0.0,
+        0.0,
+        -1.0,
+        -0.14961495608091355
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        -0.1665913203358651
+      ],
+      [
+        0.0,
+        -1.0,
+        0.0,
+        0.35119313647363865
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "housing_support_path": "/World/HarvestRobot/Robot/farmily_lift_platform/PlatformRGBDSupport",
+    "plate_edge_optical_standoff_m": 0.035
+  },
+  "tests": {
+    "passed": 8,
+    "log": "/root/farmily_runtime/newton/runs/20261110_lower_plate_camera/tests.log",
+    "log_sha256": "0025df40261b0968369b0c604816926aa9f1323ee40e1a415cebe4f8354d191e"
+  },
+  "gpu_runs": [
+    {
+      "status": "completed",
+      "backend": "gpu",
+      "physics_engine": "Newton SolverMuJoCo",
+      "simulated_s": 16.499786376953125,
+      "loop_wall_s": 4.430808756966144,
+      "setup_wall_s": 7.714288491057232,
+      "realtime_factor": 3.7238768996770766,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "name": "lift_yaw_gpu",
+      "states_count": 3471,
+      "states_sha256": "2f19ea2534bb5ee277487340bcfc0be7a19532736a6354115741e0a3d648ee85",
+      "summary_sha256": "74432c60e4f17c3fd0ce8353f11f11953804efa99963da9b6326876839bf726c",
+      "preparation_screen": {
+        "passed": true,
+        "collision_certified": false,
+        "samples": 991,
+        "elastic_intersections": [],
+        "scope": "Rigid preparation intersections screened; flexible overlap diagnostic only. Actual GPU guard remains authoritative"
+      },
+      "lift_range_m": [
+        0.1799999177455902,
+        0.28000155091285706
+      ],
+      "rail_final_m": -9.771897180321787e-11,
+      "tool_yaw_range_deg": [
+        -14.981277192892854,
+        14.984736186153434
+      ],
+      "max_tool_entry_tilt_deg": 0.0038373873175054727
+    },
+    {
+      "status": "completed",
+      "backend": "gpu",
+      "physics_engine": "Newton SolverMuJoCo",
+      "simulated_s": 14.499855041503906,
+      "loop_wall_s": 3.7468786579556763,
+      "setup_wall_s": 7.452239504898898,
+      "realtime_factor": 3.8698491104633557,
+      "max_active_penetration_m": 0.0,
+      "finite_all_steps": true,
+      "solver_capacity_valid": true,
+      "active_contact_criterion_passed": true,
+      "name": "camera_move_gpu",
+      "states_count": 3191,
+      "states_sha256": "3cd0cd63baa2687a51308eb18a6ac16075f4f205e140a80292741ed19ac1da07",
+      "summary_sha256": "392447620a084e0f349371deebfa5141e7c76f53e037ae0828e3e8333a09f89e",
+      "preparation_screen": {
+        "passed": true,
+        "collision_certified": false,
+        "samples": 872,
+        "elastic_intersections": [],
+        "scope": "Rigid preparation intersections screened; flexible overlap diagnostic only. Actual GPU guard remains authoritative"
+      },
+      "lift_range_m": [
+        0.18000000715255737,
+        0.48000290989875793
+      ],
+      "rail_final_m": 0.6000001430511475,
+      "tool_yaw_range_deg": [
+        -0.013306425192823232,
+        0.01571027570134429
+      ],
+      "max_tool_entry_tilt_deg": 0.006234631571016664
+    }
+  ],
+  "camera_results": [
+    {
+      "tag": "start",
+      "frame": 0,
+      "time_s": 0.0,
+      "red_count": 0,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.1665913239121437
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.5311930968239904
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "tag": "raised",
+      "frame": 990,
+      "time_s": 4.500021934509277,
+      "red_count": 0,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.1665913239121437
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.6310559703782201
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "tag": "yaw_minus",
+      "frame": 1430,
+      "time_s": 6.500124931335449,
+      "red_count": 0,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.16659001260995865
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.6311931802704931
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "tag": "yaw_plus",
+      "frame": 2310,
+      "time_s": 10.500068664550781,
+      "red_count": 0,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.1665913239121437
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.6311931802704931
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "tag": "returned",
+      "frame": 3469,
+      "time_s": 16.48311996459961,
+      "red_count": 0,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.1665913239121437
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.5311930968239904
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "tag": "row_view",
+      "frame": 3188,
+      "time_s": 14.490764617919922,
+      "red_count": 30,
+      "robot_pixels": 0,
+      "total_pixels": 307200,
+      "world_from_camera_optical": [
+        [
+          0.0,
+          0.0,
+          -1.0,
+          -0.14961495608091355
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.43340881913900375
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.8311932279542089
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "gui": {
+    "url": "http://192.168.222.27:5905",
+    "preview": "/root/farmily_runtime/newton/runs/20261110_lower_plate_camera/gui_preview.png",
+    "physics_started_by_agent": false
+  },
+  "default_asset_change": {
+    "previous": "/root/farmily_runtime/newton/assets/patrol_elbow_modes_20261110",
+    "current": "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110",
+    "reason": "User requested lower flat lift plate and central portrait camera"
+  },
+  "input_sha256": {
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/model/scene.xml": "d153d69601cb4e248eb7485353455e37ee494d15241fc6fb947a5da37ed4ffc3",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/inputs/input_model.mjb": "f988c968f92fce98107a80d1521e374d928a46391b66ed2fd5f05775a1bec6e1",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/inputs/initial_state.npz": "0c86d2aae56cd3cfd13402e607049563e808702372c6df97e3aedb96a31e075d",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/down/inputs/initial_state.npz": "59aad8e4b1fd2fe5051141f4e9adbf664479cca91d15a7e9d8b7091ff7e9a213",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/sensor_catalog.json": "637c19cea659037bf2e74f038d8e86933b51dfd541935cabd0b86d13fcdda7e5",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/plant_17/assembly/composed.usdc": "de149d703e63be945ea536dafee2dbf8c63207ba5662fa86c00eee496b9b030f",
+    "/root/farmily_runtime/newton/assets/patrol_lower_plate_camera_20261110/up/plant_17/assembly/motion_manifest.json": "6a5eef8d89a770bc59d24f09dcc98adcbd30a23c458fc34d5f031578f8e57719"
+  },
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/upright_yaw_mount.py": "df6a78529f9d7aa73d74a034eb8b2131b987f1fbc3ee385e4168e2682fa60a57",
+    "nvidia-sim/harvest_s300/test_upright_yaw_mount.py": "8dfdcf469ab774d724cae1a9fe848a728e46491fbcf9557e022891414fd37151"
+  },
+  "videos": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_lower_plate_camera/lower_plate_lift_yaw_actual.mp4",
+      "sha256": "d3baccc1c2c1d53a5842acd9dbc90c81a1f46815046827ed10cf5891cc28b10e",
+      "actual_state_replay": true,
+      "render": {
+        "renderer_source_sha256": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313",
+        "actual_recorded_states": true,
+        "physics_steps_executed": 0,
+        "geometric_assumed_harvest": true,
+        "fps": 12,
+        "frames": 198,
+        "render_wall_s": 15.557307949988171,
+        "sources": [
+          "/root/farmily_runtime/newton/runs/20261110_lower_plate_camera/lift_yaw_gpu/step_000/physics/states.npz"
+        ],
+        "eye_offset": [
+          -1.0,
+          -1.1,
+          1.2
+        ],
+        "look_at_offset": [
+          0.0,
+          -0.1,
+          0.75
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Assumed plate and bracket dimensions; no structural strength/fastener verification",
+    "Camera housing remains visual-only with original uncalibrated ideal sensor semantics",
+    "New hardware full harvest patrol not qualified; only mount/FK, lift/yaw, rail and camera smoke trials",
+    "Observed red fruit count is not harvest success"
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

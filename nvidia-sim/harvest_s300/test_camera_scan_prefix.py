@@ -319,6 +319,20 @@ class ScanPanTests(unittest.TestCase):
                        dict(view='row-front',rail_axis_world=[0.,1.,.1])]:
             with self.assertRaises(ValueError):append_scan_pan(phases,metadata,self.Kinematics(),[-.5,1.55,1.3],mount,**kwargs)
 
+    def test_row_front_keeps_explicit_downward_pitch_without_relaxing_axis_check(self):
+        from scipy.spatial.transform import Rotation
+        phases,metadata,mount=self.fixture();kin=self.Kinematics()
+        mount[:3,:3]=mount[:3,:3]@Rotation.from_euler('x',-15,degrees=True).as_matrix()
+        with self.assertRaises(RuntimeError):
+            append_scan_pan(phases,metadata,kin,[-.5,1.55,1.3],mount,view='row-front')
+        _,result=append_scan_pan(phases,metadata,kin,[-.5,1.55,1.3],mount,
+            view='row-front',row_downward_pitch_deg=15.)
+        evidence=result['camera_scan']['physical_pan']
+        np.testing.assert_allclose(evidence['optical_forward_world_after'],
+            [-np.cos(np.pi/12),0,-np.sin(np.pi/12)],atol=1e-6)
+        self.assertEqual(evidence['optical_axis_goal_tolerance_rad'],1e-3)
+        self.assertFalse(evidence['camera_transform_edited'])
+
     def test_yaw_limits_and_invalid_inputs_fail_without_fake_alignment(self):
         phases,metadata,mount=self.fixture();kin=self.Kinematics()
         kin.bounds=kin.bounds.copy();kin.bounds[:,1]=[-.1,.1]

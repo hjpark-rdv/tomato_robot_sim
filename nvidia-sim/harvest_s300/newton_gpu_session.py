@@ -65,6 +65,83 @@ class _InitialBuffers:
             wp.copy(target, original)
 
 
+class NewtonGPUContinuationCache:
+    """Reuse upload buffers after independently verified measured continuation.
+
+    The existing reset cache remains strict and unchanged. Here reset is only
+    scratch-buffer initialization: the caller restores verified q/v/clock,
+    equality activity, damping and warmstart immediately before execution.
+    Keep at most one engine; a changed active-window MJB starts a fresh cache.
+    """
+    allow_verified_continuation = True
+
+    def __init__(self):
+        self.cache=None;self.identity=None;self.initial=None;self.kinematics_graph=None
+        self.deterministic_adapter=None
+        self.metadata_digests={}
+
+    def metadata_digest(self,file_digest,metadata,*,released_gutter_diagnostic):
+        # The caller verified immutable input bytes and only overlays this
+        # one runtime flag. Do not reserialize33MB of source geometry per hop.
+        key=(file_digest,bool(released_gutter_diagnostic))
+        if key not in self.metadata_digests:
+            self.metadata_digests[key]=_signature_digest(metadata)
+        return self.metadata_digests[key]
+
+    def acquire(self,signature,factory,initial):
+        if not signature.get('physical_model_sha256'):
+            raise ValueError('Continuation cache requires exact physical model SHA')
+        identity=_signature_digest(signature)
+        if identity!=self.identity:
+            self.close()
+            # The executor restores the measured state and runs kinematics
+            # afterwards. Computing it here on the scratch initial state is
+            # redundant (and switches Warp's deterministic module variant).
+            self.cache=NewtonGPUSessionCache(initialize_kinematics=False);self.identity=identity
+            self.kinematics_graph=None
+            self.initial={k:np.asarray(v).copy() for k,v in initial.items()}
+        for name in ('plant_preload','runtime_dof_length','actuator_kp','robot_qpos_addresses','actuator_ids'):
+            if name in initial and not np.array_equal(initial[name],self.initial[name]):
+                raise ValueError('Continuation cache fixed adapter field changed: '+name)
+        engine,evidence=self.cache.acquire(signature,factory,self.initial)
+        from newton_frozen_constraints import restore_frozen_connect_launch_list
+        # configure_frozen_connects still validates the entire source model,
+        # metadata and exact GPU launch arrays. Identical static metadata does
+        # not need a restore followed immediately by the same filtering.
+        evidence['frozen_connect_launch_list_restored']=(False if signature.get('frozen_connect_metadata_sha256')
+            else restore_frozen_connect_launch_list(engine.solver))
+        evidence.update(verified_continuation=True,measured_state_restored_by_executor=True,
+            persistent_solver_caches=False,scope='Model/GPU allocation reuse; scratch caches reset before exact measured state restoration')
+        return engine,evidence
+
+    def bounded_deterministic(self,solver,**options):
+        from newton_gpu_deterministic import BoundedDeterministicExecution,validate_features
+        validate_features(solver,allow_cg=options.get('allow_cg',False))
+        if self.deterministic_adapter is None:
+            self.deterministic_adapter=BoundedDeterministicExecution(solver,**options)
+        elif self.deterministic_adapter.solver is not solver:
+            raise ValueError('Deterministic adapter belongs to a different solver')
+        return self.deterministic_adapter
+
+    def close(self):
+        if self.deterministic_adapter is not None:
+            self.deterministic_adapter.close();self.deterministic_adapter=None
+
+    def kinematics(self,engine):
+        """Same native kernels, captured once, with no integrated time."""
+        if self.cache is None or engine is not self.cache.engine:
+            raise ValueError('Kinematics graph belongs to a different continuation model')
+        device=engine.model.device
+        if not device.is_cuda:
+            mw.kinematics(engine.solver.mjw_model,engine.solver.mjw_data)
+            return
+        if self.kinematics_graph is None:
+            with wp.ScopedCapture(device=device) as capture:
+                mw.kinematics(engine.solver.mjw_model,engine.solver.mjw_data)
+            self.kinematics_graph=capture.graph
+        wp.capture_launch(self.kinematics_graph)
+
+
 class NewtonGPUSessionCache:
     """Single-model in-process cache. Call ``acquire`` before every trial.
 
@@ -74,7 +151,8 @@ class NewtonGPUSessionCache:
     The factory is invoked once and must return an engine before stepping,
     capture or trial-specific callback installation.
     """
-    def __init__(self):
+    def __init__(self, *, initialize_kinematics=True):
+        self.initialize_kinematics=initialize_kinematics
         self.engine = None
         self._signature = None
         self._initial = None
@@ -142,7 +220,7 @@ class NewtonGPUSessionCache:
                 if not np.isfinite(value).all():
                     raise ValueError(f"Initial {name} contains nonfinite values")
                 target.assign(np.ascontiguousarray(value))
-            mw.kinematics(model, data)
+            if self.initialize_kinematics:mw.kinematics(model, data)
             wp.synchronize_device(engine.model.device)
         solver._step = 0
         self.acquisitions += 1

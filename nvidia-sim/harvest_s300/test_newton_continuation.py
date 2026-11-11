@@ -12,6 +12,33 @@ from newton_continuation import (file_sha256, model_identity, load_resume,
 
 
 class MeasuredContinuationTests(unittest.TestCase):
+    def test_readonly_json_reuses_parsing_but_rejects_changed_input_bytes(self):
+        path=self.root/'immutable.json';path.write_text('{"value": [1, 2]}')
+        scope=VerificationContext(scope='patrol')
+        first=scope.readonly_json(path)
+        self.assertIs(scope.readonly_json(path),first)
+        alias=self.root/'alias.json';alias.symlink_to(path)
+        self.assertIs(scope.readonly_json(alias),first)
+        path.write_text('{"value": [3, 4, 5]}')
+        with self.assertRaisesRegex(ValueError,'changed within scope'):scope.readonly_json(alias)
+
+    def test_online_camera_endpoint_preserves_exact_proposed_prefix(self):
+        full=dict(time=np.arange(30)/10.,dt=np.full(30,.1),command=np.zeros((30,2)),
+                  phase=np.full(30,'rail_transfer'),belt_surface_velocity_local_y_m_s=np.zeros((30,2)))
+        np.savez(self.parent/'proposed_commands.npz',**full)
+        prefix={k:v[:17] for k,v in full.items()}
+        np.savez(self.parent/'executed_commands.npz',**prefix)
+        self.summary['executed_commands_sha256']=file_sha256(self.parent/'executed_commands.npz')
+        self.summary['online_camera_boundary']=dict(completion_kind='online_observation_endpoint',
+            executed_steps=17,maximum_planned_steps=30,
+            proposed_commands_sha256=file_sha256(self.parent/'proposed_commands.npz'))
+        self.save();self.load()
+        prefix['command'][8,0]=.1
+        np.savez(self.parent/'executed_commands.npz',**prefix)
+        self.summary['executed_commands_sha256']=file_sha256(self.parent/'executed_commands.npz')
+        self.save()
+        with self.assertRaisesRegex(ValueError,'exact proposed prefix'):self.load()
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)

@@ -78,6 +78,31 @@ class ActiveWindowTests(unittest.TestCase):
         for field in ('geom_size','geom_pos','geom_quat','geom_friction','geom_contype','geom_conaffinity'):
             np.testing.assert_array_equal(getattr(m,field),getattr(self.model,field))
 
+    def test_ideal_mode_removes_all_plant_dofs_and_preserves_colliders_and_lifted_robot_state(self):
+        meta=json.loads((self.source/'source_export.json').read_text())
+        meta['geometric_harvest']=dict(mode='main_stem_only_geometric_harvest')
+        (self.source/'source_export.json').write_text(json.dumps(meta))
+        manifest=json.loads((self.source/'inputs.json').read_text())
+        manifest['input_files']['source_export.json']['sha256']=sha256(self.source/'source_export.json')
+        (self.source/'inputs.json').write_text(json.dumps(manifest))
+        proof=prepare(self.source,self.root/'static','22',freeze_all_plants=True)
+        self.assertEqual(proof['reduced_counts']['nv'],1)
+        self.assertTrue(proof['all_plants_static'])
+        self.assertEqual(proof['frozen_eq_solver_rows'],0)
+        self.assertEqual(len(proof['frozen_attachment_names']),3)
+        reduced=mj.MjModel.from_binary_path(str(self.root/'static/input_model.mjb'))
+        for field in ('geom_size','geom_pos','geom_quat','geom_friction','geom_contype','geom_conaffinity'):
+            np.testing.assert_array_equal(getattr(reduced,field),getattr(self.model,field))
+        terminal=dict(np.load(self.root/'static/initial_state.npz'))
+        terminal['qpos'][0]=.3;terminal['qvel'][0]=.02;terminal['time']=np.array([3.])
+        lifted,_=lift_state(self.source,self.root/'static',terminal)
+        self.assertEqual(lifted['qpos'][self.initial['robot_qpos_addresses'][0]],.3)
+        self.assertTrue(lifted['eq_active'].all())
+
+    def test_freezing_all_plants_is_not_available_in_physical_harvest_mode(self):
+        with self.assertRaisesRegex(ValueError,'explicit geometric'):
+            prepare(self.source,self.root/'reject_static','22',freeze_all_plants=True)
+
     def test_measured_snapshot_detached_free_fruit_and_lift(self):
         b={k:v.copy() for k,v in self.initial.items()}
         b['qpos'][self.model.joint('P27_bend').qposadr[0]]=.19

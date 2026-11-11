@@ -1,4 +1,181 @@
+## Independent camera patrol (2026-11-08)
+
+Current requested experiment: **main-stem obstacles + geometric harvest**.
+Fruit, rachis, pedicel, peduncle and foliage have no physical collision.
+Thick main-stem segments, robot self collision and structural obstacles remain.
+After actual goal arrival, every prepared fruit center inside the tool's
+96×158×48 mm inner region is marked collected, hidden in the viewer/camera,
+and excluded from subsequent selection. All colors inside this region count.
+This mode records assumed harvests separately from physical detachment.
+
+Measured headless task timing: the same nine collected fruit took 74.46s
+instead of 475.28s; initial preparation adds 15.26s. Pure GPU physics ran at
+3.66x. This includes an authorized static-plant approximation and changed
+path ordering. The longer five-motion / fifteen-fruit route still took
+275.49s because some targets exhausted IK/self-collision proposals; the whole
+route is not yet realtime. All recorded fields of thirteen executed segments
+matched the GUI run exactly, including camera orbit during physics.
+
+```bash
+cd /root/farmily_tomato
+./nvidia-sim/run_s300_newton.sh camera-patrol
+```
+
+Open `http://192.168.222.27:5905` (or forward port 5905 in VS Code), then click
+**순회 시작**. Physics waits for the browser to render. The right panel shows
+mounted-camera recognition from the latest stop. It is not a continuously
+streaming RGB camera during arm motion. The 3D robot/plant view follows actual
+GPU state throughout motion.
+
+The bounded entrance fixture is selected by `assets/patrol_current`. The loop
+starts at rail station 0, observes, advances at most 15 cm, observes again,
+selects an observed ripe group in the left bed, plans lift/arm movement,
+executes open-jaw insertion, a short capture hold and the existing retreat,
+and observes the remaining fruit. The same physical state and geometric
+collection ledger continue across segments. It stops
+at the configured route budget, trial budget, user Stop, or physical failure.
+A finite planning rejection is recorded, followed by bounded local view probes;
+it is not a declaration that the crop is impossible to harvest.
+The current ideal mode fixes all plant coordinates at verified poses and integrates
+only the original ten robot axes on the GPU. Thick-stem colliders remain unchanged.
+One immutable MJB is reused across segments with strict same-model measured-state
+continuation. A resident USD/IK adapter reuses robot geometry; plans are still new
+commands from the actual measured robot state. The last successful direction is
+tried first (initial -50 degree lateral preference from the saved baseline).
+The same finite 0/-25/+25/-50/+50 degree directions and three existing preparation
+connectors remain available; by default each view evaluates up to three proposals
+then obtains a bounded 5cm forward view if blocked. Use --proposals-per-view 15
+for the previous exhaustive per-view search. Unexamined proposals are recorded
+as unknown, not impossible.
+The ideal grasp depth is 15 mm behind the nose, the existing planner's minimum.
+
+```bash
+# No browser, otherwise the same camera/decision/physics loop.
+./nvidia-sim/run_s300_newton.sh camera-patrol --headless
+
+# A longer route requires source assets prepared for that route.
+./nvidia-sim/run_s300_newton.sh prepare-patrol /root/farmily_runtime/newton/assets/patrol_longer --end-station 1.5
+./nvidia-sim/run_s300_newton.sh camera-patrol /root/farmily_runtime/newton/assets/patrol_longer --max-harvests 6
+```
+
+`--max-harvests 6` limits attempted harvest motions; it does **not** guarantee
+six fully harvested trusses. `--step .1` uses 10 cm increments (maximum 20 cm).
+The validated default `--camera-scale .5` uses 240x320; `--camera-scale 1`
+uses the mounted 480x640 sensor. Results
+are new timestamped folders below `/root/farmily_runtime/newton/runs`; each
+contains decisions, visible RGB-D/GT observations, plans, actual state traces,
+contact/release records and the final summary. Large identical compiled model
+files are shared within each new run after SHA verification.
+
+`prepare-patrol` now prepares this ideal mode by default. To derive it from
+an existing prepared source without rebuilding the farm:
+
+```bash
+./nvidia-sim/run_s300_newton.sh prepare-geometric-patrol SOURCE_ASSETS NEW_ASSETS
+```
+
+Old prepared physical assets remain usable when passed explicitly. The source
+builder's `--physical-harvest` option retains the earlier contact/release mode.
+
+See [S300_NEWTON_CAMERA_PATROL_KO.md](S300_NEWTON_CAMERA_PATROL_KO.md) for measured
+results, current collision scope, and remaining limitations.
+
 # S300 농장 수확 · Newton 실행
+
+## 2026-11-08: Isaac 없이 실시간 브라우저 실행
+
+브랜치 `codex/s300-newton-standalone-20261108`. 기존 Newton GPU 실행기와
+명령·벨트·열매 분리·접촉 판정을 재사용한다. 물리는 Newton → MuJoCo Warp → CUDA,
+화면은 별도 Viser 프로세스가 실제 측정 상태를 읽어 표시한다. Isaac/Kit 실행,
+과거 trajectory 또는 NAS 결과 폴더가 필요하지 않다. MuJoCo 라이브러리는 솔버와
+모델/표시 형상 읽기에 여전히 사용한다. MuJoCo CPU로 전환한 구성이 아니다.
+
+현재 서버에서:
+
+```bash
+cd /root/farmily_tomato
+./nvidia-sim/run_s300_newton.sh standalone
+```
+
+브라우저에서 `http://192.168.222.27:8091` 또는 서버 내부 `http://localhost:8091`을
+열고 **시작 · 1배속**을 누른다. VS Code를 사용하면 8091 포트를 전달해도 된다.
+최초 화면 확인과 버튼 입력 전에는 물리가 0초에 머문다. 완료 후 **초기화 후 다시 실행**은
+같은 GPU 모델과 브라우저 장면을 유지하고 초기 상태에서 새로운 물리를 계산한다.
+연속 수확의 말단 상태 이어가기와 구분한다. **뷰어 닫기**로 종료한다.
+포트가 사용 중이면 `--viewer-port 8092`처럼 다른 포트를 지정한다.
+수정된 바닥 입력의 실제 반복2회는 같은 viewer PID/브라우저를 유지했고,
+두번째 GPU 모델 로딩0초·다음 실행 준비3.43초였다. 일반 모드 평균은0.964/0.966RTF
+(1배속 대기 포함), 최종 상태와 분리 이벤트는 화면 없는 실행과 같았다.
+
+```bash
+# 같은 GPU 입력, 화면 없이 최대 처리 속도
+./nvidia-sim/run_s300_newton.sh standalone --headless
+
+# 화면을 켠 최대 처리 속도 비교: 시작 버튼/1배속 대기 없이 실행
+./nvidia-sim/run_s300_newton.sh standalone --no-interactive-viewer
+
+# 상세 상태가 필요한 진단에만 선택
+./nvidia-sim/run_s300_newton.sh standalone --recording full
+```
+
+기본 `summary`는 매 스텝의 유한성·접촉 검사를 유지하면서 요약·분리 이벤트·최종 재시작
+상태만 저장한다. 한 번 실행에 약 0.5MB이며 MP4와 전체 trajectory는 만들지 않는다.
+장면/충돌 모델은 `/root/farmily_runtime/newton/assets/`, 실행 기록은 `runs/`에 분리했다.
+큰 모델 자산은 반복해서 생성할 필요가 없다. `assets/current`는 검증한
+`harvest_floor_20261108`을 가리킨다. NAS 경로가 들어 있는 옛 metadata는 실행 입력으로 읽지 않는다.
+
+새 설치의 표시 의존성과 원본 재구축 명령:
+
+```bash
+./nvidia-sim/setup_s300_newton.sh
+./nvidia-sim/setup_s300_newton.sh --viewer
+./nvidia-sim/run_s300_newton.sh prepare-standalone /root/farmily_runtime/newton/assets/my_scene
+./nvidia-sim/run_s300_newton.sh standalone /root/farmily_runtime/newton/assets/my_scene/inputs
+```
+
+재구축에는 기존 `.asset-venv`의 USD/FCL 계획 환경과 저장소의 원본 자산이 필요하다.
+로컬 full-house USD, 검토된 식물 배치, 줄기/송이 GLB, RB5 USD, 기존 그리퍼/리프트
+생성기를 사용한다. 사라진 S300 원래 snapshot 대신 저장소의 조립 GLB에서 정적 차체만
+복구했다. 로봇/도구 물리는 GLB의 멈춘 자세에서 복원하지 않는다. GLB 차체는 재질별로
+합쳐진 형상이므로 과거 부품별 차체 충돌 분할과의 완전한 동등성은 미검증이다.
+
+새 Plant22/Truss02, 133자유도, 기존 coarse4/열매 proxy, 접촉220Hz·이동60Hz로 검증했다.
+고정한 기존 정책은 belt stroke 구간의 지정 열매/꼭지 2mm, 그 외 감시 접촉1mm와
+분리 열매 예외다. 타깃 송이·자기 주줄기/로봇/거터/바닥을 충돌 대상으로 사용하며,
+주변 식물은 원형 그대로 표시하지만 충돌/탄성은 계산하지 않는다.
+
+| 수정된 바닥 모델의 실행 | sim 시간 | 물리 loop 시간 | 평균 RTF | 가장 느린 단계 |
+|---|---:|---:|---:|---:|
+| 화면 없음 |44.0002초|19.3158초|2.278|belt_finish 1.035|
+| Viser + 카메라 조작 |44.0002초|24.6068초|1.788|belt_finish 0.813|
+
+초기 준비는 각각6.94초/17.34초로 표와 별도이며 첫 설치/JIT 시간과 같지 않다.
+브라우저는 서버 GPU의 Chromium/Vulkan으로 검증했다. 소프트웨어 WebGL은 전체 농장에서
+크게 느렸으므로 브라우저 하드웨어 가속을 사용한다. GUI 접촉 구간까지 항상1배속을
+넘는 것은 아니다. 일반 모드는 물리 계산 사이에 1배속 대기 시간을 넣는다.
+
+두 새 실행의 **6,800스텝+초기 상태 전체**에서 qpos/qvel, 모든 body pose, 명령,
+접촉/힘/침투 지표, 솔버 반복 수와 분리 이벤트가 정확히 일치했다. 5알 분리는
+close 중3알, cycle_reclose 중1알, approach 중1알이다. 접근 중 분리와 포집 미검증을
+포함하므로 ‘정상 수확5알’이나 ‘송이 전체 수확’으로 집계하지 않는다.
+활성 감시 접촉의 최대 침투는0.9204mm다. `training_eligible=false`, `harvest_success=null`.
+
+첫 `harvest_20261108` 입력은 얇은 box 바닥 때문에 분리 과실3개가 바닥을 통과했다.
+기존 exporter의 `ground_collision=top-plane`을 사용해 같은 바닥 윗면에 무한 충돌평면을
+두고 시각적인 원래 바닥은 유지했다. 원래 입력/실패 결과는 보존했다. 다른 geom·관절·
+물성·제어·초기 상태는 동일함을 배열로 확인했다. 수정 후 모든 저장 스텝의 과실 중심은
+바닥 위에 남는다. 이 검사는 바닥 관통 후 무한 낙하에 대한 검사이며, 바닥 접촉 침투0이나
+실물 포집 성공의 증거가 아니다.
+
+RGB-D/GT 센서, ROS2, 카메라 판단으로 여러 송이를 연속 수확하는 기능은 이 독립 뷰어에
+아직 연결하지 않았다. 기존 카메라 장착 형상과 calibration metadata만 재구축했다.
+새 경로를 유리하게 찾거나 수확 알고리즘을 바꾸지 않고 기존 단일 진입 동작을 검증했다.
+검증 수치와 입력/코드 해시는 `validation/s300_newton_standalone_20261108.json`에 기록한다.
+
+Viser1.1.1 호환을 위해 WebSocket 전송 패키지를15.0.1로 고정했다. Newton1.7.0,
+MuJoCo/MuJoCoWarp3.15.0, Warp1.17.0 등 수치 계산 패키지는 변경하지 않았다.
+
+## 이전 실험 기록
 
 2026-10-17 솔버·식물 표현 비교는 [S300_NEWTON_SOLVER_COMPARISON_KO.md](S300_NEWTON_SOLVER_COMPARISON_KO.md)에 있다.
 원본을 보존한 opt-in `./nvidia-sim/run_s300_newton.sh gpu-fast --gui`는

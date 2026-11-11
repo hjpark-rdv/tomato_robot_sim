@@ -8,12 +8,13 @@ python="$venv_dir/bin/python"
 lock="$task_dir/newton-requirements.lock.txt"
 mode="${1:-install}"
 if [[ "$mode" == '--help' || "$mode" == '-h' ]]; then
-  printf '%s\n' 'Usage: setup_s300_newton.sh [--check]' \
+  printf '%s\n' 'Usage: setup_s300_newton.sh [--check|--viewer]' \
     'Installs pinned Newton 1.7 / MuJoCo+MJWarp 3.15 / Warp 1.17 into nvidia-sim/.newton-venv.' \
-    '--check only validates installed package versions and dependencies; it does not start CUDA or Isaac.'
+    '--check only validates installed package versions and dependencies; it does not start CUDA or Isaac.' \
+    '--viewer adds the optional Viser browser display to the existing pinned physics environment.'
   exit 0
 fi
-if [[ "$mode" != 'install' && "$mode" != '--check' ]]; then
+if [[ "$mode" != 'install' && "$mode" != '--check' && "$mode" != '--viewer' ]]; then
   printf 'Unknown setup mode: %s\n' "$mode" >&2
   exit 2
 fi
@@ -40,6 +41,9 @@ if [[ ! -x "$python" ]]; then
   printf 'Missing Newton runtime: %s\nRun %s first.\n' "$python" "$0" >&2
   exit 1
 fi
+if [[ "$mode" == '--viewer' ]]; then
+  env -u PYTHONPATH "$python" -m pip install -c "$lock" -r "$task_dir/newton-viewer-requirements.txt"
+fi
 env -u PYTHONPATH "$python" - "$lock" <<'PY'
 from importlib.metadata import version
 from pathlib import Path
@@ -61,4 +65,4 @@ print(json.dumps({'python': sys.executable, 'packages': installed,
                   'cuda_or_simulator_started': False}, indent=2))
 PY
 env -u PYTHONPATH "$python" -m pip check
-printf '%s\n' 'Newton physics runtime is ready. Isaac Sim remains an independent display process.'
+printf '%s\n' 'Newton physics runtime is ready. Display is independent (Isaac or optional Viser).'

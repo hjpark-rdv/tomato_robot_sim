@@ -83,6 +83,17 @@ class RowTargetTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'exactly one'):select_build_target(self.fruits,'Truss_19_Fruit_01')
         with self.assertRaisesRegex(ValueError,'exactly one'):select_build_target(self.fruits+[self.fruits[21]])
 
+    def test_build_reference_for_a_plant_without_truss02(self):
+        fruits=list(reversed(self.fruits[:20]))
+        before=list(fruits)
+        self.assertIs(select_build_target(fruits),self.fruits[0])
+        self.assertEqual(fruits,before)
+        with self.assertRaisesRegex(ValueError,'exactly one'):
+            select_build_target(fruits,'Truss_02_Fruit_02')
+        with self.assertRaisesRegex(ValueError,'exactly one'):select_build_target([])
+        with self.assertRaisesRegex(ValueError,'exactly one'):
+            select_build_target(fruits+[self.fruits[0]])
+
 
 class SingleBedSelectionTests(unittest.TestCase):
     def setUp(self):

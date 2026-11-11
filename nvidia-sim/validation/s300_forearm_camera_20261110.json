@@ -1,0 +1,185 @@
+{
+  "schema": "s300-distal-forearm-camera-relocation-v1",
+  "date": "2026-11-10",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "assets": "/root/farmily_runtime/newton/assets/patrol_forearm_camera_20261110",
+  "asset_configuration_sha256": "10d1ea906ca95c4d9e98fc2b6bab9679ee59c06888896f64e7557f59f0ac14ec",
+  "source_code_sha256": {
+    "nvidia-sim/harvest_s300/prepare_newton_patrol.py": "cab2efe025e6462ab8244771965223a3044bc5b7ec8d4a1320f82f9d21679b8f",
+    "nvidia-sim/harvest_s300/newton_mounted_camera.py": "8663b4b2b7d3ef070a8e97df39cde1da3b36446936a2885294a7e90e9555d4cd",
+    "nvidia-sim/harvest_s300/camera_scan_prefix.py": "8263adfcb59f47a13483e8ed1abb9564249b76db51b67a9090233dcc79d9433a",
+    "nvidia-sim/harvest_s300/camera_patrol_runner.py": "248179208c8e4d9c337d9c5c14cadd794c8367ea65a359565d77061c2d99427d",
+    "nvidia-sim/harvest_s300/test_newton_camera_patrol.py": "10b236020dbb337513e584f63ae06a6879a62345b519fa133d7629cbaec6dfb0"
+  },
+  "mount_preview": {
+    "source_measured_state": "/root/farmily_runtime/newton/runs/20261110_planner_read_guard_fix/headless_retry/step_003/physics/final_states.npz",
+    "source_state_sha256": "79488592f6ce439ca11d7d89d794888c699cf7aa8db1486f50b6ad97f256b68f",
+    "physical_model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+    "physics_steps_executed": 0,
+    "before": {
+      "body": "/World/HarvestRobot/Robot/link1",
+      "optical_world": [
+        [
+          -0.0007962155791513825,
+          -6.715441345228612e-07,
+          -0.9999996830201002,
+          -0.09594744044601546
+        ],
+        [
+          0.9999996830203257,
+          -5.346940668005118e-10,
+          -0.000796215579151216,
+          0.44422542385932456
+        ],
+        [
+          0.0,
+          -0.9999999999997746,
+          6.715443474081262e-07,
+          0.8759517752982552
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "visible_objects": 710,
+      "source_hashes": {
+        "visual_xml_sha256": "1fc5a50842d67316e5dcf8a37a6e3417f79df0cfdaae836a6530f52a354f9b4f",
+        "sensor_catalog_sha256": "9422c2a20f95c124c479c310a749a7b023f727092f4b5ab38f6a8ff77be36727",
+        "mounted_camera_sha256": "dc25c6ccd8dafd753cdbed15a9fa61c01ddfebce96b1ba69ecf1e3bc68dd4bf7"
+      }
+    },
+    "after": {
+      "body": "/World/HarvestRobot/Robot/link3",
+      "optical_world": [
+        [
+          -3.960687031128694e-11,
+          -6.387473908854992e-07,
+          -0.9999999999997964,
+          -0.09575149136331834
+        ],
+        [
+          0.999999999151238,
+          -4.120102081632678e-05,
+          -1.3289875523131477e-11,
+          0.19822543594103703
+        ],
+        [
+          -4.120102081629237e-05,
+          -0.9999999991510342,
+          6.387473919822126e-07,
+          0.9488188544991262
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "visible_objects": 367,
+      "source_hashes": {
+        "visual_xml_sha256": "d75c02cf92afd74757d6fe6107fd26933fb62e363ce563fddf2c18a842373758",
+        "sensor_catalog_sha256": "9422c2a20f95c124c479c310a749a7b023f727092f4b5ab38f6a8ff77be36727",
+        "mounted_camera_sha256": "10d1ea906ca95c4d9e98fc2b6bab9679ee59c06888896f64e7557f59f0ac14ec"
+      }
+    },
+    "second_measured_pose": {
+      "source": "/root/farmily_runtime/newton/runs/20261110_planner_read_guard_fix/headless_retry/step_004/physics/states.npz",
+      "state_index": 1914,
+      "world_translation_m": [
+        -0.29038036150733776,
+        0.5526328513559357,
+        0.8029170149042856
+      ],
+      "parent_frame_tracking_verified": true
+    }
+  },
+  "smoke_test": {
+    "status": "harvest_attempt_budget_exhausted",
+    "completed_harvest_motions": 1,
+    "assumed_harvest_count": 1,
+    "wall_s": 45.53829765797127,
+    "segments": [
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_000/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 0.0,
+        "states_sha256": "0e495d18a344385cc5b8287b0708af1aaacac8543aae2b3f75c982499b74b4eb"
+      },
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_001/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 0.0,
+        "states_sha256": "2884ef3b2a6cdb8675e813bd759f349ce8dcc3c1563a3c74c3401e36d45a59c4"
+      },
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_002/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 0.0,
+        "states_sha256": "7a095fbd1cf7cd0ab069dd62d9b7ff9e5e14fe3902b696f8502421da6716b99b"
+      },
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_003/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 0.0,
+        "states_sha256": "4a05e21d0a31690b3b76496b3e1d2fd982aa0787f4e4e87a818292471cc9b07e"
+      },
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_005/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 0.0,
+        "states_sha256": "5f437121a2a20ce969eb61a2b98c998a89dba3e588334b97dfa9d3f08bbcd3f1"
+      },
+      {
+        "path": "/root/farmily_runtime/newton/runs/20261110_forearm_camera/headless_smoke/step_006/physics/summary.json",
+        "status": "completed",
+        "stop": null,
+        "finite_all_steps": true,
+        "solver_capacity_valid": true,
+        "active_contact_criterion_passed": true,
+        "max_active_penetration_m": 1.621176488697529e-05,
+        "states_sha256": "9c04d1b502428c4342d3195dd7b997364cb6ac7fd6194a9959a08cf02df9ff54"
+      }
+    ]
+  },
+  "regressions": {
+    "camera_patrol": 10,
+    "camera_scan_prefix_and_integration_and_heading": 39,
+    "all_passed": true
+  },
+  "images": [
+    "/root/farmily_runtime/newton/runs/20261110_forearm_camera/mount_closeup.png",
+    "/root/farmily_runtime/newton/runs/20261110_forearm_camera/after/camera.png",
+    "/root/farmily_runtime/newton/runs/20261110_forearm_camera/before/camera.png"
+  ],
+  "limitations": [
+    "One-harvest-motion smoke test; no full-route performance claim.",
+    "Physical model and collision policy unchanged; harvest remains geometric credit.",
+    "Original USD planning assemblies retain a non-colliding old visual sensor; Newton render assets and optical calibration use the explicit relocated profile."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

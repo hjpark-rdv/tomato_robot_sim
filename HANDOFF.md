@@ -1,3 +1,90 @@
+## 2026-11-11 최신: 순회 시작 범위와 짧은 종점 감속 오류 수정
+
+- 사용자 마지막 명령 `camera-patrol --end-station 3.85 --max-harvests 1000 --max-decisions 10000`은 기본 자산이0.85m를 가리켜 START 뒤 실패했다. 기존3m 농장 자산에 이미 있는4그루/40열매 ID와64개 주줄기 collider를 추가 등록하여3.85m로 확장했다. 새 메시/식물 조인트0, 준비46.42초. `patrol_current` → `/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111`. 실제 실행 중 농장을 새로 변환하지 않는다.
+- `preflight_patrol`은 GUI 형상 로딩 전에 선택 가능한 up/down 구간을 확인한다. 잘못된 범위는0.46초에 실패하며 launch/summary에 원인을 남긴다. 모델/카메라 초기화 예외도 error.json에 기록한다. 시작 화면에 실제 순회 종점을 표시한다.
+- 새 GUI 검증에서0.8482916m 지점의 전체 주행 계획에1.708mm 잔여 구간이 생겨 기존 고정0.12m/s 경계속도로 정지할 수 없는 추가 오류를 발견했다. `cruise_route`는 남은 정지거리와 단계별 가속거리로 다음 경계속도를 제한한다. 속도0.12m/s·가속도0.3m/s²·카메라 관측 간격·충돌 규칙은 유지한다. 기록된 실패 위치와10µm 잔여 구간/1cm 이동 간격을 포함한 경계속도 연속성·단조 이동·속도/가속도 회귀33개 통과.
+- 원자료 `/root/farmily_runtime/newton/runs/20261111_route_start_fix`. 첫 주행의 별도 감속 실패는 `failed_tail_gui`에 보존했다. 새 GUI/GPU 전체 재실행은3.850217m 도착,19회 수확 동작/18송이에서126개 영역 수확, 모든 물리 구간 완료/활성 위반0/진입각 통과. 169.975sim초/360.310wall초(RTF0.472), 초기23.871초 별도. 실행 속도 전체를 개선한 작업이나 물리 분리 검증은 아니다. 새 headless 대조/엘보우 아래 전체 검증은 하지 않았다. 검증 `nvidia-sim/validation/s300_route_start_fix_20261111.json`, 최종 영상 `route385m_live.mp4`(실제 browser wall-clock,13px 자막), 실패 영상 `failed_tail_route385m_live.webm`.5905는 새3.85m 입구/시작 대기 상태로 재실행한다.
+- 실행: `./nvidia-sim/run_s300_newton.sh camera-patrol --end-station 3.85 --max-harvests 1000 --max-decisions 10000` (포트5905). 새 기본 자산의 등록 한도는3.85m이며 더 긴 구간은 기존 농장 재사용 `prepare-route`로 미리 등록한다. 수확 횟수 옵션을 생략하면 기존 기본6회 한도는 유지된다.
+
+## 2026-11-11 최신: 이동을 막지 않는 장면 선로딩
+
+## 2026-11-11 최신: 기존 농장 재사용3m 순회
+
+- 사용자 지적대로 불필요한 식물별 탄성 변환을 중단했다. `prepare-route` → `prepare_static_patrol_route.py`: 기존 전체 농장 메시·색상·배치/instance catalog 재사용, 추가7그루130열매 ID와112개 주줄기 capsule만 등록. 새 메시/식물 조인트0. 기존 로봇/카메라/1mm/진입±15도/84mm 영역 유지. 준비45.79초, 시각31,468형상/3,471메시의 초기 world 형상·색상 정확히 동일 확인.
+- 자산 `/root/farmily_runtime/newton/assets/patrol_reuse3m_20261111` (현재 기본 `patrol_current`0.85m는 유지). 실행: `./nvidia-sim/run_s300_newton.sh camera-patrol /root/farmily_runtime/newton/assets/patrol_reuse3m_20261111 --end-station 3 --max-harvests 1000 --max-decisions 1000`.
+- 실제 GUI/GPU 3.000205m 도착,16회 동작/15송이에서107개 영역 판정 수확. 전체 송이 완전 수확/물리 분리 증거 아님. 모든 물리 구간 완료/활성 위반0/진입각 통과. 138.06sim초/286.59wall초, 초기23.34초 별도. 실행의 경로·카메라 대기는 남음. 아래 자세3m 전체 및 새 GUI/headless 대조 미실시.
+- 포트5905 최종 화면 유지. `geometric_fruit_names`는 새 물리 attachment 없이 정적 열매를 수확/숨김하는 목록이며 `fruit_catalog`와 기존 robot assembly를 구분한다. 회귀30개, row target12개 통과. 검증 `nvidia-sim/validation/s300_reused_farm_3m_20261111.json`, 원자료 `/root/farmily_runtime/newton/runs/20261111_patrol_3m`, 영상 `route3m_live.mp4`(wall-clock, 작은 자막). 중단된 예전 전체 변환 `/root/farmily_runtime/newton/assets/patrol_route3m_20261111`는 보존하되 사용하지 않는다.
+
+
+- 사용자 요청은 다음 구간 선로딩 때문에 별도로 기다리지 않도록 하는 것이다. `newton_scene_chunks.py`에서 오프라인 구간 파일을 만들고 `newton_scene_stream.py`가 별도 프로세스에서 다음 카메라 GPU 모델·BVH·첫 렌더를 준비한다. 현재 장면만 최초 준비 장벽이며 다음 장면을 기다린 뒤 출발하지 않는다. 구간 경계에서 READY만 확인하고, 미완료면 기존 장면의 유효 겹침 범위를 사용한다. 범위를 소진하면 명시적 오류이며 가짜 관측/충돌 생략으로 진행하지 않는다.
+- GUI 정적 장면도 별도 스레드에서 준비한다. 전환은 표시 토글뿐이고, 이전 메시 삭제/GPU 프로세스 join은 백그라운드에서 한다. 현재/다음 두 worker로 제한하고 기존 물리 적분·실측 상태·수확 ledger를 그대로 유지한다. 내용이 같은 구간은 GPU 모델을 재사용한다.
+- `patrol_current` → `/root/farmily_runtime/newton/assets/patrol_prefetch_20261111`. 기존 up/down 모델·초기 상태·물성·충돌 정책을 symlink로 그대로 공유하고 시각 구간 파일만 추가했다. `camera-patrol`의 기본 `--scene-loading auto`가 이를 사용한다. `--scene-loading full`은 비교 기준, `prepare-scene-stream PROFILE PROFILE/scene_stream`은 새 자산의 일회성 변환이다. 현재5m 농장은 센서 범위 안에 전부 들어가서 기본 시각 geom31,468개를 줄이지 않았다.
+- 실제 선로딩 부하 시험은30cm 구간에서 `--scene-reload-identical`로 동일 내용 재사용을 의도적으로 끄고 수행했다. 다음 GPU 장면 준비8.5~8.7초를 기존 실행과 겹쳤고, 최종 GUI 두 번의 전환0.31/0.47ms·로딩 대기0초·coverage miss0이었다. 입구0..0.85m에서5회 진입/33개 영역 수확, 전체15개 물리 구간 상태·접촉·명령과24회 RGB·depth·mask·관측이 전체 장면 기준 및 GUI/headless에서 정확히 같다. 실제 열매 분리나6송이 전체 수확이 아니다.
+- 37개 회귀 통과. 단위 시험에 늦은 preload 비차단, GPU만 준비되고 파일이 미완료인 경우, 이전 장면 정리 지연, 유효 범위 소진, 실제 카메라 위치 이탈, 원본 변경 검출, 먼 식물10→100개 증가 시 첫 구간4개 유지 등을 포함했다. 초기 catalog의 미라벨 형상0 ID 검증 오류는 원자료를 보존하고 수정했다.
+- 기본 headless는 초기 준비15.60→11.88초(카메라12.73→8.97초). 로딩 후 전체는54.46→55.39초/42.77sim초로 거의 같다. **경로 검사/기록/관측의 기존 정지는 미해결**이며 전체 실행 가속이나 무지연을 달성했다고 보고하지 않는다. 시각 선로딩만 구현했고 대규모 물리 창 이동/기존0.85m를 넘는 전체 레일 수확은 이번 범위가 아니다. 오프라인 최초 변환은 여전히 원본 전체를 읽는다.
+- 원자료 `/root/farmily_runtime/newton/runs/20261111_scene_prefetch`, 검증 `nvidia-sim/validation/s300_scene_prefetch_20261111.json`. 영상 `prefetch_final_live.mp4`와 정리 스레드 개선 전 `prefetch_live.mp4`는 모두 실제 브라우저 wall-clock 녹화이며 기존 계획 대기를 포함한다(13px 자막). 이전 미커밋 작업·데이터 보존. 새 커밋/푸시는 요청되지 않았다. 검증용5907은 시험 후 종료했고, 기존 사용자5905 실행은 중단하지 않았다.
+
+## 2026-11-11 이전: 이동 중 관측·짧은 수확 동작·GUI 일정 배속
+
+- 사용자 요청은 주행의 반복 정지와 수확 시작 지연 제거다. 기본 `camera-patrol --motion-profile fluid`로 변경했다. 이동 중 실제 장착 카메라를 약15cm 간격으로 확인하며, 중간 관측마다 속도를0으로 내리지 않는다. 관측이 수확/정밀 확인을 요구하면 측정 상태에서 감속하고 정차 시야를 다시 확인한다. 실제 GPU 명령으로 움직이며 좌표를 순간이동하거나 화면만 이어 붙이지 않는다.
+- 기존 IK 경로의 이동량에 맞춰 시간을 정하고 반복 대기/복귀 후 닫기를 제거했다. 그리퍼는 수확 사이에 열린 상태를 유지한다. 1회 기존24.35초→이번5.62~6.85초. 주행 명령 최대0.12m/s·가속도0.3m/s²는 시뮬레이션용 한도이며 실제 RB5/기체 안전 한도의 증거는 아니다. `--motion-profile legacy`는 기존 타이밍이다.
+- GPU 엔진/kinematics CUDA graph/고정 deterministic adapter/검증된 정적 metadata를 재사용한다. 동일 명령의 기존5개 구간은 최적화 전후 모든 물리 상태·접촉 배열이 완전히 같다. 동적 관측 종단은 원래 전체 계획과 실행된 정확한 prefix를 함께 저장하고 다음 구간에서 검증한다. GUI는 기본1배속·30Hz 목표, `--display-rate 0`은 최대 처리량이다. batch는 GUI/headless 공통2로 설정한다.
+- 확대84mm 영역/촘촘한 송이/주줄기 충돌/±15도/엘보우 위/1mm 기준을 그대로 두고 입구0..0.85m에서5회 동작·33개 영역 수확을 확인했다. 실제 과실 분리나6송이 전체 수확은 아니다. 새 headless와 카메라 회전/확대를 포함한 새 GUI의 전체15개 구간 상태·접촉·수확 처리가 배열 단위로 같다.
+- **무지연 목표는 아직 완전히 충족하지 않았다.** 정상 구간 연결도 준비·기록·관측·계획 시간이 남고, 충돌 경로를 여러 개 검사할 때 기존 GUI 검증에서는 최대6.84초 멈췄다. 초기 camera/model 준비 약16초, 첫 GPU 준비 약6초도 별도다. 깨끗한 headless는42.771sim초/54.727wall초(RTF0.782, 최초 준비 별도). 수확 타이밍을 줄여 총 작업 시간을 줄인 것이므로 예전 긴 타이밍의 RTF와 직접 엔진 가속률로 비교하지 않는다.
+- 실제 기록 영상은 `/root/farmily_runtime/newton/runs/20261110_fluid_patrol/fluid_harvest_actual.mp4`, 검증은 `nvidia-sim/validation/s300_fluid_patrol_20261111.json`이다. 영상은1배속 시뮬레이션 시간이며 wall-clock 계획 대기는 포함하지 않는다. 테스트88개 고유 항목 통과, plan adapter6통과/2환경skip. `patrol_current`는 기존84mm 자산 그대로,5905는 새 코드의 시작 대기 화면으로 교체한다. 이전 미커밋 작업 보존, 새 커밋/푸시는 요청되지 않았다.
+
+## 2026-11-10 최신: 수확 영역 높이48→84mm
+
+- 사용자 녹색 표시처럼 롤러 끝 캡까지 포함하도록 실제 영역 판정을 확장했다. CAD 캡 범위는 Tool_fixed Z=-4..79mm, 새 박스는 X=-48..48/Y=0..158/Z=-5..79mm, 크기96×158×84mm다. 기존37mm 높이 중심을 유지한다. 화면 노란 박스/저장 영상 박스/카메라 집단 선택/실측 도달 위치의 열매 중심 판정이 같은 선언 범위를 사용한다.
+- `HarvestGroupSelector`는 명시한 `tool_height_interval_m`을 사용한다. Newton 영역 모드에서 현재 자산의 선언값을 전달하며 기존 물리 수확 선택기의 기본13..61mm는 유지한다. 이전 자산·기록도 선언한48mm 박스로 재생/재시험할 수 있게 `volume_bounds`를 사용한다.
+- 새 자산 `/root/farmily_runtime/newton/assets/patrol_capture_height84_20261110`으로 `patrol_current`를 교체했다. `newton_geometric_harvest.py SOURCE OUTPUT --volume-only`는 검증한 물리 파일을 공유하고 영역 메타데이터/서명만 새로 만든다. 두 엘보우 모드의 MJB/XML/초기 상태/명령 바이트가 직전 촘촘한 송이 자산과 정확히 같다. 농장/로봇/충돌체/접촉 기준은 바꾸지 않았다.
+- 새 GPU 샘플2회 진입/13개 영역 수확 정상 완료, 그중7개가 이전 Z=13..61mm 바깥에 있어 확대 영역의 실제 적용을 확인했다. 6개 물리 구간 모두 유한 상태/버퍼/접촉 검사 통과, 활성 관통0mm다. 시뮬레이션62.343초/로딩 후 전체42.942초(RTF1.452)이며 실제 물리 열매 분리 증거는 아니다.
+- 관련 회귀66개 통과. asset Python에서 선택/카메라45개, native Python에서 영역/GPU 순회21개를 검사했다. 최초 잘못 묶은 native 환경에서는 USD `pxr` 부재로3개가 실패했으며 올바른 두 환경으로 전부 재검증했다. 원자료 `/root/farmily_runtime/newton/runs/20261110_capture_height84`, 검증 `nvidia-sim/validation/s300_capture_height84_20261110.json`, 실제1배속/13px 영상 `height84_harvest_actual.mp4`다.5905는 새 박스의 시작 대기 화면으로 재실행한다.
+
+## 2026-11-10 최신: 방울토마토 송이를 촘촘하게 수정
+
+- `dense_cherry_v1`을 새 농장 생성의 기본으로 적용했다. 전체 68그루/106송이/1,060개 열매를 다시 구성했다. 열매 지름 약20~27mm·형상·색·ID는 유지하고 송이 안 배치를 압축한다. 실제 삼각형 표면의 최근접 간격은2.30~5.46mm이며, 모든 열매 쌍의 겹침이 없다. 대표 직선 송이의 열매 중심 높이 범위190.07→127.22mm, 중심줄기251.37→162.95mm, 주줄기 연결가지109.66→76.76mm다. 주줄기·잎 템플릿은 정점/면/색이 원본과 정확히 같다.
+- 원본 GLB에 덮어쓰지 않고 `dense_truss.py`에서 열매/꽃받침을 강체 이동하고 연결 가지의 중심선을 함께 옮긴다. `latest_farm.build_latest(..., truss_profile='reviewed_original')`로 이전 형상도 새로 생성할 수 있다. `prepare_dense_patrol.py`는 기존 생성기/변환기를 연결하며, 중단된 plant19 압축은 보존 후 재생성하고 완료된17/18단계를 SHA 검증해 재사용했다.
+- 현재 자산은 `/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol`이며 `patrol_current`를 이곳으로 교체했다. 낮춘 평판 리프트/70mm gripper inset/손목 위 세로 하향15도 카메라/두 엘보우 모드/주줄기만 충돌/1mm/1024버퍼를 유지했다. 활성90개 열매의 manifest·native·visual 중심 오차는 최대4.41e-12m이며 전체1,060개 GT ID/숙도 색이 같다.
+- 새 모델로 입구부터 실제 Newton GPU·장착 카메라 시험: 2그루의3송이를 대상으로6회 진입/21개 영역 수확,16개 물리 구간·22,273상태 정상 완료, 활성 관통0mm, 최대 후보572/1024. 시뮬레이션175.223초/촬영·계획·저장 포함114.755초(RTF1.527), 최초 준비15.716초 별도다. 다른 작업량인 이전6회 시험과 직접 속도 향상 비교하지 않는다. 기존 영역 수확 정책의 결과이며 실제 과실 분리/송이 전체 완료를 뜻하지 않는다.
+- 시험 중4회15개 뒤 낮은 기억 송이가 현재 카메라에 안 보일 때 동일 정차 촬영을 반복하는 Newton 연결 누락을 발견했다. 기존 native 실행기의 `record_local_failure` 처리와 같은 정책으로 새 관측 실패를 기록하고,5cm 전진 재관측/2개 실제 시점 후 유한 보류한다. 해당 송이를 지우거나 수확 처리하지 않는다. 수정 전 진단은 의도적으로 종료하고 원본·중단 사유를 보존했다. 수정 후 독립 재시험에서 다음 그루 수확까지 완료했으며, 수정 개입 이전11개 물리 구간의 모든 상태 배열이 진단과 정확히 같다.
+- 회귀56개 중55통과/구형 상판 카메라1skip. 검증 `nvidia-sim/validation/s300_dense_trusses_20261110.json`, 원자료 `/root/farmily_runtime/newton/runs/20261110_dense_trusses`. 영상 `dense_trusses_harvest_actual.mp4`는 새 측정 상태의1배속/13px 자막이며 PIP는 시각을 표기한 직전 정차 관측이다.5905는 새 모델의 시작 대기 화면으로 실행한다. 기존 미커밋 변경을 보존했고 이번 요청에서는 커밋/푸시하지 않았다.
+
+## 2026-11-10 최신 수정: 연속 수확 5번째 GPU 후보 버퍼 초과
+
+- 사용자 5905 실행은 4회/12개 영역 수확 뒤 5번째 준비 구간에서 `solver_capacity_overflow`로 중단됐다. 순회 실행기가 `nconmax=256`을 고정했고, broadphase 후보가 257개부터 초과했다. 실제 접촉은 최대 1개이며 활성 관통 초과는 없었다. 원본 `20261110_roller_projection/gui_preview`의 중단과 상태를 보존했다.
+- 순회 기본 `--nconmax`를 1024로 수정했다(`--njmax` 1024 유지). 접촉 후보도 같은 버퍼를 쓰므로 실제 접촉 개수만으로 용량을 정하면 안 된다. 실행 요약에 후보/접촉/제약 최대치와 각 버퍼 한도를 추가했다. 물리 모델·충돌 정책·1mm·솔버·시간 간격은 그대로다.
+- 원래 실패 008구간을 직전 정상 007말단에서 독립 재검증했다. 수정 전 유효 prefix 394상태가 완전히 같고, 전체 완료/후보 최대 310이다. 새 입구부터 headless/GUI 각각 6회·18개 영역 수확(2송이 대상), 전체 10구간 완료/활성 관통 0mm/최대 후보 639를 확인했다. GUI 카메라 회전·확대 5회 포함, 두 실행의 전체 상태·접촉 metrics·수확 처리가 배열 단위로 같다. 6송이 수확이나 실물 분리는 아니다.
+- 회귀 18개 통과. 원자료 `/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix`, 검증 `nvidia-sim/validation/s300_patrol_capacity_fix_20261110.json`. 정상 5·6번째 실제 영상은 `fifth_sixth_harvest_fixed_actual.mp4`다. 5905는 수정된 시작 대기 화면으로 재실행했다. 더 큰 모델의 무조건 성공을 보장하지 않으며 기존 overflow 중단 검사는 유지한다.
+
+## 2026-11-10 이전 샘플 수확: 보정한 그리퍼로 첫 진입 완주
+
+- `patrol_roller_projection_20261110`의 엘보우 위 시작 상태에서 새 Newton GPU/장착 카메라 순회를 실행했다. 입구0→0.15→0.30→0.45m 이동 후 Plant17/Truss02 첫 수확 동작1회와 복귀를 완료했다. 기존 영역 수확 규칙으로 Fruit01/02 두 개를 처리했으며 실제 열매 분리는 아니다.
+- 5개 물리 구간 모두 완료, 활성 관통0mm, 유한 상태·버퍼·실제 진입각/엘보우 조건 통과. 목표 위치오차0.0198mm, 최대 진입 yaw0.00793도. 원래 주줄기/로봇 충돌과1mm 기준을 유지했다.
+- 시뮬레이션37.99초 / 촬영·계획·저장을 포함한 실행32.85초(RTF1.16), 초기 준비15.79초 별도. GPU 계산만7.19초(RTF5.29), 수확 구간24.35초/계산3.33초(RTF7.32). 접촉 수확·전체 레일 성능으로 일반화하지 않는다.
+- 원자료 `/root/farmily_runtime/newton/runs/20261110_roller_harvest_sample/up`, 검증 `nvidia-sim/validation/s300_roller_harvest_sample_20261110.json`. 영상은 상위 폴더의 `entrance_to_harvest_actual.mp4`와 `harvest_closeup_actual.mp4`이며 동일 실제 상태의1배속 재생이다. 카메라 PIP는 표기된 직전 정차 관측이다. 시각 확인용5905 미리보기는 별도로 유지했다.
+
+## 2026-11-10 최신 Newton 형상: 롤러 돌출 위치 보정
+
+- 사용자가 직전 120mm 후퇴가 과하다고 수정 요청하여, 그 위치에서 그리퍼 전체를 **앞으로 50mm** 보정했다. 원래 기준 inset은 70mm, flange/tool 원점 수평 간격은 80mm다. 90도 어댑터 연결판·조인트·충돌체·질량도 함께 재생성했다. 손목 위 세로/하향15도 카메라의 고정 변환과 낮춘 평판은 유지했다.
+- `patrol_current` → `/root/farmily_runtime/newton/assets/patrol_roller_projection_20261110`. 포트5905 시작 전 미리보기를 새 모델로 다시 띄웠다. 두 엘보우 모드·개폐·손목±15도 검사10통과/구형 카메라1skip, 기존 대비 정확히 tool +Y 50mm 이동 및 카메라 extrinsic 불변 확인.
+- 새 GPU 리프트/손목 시험16.50초 완주, RTF3.72, 활성 관통0mm. 전체 수확 순회를 재검증한 결과는 아니다. 원자료 `/root/farmily_runtime/newton/runs/20261110_roller_projection`, 검증 `nvidia-sim/validation/s300_roller_projection_20261110.json`. 이전 모델·미커밋 변경 보존.
+
+## 2026-11-10 이전 Newton 형상: 안으로 당긴 그리퍼·손목 위 카메라
+
+- 그리퍼 전체를 손목 쪽으로 120mm 이동했다. 고정 90도 어댑터를 유지하면서 수평 flange/tool 간격 150→30mm, 모든 tool body/joint/collider 및 어댑터 질량을 함께 갱신했다. 낮춘 평판 상판은 그대로다.
+- 카메라는 상판에서 손목 link5의 상단 cap 위로 옮겨 세로·하향 15도로 고정했다. 실제 하우징 최하단 기준으로 받침 높이를 맞췄다. 위/아래 모드는 동일 extrinsic이며 아래 모드 카메라 정렬은 실제 base pan으로 수행한다. 정면 보정에 명시적 하향 목표각을 추가하고 원래 광축 오차 검사를 유지했다.
+- 현재 `patrol_current` → `patrol_inset_wrist_camera_v3_20261110`. 5905에 새 시작 전 미리보기를 띄웠다. CAD/FK 10통과·구형 카메라 검사1skip, pan18/보정27시험 통과. 새 GPU 리프트/손목 및 레일 이동 2회 완주·활성 관통0mm, 카메라 익음 proxy 빨강43개 관측. 수확 실적이나 전체 순회 완료를 뜻하지 않는다.
+- 원자료 `/root/farmily_runtime/newton/runs/20261110_inset_wrist_camera`, 검증 `nvidia-sim/validation/s300_inset_wrist_camera_20261110.json`. 이전 모델·중간 오류/진단 자료 및 미커밋 작업 보존. 새 commit/push 요청은 없었다.
+
+## 2026-11-10 이전 Newton 형상: 낮춘 상판·중앙 카메라
+
+- 브랜치 `codex/s300-newton-standalone-20261108`. 기존 미커밋 작업과 결과를 보존했다. 사용자가 지정한 낮은 위치로 상판/수직 RB5를 300mm 내려 삼각 cantilever를 없애고 660×230.5×10mm 가정 평판을 적용했다. 이동 조인트·충돌체·질량/관성 추정도 같은 형상으로 변경했다.
+- 이전에 요청한 손목 고정 90도 브래킷과 위/아래 시작 모드를 유지한다. 카메라는 팔에서 분리하여 낮춘 상판의 작물 쪽 변 중앙에 세로로 고정했다. RGB-D/GT 광학 프레임과 실제 시각 장착을 함께 바꿨다.
+- 기본 `patrol_current` → `patrol_lower_plate_camera_20261110`. 실행 `./nvidia-sim/run_s300_newton.sh camera-patrol`, 포트 5905. 새 GUI는 시작 전 미리보기 상태로 띄웠다.
+- 8개 CAD/FK 회귀 통과. 새 GPU 리프트/손목 시험 16.50초·RTF3.72, 별도 리프트/레일 촬영 이동 14.50초·RTF3.87, 모두 활성 관통 0mm. 새 촬영 위치에서 익음 proxy 빨강 30개 관측·로봇 자체 가림 0픽셀. 전체 수확 순회 완료나 실물 분리 성공의 증거가 아니다.
+- 상세 `nvidia-sim/S300_NEWTON_CAMERA_PATROL_KO.md`, 검증 `nvidia-sim/validation/s300_lower_plate_camera_20261110.json`, 원자료 `/root/farmily_runtime/newton/runs/20261110_lower_plate_camera`. 최신 요청은 형상 수정이며 이번 변경을 새 commit/push하지 않았다.
+
 ## 2026-11-08 커밋·푸시용 작업 상태 보존
 
 - 사용자가 지금까지의 작업 전체를 커밋·푸시하도록 요청했다. 현재 브랜치는 `codex/s300-side-mount-patrol-20261023`이며 카메라 순회·수확, 측정 상태 재개, 웹 PIP·구간 선로딩, 관련 회귀시험과 검증 문서를 함께 보존한다.
@@ -1946,3 +2033,42 @@ cd /root/farmily_tomato
 ## 다중 토마토 RGB-D 진입각 학습 완료
 
 데이터10대상×30경로/710관측(05없음). 8대상 학습,09검증,06테스트로 분리. 진입 BCE만 학습하며 밀림 감점 제거. DINOv2 seed2 선택,06의64시점 모두−81.09° 후보00001 추천. 고유 경로1개 새 물리 실행에서 중심진입 성공(밀림30.78mm). action_only도동일 top1성공으로 영상 우위 미입증. 전체 후보 확률 calibration 불량(Brier약0.315). 상세/명령: [learning/MULTI_TOMATO.md](mujoco-benchmark/learning/MULTI_TOMATO.md). 결과 `/root/docker_share/mujoko_debugging_data/20260922_234403_multi_tomato_training/index.html`. 초기 요청 커밋3f636c2 이후 학습기 확장 작업.
+## 2026-11-08 Newton 독립 실행 · 새 로컬 장면 검증
+
+- 새 브랜치 `codex/s300-newton-standalone-20261108`, 출발 `f984e6ecf918fb939e073afa79a6f9f1f6f84dda`. 기존 미커밋 변경 없는 상태에서 시작했다. NAS 결과/영상 복구가 선행조건이 아니라는 사용자 정정에 따라 로컬 원본과 기존 빌더로 새 장면·명령을 만들었다. 잃어버린 물리 말단의 연속 재개가 아니다.
+- 기본 실행 `nvidia-sim/run_s300_newton.sh standalone`, 브라우저 `http://192.168.222.27:8091`. Newton GPU 기존 실행기와 별도 Viser 실측 상태 소비자이며 Isaac/Kit 없이 실행한다. 첫 렌더와 시작 버튼 전에는 t=0; 완료 후 동일 GPU 모델/브라우저에서 초기화 후 재시험 가능. 기본 summary는 약0.5MB/실행, 전체 trace/영상은 필요조건이 아니다.
+- 자산은 `/root/farmily_runtime/newton/assets/`, 실행은 `runs/`. 기본 `assets/current`는 `harvest_floor_20261108`을 가리킨다. 원본 농장/식물 GLB·USD와 RB5/그리퍼/측면 리프트 빌더를 재사용했다. 원래 S300 snapshot을 대신해 체크인된 조립 GLB의 정적 차체만 추출했으므로 과거 차체 부품별 충돌체와의 동일성은 미검증이다.
+- 같은 새 입력으로 headless/Viser 실제 GPU 실행44.0002초를 각각19.3158초(RTF2.278),24.6068초(RTF1.788)에 완주했다. GUI 카메라 이동 중에도6,800스텝 전체 qpos/qvel/pose/명령/접촉·힘/연결해제·솔버 반복이 정확히 같다. GUI 최저 단계는 belt_finish0.813RTF이므로 모든 구간 실시간 해결로 해석하지 않는다.
+- 최초 source-box 바닥 입력에서 분리 과실3개가 바닥을 관통해 무한 낙하했다. 그 결과는 보존하고 정상 환경 판정에서 제외했다. 기존 top-plane 옵션으로 같은 바닥 윗면에 무한 충돌평면을 두고 시각적인 바닥은 보존했다. 다른 geom/물성/관절/명령/초기 상태 불변을 확인했다. 수정본의6,801개 저장 상태에서 과실 중심이 바닥 아래로 이탈하지 않았다. 원래 바닥과 완전히 같은 충돌 표현이라고 주장하지 않는다.
+- 수정본5알 분리: close3/cycle_reclose1/approach1. 접근 중 우발 분리와 포집 미검증을 포함하므로 수확5알·송이 전체 완료로 세지 않는다. 활성 최대침투0.9204mm, finite/capacity PASS. 기존 coarse4/열매proxy,220/60Hz, 지정 belt stroke2mm/그 외 감시1mm 및 분리 과실 예외 유지. 타깃 송이·주줄기 중심의 충돌범위이고 주변 농장은 시각 표현이다.
+- 수정본으로 브라우저 시작/반복 실제2회가 각각RTF0.964/0.966에 완주했다(1배속 대기 포함). 같은 viewer PID/브라우저, 두번째 model load0초·준비3.43초, 최종 상태와 분리 이벤트가 headless와 동일. 종료 버튼 정리도 확인했다.
+- 오프라인 Newton/viewer/launcher46시험, 실제 측면장착+GLB복구9시험, 기존 바닥/농장adapter8시험 모두통과. 물리 패키지 Newton1.7/MuJoCo3.15/MJWarp3.15/Warp1.17 유지. Viser1.1.1을 위해 전송패키지websockets만15.0.1로 호환 고정했으며 설치 검사 통과.
+- 아직 독립 뷰어의 RGB-D/GT·ROS2·카메라 기반 여러 송이 연속 수확은 연결하지 않았다. 기존 카메라 장착과 calibration은 자산에 보존했다. 단일 송이 새 물리 실행/표시/반복의 이식 검증 범위이며 `training_eligible=false`, `harvest_success=null`.
+- 실행 안내: `nvidia-sim/S300_NEWTON.md` 첫 절. 작은 근거: `nvidia-sim/validation/s300_newton_standalone_20261108.json`. MP4를 새로 만들지 않았고 실시간 확인용 스크린샷은 `runs/newton_live_ready.png`, `runs/newton_live_finished.png`다.
+
+## 2026-11-08 — Newton mounted-camera entrance patrol
+
+- New launcher: `./nvidia-sim/run_s300_newton.sh camera-patrol` (Viser 5905, waits for browser Start) or `--headless`; native GPU physics and Newton GPU RGB-D/SIM-GT camera, no Isaac/Kit. Starts at rail entrance 0m, left bed, 15cm increments (max20cm), default validated camera 240x320. Reuses existing CameraPatrol/CameraRegionSelector, plan_adapter, GPU runner and strict measured window continuation.
+- Detailed commands, scope and measured outcomes: `nvidia-sim/S300_NEWTON_CAMERA_PATROL_KO.md`. Local sources/results are under `/root/farmily_runtime/newton`; deleted NAS recordings are not dependencies.
+- First valid cycle: approach/harvest/withdraw completed, 3 releases, max penetration0.905mm. Release phases include preparation and withdrawal; this is not three verified belt-only collections. Fresh-process versus retained-engine movement and GUI versus headless harvest traces matched every saved field exactly.
+- Repeated second attempt reached a return-path collision (Tool_R versus another truss peduncle,1.456mm) and stopped; it is not counted as a completed harvest. Physical failure never triggers a reset-and-continue disguised as continuous harvesting. Failed planning has finite recorded alternatives/probes.
+- Prepared plant assets retain every truss of each plant. Active plant flexible, other prepared plants static obstacles, released fruit dynamic; outside prepared route plants visual only. This is more work than the old single-truss133-DOF benchmark. End-to-end patrol is NOT yet realtime: model preparation/verification/planning transitions still dominate.
+- Existing uncommitted standalone implementation and old results preserved. Newly generated identical MJB/XML are SHA-verified and shared inside each new run. `training_eligible=false`, `harvest_success=null` remain.
+
+## 2026-11-08 — user-authorized main-stem-only geometric harvest
+
+- Latest user rule overrides the earlier plant-contact policy: fruit and all thin plant/truss geometry have zero collision masks; only thick `Stem_MainStem_*` segments remain plant obstacles. Robot self/structure collisions remain. After actual goal arrival, every fruit center in the existing open-jaw 96×158×48mm region is assumed harvested, regardless of color. Physical attachment breakage is disabled in this explicit mode; no physical harvest claim.
+- `newton_geometric_harvest.py` derives immutable prepared assets, retains the existing GPU runner/state continuation/planner, and records measured capture receipts. `prepare-patrol` now defaults to this mode; `prepare-geometric-patrol SOURCE_ASSETS NEW_ASSETS` converts existing local source assets. Old physical assets and results remain usable explicitly.
+- Default `assets/patrol_current` now points to `patrol_mainstem_ideal_v3`. Native model geometry/material/joint/inertia arrays remain unchanged except the exact collider masks and their body caches (477 unchanged arrays checked). 657 fruit/thin geoms disabled, 48 main-stem geoms retained. Prepared route0..0.85m, plants17/18/19,9trusses90fruit; original full-farm visual scene retained.
+- Fresh camera patrol `runs/patrol_mainstem_ideal_v6`: 8 actual GPU segments completed, movement0→.15→.30→.45→.50m, 3 reached insertions, geometric credit2+3+4=9unique fruit (8red-proxy,1other-color). All9 removed from subsequent camera instances and selection. Actual physical releases0. All active penetration logs0. Plans blocked by main stems/self collision remain recorded; wider observed yaw proposals0/±25/±50 and existing minimum15mm entry depth found valid paths.
+- Current goal tracking errors0.0346/0.0382/0.0306mm. Source initial state preserved. No reset between decisions; accumulated logical credit is separate from the physical release ledger. Native70 + camera/group-policy43 regression tests passed.
+- Small checked-in evidence: `nvidia-sim/validation/s300_mainstem_geometric_harvest_20261108.json`; detailed Korean scope/results in `nvidia-sim/S300_NEWTON_CAMERA_PATROL_KO.md`. Run index and first-insertion MP4 are under the run directory. Video is actual recorded-state replay at1x, not a fresh physics execution; small captions.
+- Whole patrol still has preparation/planning pauses (82.26sim seconds /475.28wall seconds in this run); it is not an end-to-end realtime result. Test ended at the3-insertion budget, not full-farm/truss completion. Prior failure/probe outputs preserved. Existing uncommitted work remains intact.
+# 2026-11-08: Newton 카메라 순회의 반복 대기 시간 개선
+
+- 현재 기본 `patrol_current`는 `patrol_mainstem_static_v1`. 사용자 지정 영역 수확 모드에 맞춰 준비된 모든 식물을 고정하고 로봇 10축만 Newton CUDA로 적분한다. 두꺼운 주줄기/자기충돌/구조물은 유지한다. 과거 물리 수확 모드의 기본 동작을 변경하지 않았다.
+- 모델 1회 컴파일/상주 GPU 엔진, 동일 MJB measured resume, 기존 USD/IK 계획기 상주 실행, 변경을 거절하는 순회 범위 SHA 재사용, 큰 불변 메타데이터 공유, 동일 순서의 빠른 descendant 배열 생성, 구간당 3개 제안/다음 관측의 방향 변경을 적용했다. `--proposals-per-view 15`로 기존 전체 관측 후보 수 사용 가능.
+- 최종 headless: 실제 78.71초 동작/3회 진입/9개 가상 수확을 74.46초에 완료(초기 준비 15.26초 별도). 이전 475.28초 대비 작업 시간 6.38배 개선. 물리 루프 RTF 3.66. 원래와 식물 동역학/계획 순서가 다른 실험이며 동일 모델 솔버 가속이 아니다.
+- 확장 순회: 0..0.85m, 두 식물에서 5회 진입/15개 영역 수확. headless 275.49초, GUI 281.12초. 후반 자기충돌/IK 검사 때문에 전체 순회는 아직 실시간이 아니다. 제한된 경로 탐색 실패를 불가능으로 해석하지 않는다.
+- GUI 카메라 회전 중에도 13개 물리 구간의 모든 저장 상태/최종 warmstart·damping·제어/명령이 headless와 정확히 일치. 최종 live-publisher OFF headless 첫 7개 구간도 GUI와 정확히 일치. 활성 관통 0mm/물리 중단 0/물리적 과실 분리 0. 실제 수확 분리가 아닌 영역 수확 원장이다.
+- 보고서: `nvidia-sim/S300_NEWTON_CAMERA_PATROL_KO.md`, 증거: `nvidia-sim/validation/s300_mainstem_patrol_speed_20261108.json`. 결과/영상: `/root/farmily_runtime/newton/runs/patrol_static_speed_gui/index.html`. `render-patrol RUN --output VIDEO.mp4`는 기존 GPU 센서로 저장된 실제 상태를 영상화하며 물리를 재실행하지 않는다.

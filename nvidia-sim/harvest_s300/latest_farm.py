@@ -2,6 +2,8 @@
 
 This is an asset adapter, not a new physics or collection pipeline. The saved
 MuJoCo layout supplies identities/angles; original USD/GLB supply all triangles.
+The default dense-cherry revision changes truss placement/length, retaining
+fruit sizes. ``reviewed_original`` rebuilds the former truss geometry.
 """
 import json
 import sys
@@ -81,8 +83,10 @@ def surface_attachment(points, radii, segment, fraction, ped, angle):
     return (a + b) / 2 + (2 * fraction - 1) * (a - b) / 2 + normal * max(radii[segment:segment + 2])
 
 
-def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT):
+def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT, *, truss_profile='dense_cherry_v1'):
     from build_scene import new_stage, mesh, sha
+    if truss_profile not in ('dense_cherry_v1', 'reviewed_original'):
+        raise ValueError('Unknown truss geometry profile')
     data = json.loads(layout_path.read_text())
     placements = data['neighbor_placements']
     if len(placements) != 68:
@@ -90,6 +94,10 @@ def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT):
     assets = output.parent
     records = []
     inputs = {str(p): sha(p) for p in (layout_path, STEM_V8, STEM_V9, farm_source)}
+    inputs[str(Path(__file__).resolve())] = sha(Path(__file__))
+    if truss_profile == 'dense_cherry_v1':
+        module = Path(__file__).with_name('dense_truss.py')
+        inputs[str(module.resolve())] = sha(module)
     v9 = read_glb(STEM_V9, True)
     # Per-object v9 area-weighted colours, also used to recolour the legacy stem.
     palette = {}
@@ -150,7 +158,7 @@ def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT):
         return path
 
     stems = [template('stem_v8_recolored', v8), template('stem_v9_full', v9)]
-    trusses = {}
+    trusses = {}; truss_revisions = {}
     for plant in placements:
         for truss in plant['trusses']:
             filename = Path(truss['source_glb']).name
@@ -160,6 +168,9 @@ def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT):
                     raise ValueError('Reviewed GLB hash mismatch: ' + filename)
                 inputs[str(path)] = sha(path)
                 meshes, ped = truss_meshes(path, truss)
+                if truss_profile == 'dense_cherry_v1':
+                    from dense_truss import compact_truss
+                    meshes, truss_revisions[filename] = compact_truss(meshes)
                 trusses[filename] = (template('truss_' + str(len(trusses)), meshes), ped, truss)
     s = new_stage(output, '/World')
     # Original house structure only: the old 54 plants are not composed here.
@@ -220,7 +231,8 @@ def build_latest(output, farm_source, house_scale=.5, layout_path=LAYOUT):
         output_placements.append(dict(id=plant['id'], stem_variant=plant['stem_variant'],
                                       position=pos.tolist(), yaw_deg=yaw, trusses=placed))
     s.GetRootLayer().Save()
-    report = dict(mode='reviewed_v8_v9_glb_full', plants=len(placements),
+    report = dict(mode='reviewed_v8_v9_glb_full', truss_profile=truss_profile,
+                  truss_geometry_revisions=truss_revisions, plants=len(placements),
                   stem_variants=dict(Counter(p['stem_variant'] for p in placements)),
                   trusses=sum(len(p['trusses']) for p in placements), templates=records,
                   source_sha256=inputs, source_layout=str(layout_path), house_scale=house_scale,

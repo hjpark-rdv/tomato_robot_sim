@@ -10,6 +10,27 @@ from camera_region_policy import CameraRegionSelector
 
 
 class CameraRegionPolicyTests(unittest.TestCase):
+    def test_robot_forward_cone_is_absolute_not_an_offset_from_sideways_rachis(self):
+        self.observation['objects'].append(dict(instance_id=5000,class_name='rachis',
+            truss='Truss_02',key=self.source+'/Truss_02/Rachis',visible_pixels=100,valid_depth_pixels=100,
+            visible_surface_xy_axis_world=[1.,0.,0.],visible_surface_xy_anisotropy=20.))
+        for yaw in (-15.,0.,15.):
+            selector=self.selector(entry_forward_world=[0.,1.,0.],yaw_offset_deg=yaw)
+            self.select(selector)
+            row=selector.last_decision['camera_region']['direction_estimates']['Truss_02']
+            np.testing.assert_allclose(np.abs(row['observed_truss_direction_world']),[1.,0.,0.])
+            direction=np.asarray(row['direction_world'])
+            actual=np.rad2deg(np.arctan2(-direction[0],direction[1]))
+            self.assertAlmostEqual(actual,yaw)
+            self.assertEqual(row['maximum_entry_yaw_deg'],15.)
+        with self.assertRaisesRegex(ValueError,'robot forward limit'):
+            self.selector(entry_forward_world=[0.,1.,0.],yaw_offset_deg=15.001)
+        with self.assertRaisesRegex(ValueError,'robot forward limit'):
+            selector.set_yaw_offset_deg(-15.001)
+        for forward in ([0.,0.,1.],[0.,0.,0.],[float('nan'),0.,0.]):
+            with self.assertRaisesRegex(ValueError,'robot entry reference'):
+                self.selector(entry_forward_world=forward)
+
     def setUp(self):
         self.source='/World/Greenhouse/Plants/Plant_22'
         self.fruits=[dict(name=f'Truss_02_Fruit_{i+1:02d}',path=f'/target/f{i}',joint=f'/joint/f{i}',

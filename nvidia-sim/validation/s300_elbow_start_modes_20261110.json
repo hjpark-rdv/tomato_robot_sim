@@ -1,0 +1,112 @@
+{
+  "schema": "s300-elbow-start-modes-validation-v1",
+  "date": "2026-11-10",
+  "profiles": "/root/farmily_runtime/newton/assets/patrol_elbow_modes_20261110",
+  "unit_tests": {
+    "motion_ready": 24,
+    "patrol_and_viser": 17
+  },
+  "preview": {
+    "both_preview_modes": true,
+    "errors": [],
+    "physics_started": false
+  },
+  "gui_start": {
+    "mode_locked": true,
+    "selection": {
+      "requested": "auto",
+      "selected": "up",
+      "assets": "/root/farmily_runtime/newton/assets/patrol_no_lift_diagonals_20261110",
+      "available_modes": [
+        "up",
+        "down"
+      ],
+      "selection_wait_s": 3.811194404028356,
+      "initial_state_sha256": "7bf4276697963af1be383ecd3ff685ea0eb91c6a5114cb3e12cf90f8c724bf6c",
+      "physical_model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+      "runtime_switch_allowed": false
+    },
+    "status": "decision_budget_exhausted",
+    "physics_rows": 1
+  },
+  "down_fresh_gpu": {
+    "status": "harvest_attempt_budget_exhausted",
+    "elbow_posture": "down",
+    "harvest_attempts": 1,
+    "completed_harvest_motions": 1,
+    "assumed_harvest_count": 4,
+    "wall_s": 81.21318615193013
+  },
+  "down_entry_audit": {
+    "passed": true,
+    "samples": 1826,
+    "reference_forward_world": [
+      -0.9999999999999857,
+      -1.693867679033515e-07,
+      0.0
+    ],
+    "maximum_allowed_deg": 15.0,
+    "minimum_yaw_deg": -0.010040336549592587,
+    "maximum_yaw_deg": 0.022558641212903643,
+    "maximum_absolute_yaw_deg": 0.022558641212903643,
+    "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+    "numerical_roundoff_tolerance_deg": 1e-08,
+    "elbow_posture": {
+      "required": "down",
+      "minimum_posture_clearance_m": 0.04363828897476196,
+      "passed": true,
+      "minimum_depth_below_shoulder_and_tool_m": 0.04363828897476196
+    },
+    "source": "Recorded actual GPU body poses; no additional physics",
+    "start_timestamp_s": 23.245189666748047,
+    "end_timestamp_s": 31.54020118713379,
+    "maximum_recorded_interval_s": 0.0045452117919921875
+  },
+  "up_recorded_recheck": {
+    "passed": true,
+    "samples": 1826,
+    "reference_forward_world": [
+      -0.9999999975015126,
+      -7.068928449586269e-05,
+      0.0
+    ],
+    "maximum_allowed_deg": 15.0,
+    "minimum_yaw_deg": -7.525093877584088,
+    "maximum_yaw_deg": -7.47947325185457,
+    "maximum_absolute_yaw_deg": 7.525093877584088,
+    "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+    "numerical_roundoff_tolerance_deg": 1e-08,
+    "elbow_posture": {
+      "required": "up",
+      "minimum_posture_clearance_m": 0.007444620132446289,
+      "passed": true,
+      "minimum_height_above_shoulder_and_tool_m": 0.007444620132446289
+    },
+    "source": "Recorded actual GPU body poses; no additional physics",
+    "start_timestamp_s": 24.795127868652344,
+    "end_timestamp_s": 33.09059524536133,
+    "maximum_recorded_interval_s": 0.004547119140625,
+    "source_run": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless",
+    "fresh_physics": false
+  },
+  "preserved": {
+    "lift_diagonals_removed": true,
+    "entry_yaw_limit_deg": 15,
+    "physical_model_same": true,
+    "runtime_mode_switch": false
+  },
+  "limitations": [
+    "Up mode fresh GUI test covered initial scan; full entry evidence is a recheck of the previous recorded run.",
+    "Mode profiles include their respective ready-pose camera mounting calibration.",
+    "One UI automation attempt disconnected its browser before render acknowledgement; zero physics ran in that preserved ui_test folder."
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "source_code_sha256": {
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "6d4b057a99b0ee0f896e0dd6e370ca1cf67167f97c9d0cc764ffc58f50e1191e",
+    "nvidia-sim/harvest_s300/newton_patrol_viewer.py": "373abf74b6c9f70b9b5b0eda85d0299da0009f3624aed9b2164c5245d441d606",
+    "nvidia-sim/harvest_s300/prepare_newton_patrol.py": "54623f07c09d1156f641b4d4b3d454709713eb524aa2bea0f0515b251f799597",
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "246fa5ce8d2d4550b4fd7c7d7423cfc9548880e39566698231918e805e8aebee",
+    "nvidia-sim/harvest_s300/newton_viser.py": "0f07939b749a2d62dbc6926241ed4a7dc015ebabbc73f671a8f24e1dc8de1d0b"
+  }
+}

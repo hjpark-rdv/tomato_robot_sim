@@ -348,6 +348,7 @@ class NewtonLivePublisher:
         self.clock = clock
         self.period = 1. / fps
         self.last_publish_wall = None
+        self.next_publish_wall = None
         self.last_seen_time = None
         self.offered = self.skipped = 0
         self.closed = False
@@ -367,7 +368,7 @@ class NewtonLivePublisher:
         """Check before GPU readback. Does not mutate timing or simulation state."""
         if self.closed:
             return False
-        return self.last_publish_wall is None or self.clock() - self.last_publish_wall >= self.period
+        return self.next_publish_wall is None or self.clock() >= self.next_publish_wall
 
     def publish(self, body_q, gap, sim_time_s, *, force=False):
         if self.closed:
@@ -384,6 +385,15 @@ class NewtonLivePublisher:
         self.writer.publish(poses, gap, stamp)
         self.last_pose_sha256 = hashlib.sha256(poses.astype('<f8').tobytes()).hexdigest()
         self.last_publish_wall = self.clock()
+        # Keep the target cadence when a fixed-step batch finishes slightly
+        # after a display deadline. Restarting the period at every readback
+        # systematically drops30Hz to~22Hz. Skip missed slots after a stall;
+        # never publish a catch-up burst or advance physical time.
+        if self.next_publish_wall is None or force:
+            self.next_publish_wall = self.last_publish_wall + self.period
+        else:
+            missed = max(1, math.floor((self.last_publish_wall-self.next_publish_wall)/self.period)+1)
+            self.next_publish_wall += missed*self.period
         return True
 
     def _save(self):
@@ -426,19 +436,24 @@ class NewtonViewerProcess:
         if not isinstance(camera_test_motion, bool):
             raise ValueError('camera_test_motion must be bool')
         self.trial = Path(trial).resolve()
+        self.initial_trial = self.trial
         if not (self.trial / 'live.json').is_file():
             raise FileNotFoundError('Publish an initial measured frame before launching its viewer')
         reader = MotionLiveReader(self.trial)
         if reader.read() is None:
             raise ValueError('Publish an initial measured frame before launching its viewer')
         self.display_source_sha256 = reader.metadata['model_sha256']
+        self.physical_source_sha256 = reader.metadata.get('physical_model_sha256')
+        self.display_body_paths = reader.body_paths
         self.ready = self.trial / 'newton_viewer_ready.json'
         self.log = self.trial / 'newton_viewer.log'
         self.report_path = self.trial / 'newton_viewer_process.json'
         for path in (self.ready, self.log, self.report_path):
             if path.exists():
                 raise FileExistsError(path)
-        python = Path(isaac_python).resolve()
+        # Resolving a venv's python symlink discards pyvenv.cfg discovery and
+        # launches the system interpreter without Newton/viewer dependencies.
+        python = Path(os.path.abspath(os.fspath(isaac_python)))
         script = Path(viewer_script) if viewer_script else Path(__file__).with_name('view_motion_live.py')
         if not python.is_file() or not script.is_file():
             raise FileNotFoundError('Isaac Python or existing measured-state viewer is missing')
@@ -472,6 +487,22 @@ class NewtonViewerProcess:
                 env=environment, start_new_session=True)
         self.report['pid'] = self.process.pid
         _write_json(self.report_path, self.report)
+
+    def switch_trial(self, trial):
+        """Switch a live Viser consumer to a new run of the identical scene."""
+        trial=Path(trial).resolve()
+        reader=MotionLiveReader(trial)
+        if (reader.metadata['model_sha256'] != self.display_source_sha256 or
+                reader.metadata.get('physical_model_sha256') != self.physical_source_sha256 or
+                reader.body_paths != self.display_body_paths):
+            raise ValueError('Persistent viewer scene, physical model or body mapping changed')
+        reader.verify_source()
+        self.trial=trial
+        self.ready=trial/'newton_viewer_ready.json'
+        self.report_path=trial/'newton_viewer_process.json'
+        self.report.update(ready=False,reused=True,live_trial=str(trial))
+        _write_json(self.report_path,self.report)
+        _write_json(self.initial_trial/'viser_next_trial.json',dict(trial=str(trial)))
 
     def wait_ready(self, timeout=300.):
         if not math.isfinite(timeout) or timeout <= 0:

@@ -1,0 +1,376 @@
+{
+  "schema": "s300-elbow-up-ready-entry-v1",
+  "date": "2026-11-10",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "source_code_sha256": {
+    "nvidia-sim/harvest_s300/prepare_newton_patrol.py": "c4ba24c622e4ed64b520f5f1d388511361a6d355686ec9c39173b3b9ca409b1c",
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "3275c5a2ac88536b35c3a66aee1bed04ffca72278de68348707a8492c0123658",
+    "nvidia-sim/harvest_s300/motion_kinematics.py": "3983de49a162ee22bc56f0b386122fdc04600e9b96c9d7fd4cd9e0cdf3a43dbc",
+    "mujoco-benchmark/scripts/s300_smoke/plan_adapter.py": "55aab2f3bfd23129450aef7cb8ed1accb3172c6a1297834c399748f02d05784b",
+    "nvidia-sim/harvest_s300/test_motion_ready.py": "3a2d90c7a0bc2f25157290cba013e14993db312cd7a73e63eccab1aca7a2431d",
+    "nvidia-sim/harvest_s300/test_newton_camera_patrol.py": "fedd565fb2d29c799fd0386efee6d7c2daaa2b5e4676f9a7128c53ffbc8c4820",
+    "nvidia-sim/harvest_s300/render_newton_patrol.py": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313"
+  },
+  "assets": "/root/farmily_runtime/newton/assets/patrol_elbow_up_20261110",
+  "source_assets": "/root/farmily_runtime/newton/assets/patrol_forearm_camera_20261110",
+  "model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+  "source_model_sha256": "f517bdf03b75dbc3bfc58bb1cf329839d8c218bb18df1a26a2c57ffa84365a19",
+  "initialization": {
+    "camera_foreaft_m": -0.0479193582223614,
+    "camera_to_grasp_height_m": 0.12234950479548368,
+    "ready_q": [
+      0.1772361584508187,
+      1.570993448313052,
+      1.5626500396317382,
+      -2.6190331399902647,
+      2.1789180224435425,
+      3.1407875883445366,
+      -0.44825977571469977
+    ],
+    "camera_world_m": [
+      -0.09580767060372354,
+      -0.20203394323428323,
+      0.9596697820326077
+    ],
+    "service_world_m": [
+      -0.3127808198254298,
+      -0.24995330145664463,
+      1.0820192868280913
+    ],
+    "source": "Exact current assembly FK, fixed mounted optical extrinsic and existing gripper nose/depth geometry",
+    "uses_hidden_plant_positions": false,
+    "scene_sha256": "d256c26d49c7390e27fcd7fcd842cdc4ce7c9d53fe335d12afc18f41e47c107a",
+    "mounted_body_path": "/World/HarvestRobot/Robot/link3",
+    "body_from_camera_optical": [
+      [
+        -0.8705813864486849,
+        -0.49202407881727106,
+        -0.0005961821039683916,
+        0.01593235671537252
+      ],
+      [
+        -0.0007962155485461448,
+        0.00019712151687889531,
+        0.9999996635918974,
+        0.09799356058270739
+      ],
+      [
+        -0.4920237957760634,
+        0.8705815682675137,
+        -0.0005633675452767015,
+        0.3636508489575476
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "original_ready_q": [
+      0.1772361584508187,
+      1.570796326802633,
+      -0.8433796855771658,
+      2.507443674795259,
+      -0.07737928186451346,
+      3.14079650682554,
+      0.015888372798979956
+    ],
+    "proposals": [
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.5707067380043618,
+          1.3871356116374647,
+          -2.448567284481373,
+          2.8548074136009407,
+          3.1407923842954113,
+          0.2225785614590717
+        ],
+        "position_error_m": 1.5108767153135422e-05,
+        "rotation_error_rad": 7.602420472072169e-05,
+        "elbow_above_shoulder_and_tool_m": 0.21630441459700478,
+        "collisions": [
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          },
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          }
+        ],
+        "accepted": false
+      },
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.5708386049563945,
+          1.4402374895224532,
+          -2.533714585561607,
+          2.5836053866419553,
+          3.140792200424035,
+          -0.08066792820313788
+        ],
+        "position_error_m": 7.159210603562559e-06,
+        "rotation_error_rad": 3.491860676673195e-05,
+        "elbow_above_shoulder_and_tool_m": 0.21983455966770338,
+        "collisions": [
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          },
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          }
+        ],
+        "accepted": false
+      },
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.5708171537799933,
+          1.4290787698016665,
+          -2.520626560803506,
+          2.6302791791418483,
+          3.140796765671104,
+          -0.03206475335560635
+        ],
+        "position_error_m": 3.5115616042187234e-06,
+        "rotation_error_rad": 1.734807428956948e-05,
+        "elbow_above_shoulder_and_tool_m": 0.21919107414828587,
+        "collisions": [
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          },
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          }
+        ],
+        "accepted": false
+      },
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.570993448313052,
+          1.5626500396317382,
+          -2.6190331399902647,
+          2.1789180224435425,
+          3.1407875883445366,
+          -0.44825977571469977
+        ],
+        "position_error_m": 3.3231814379193104e-05,
+        "rotation_error_rad": 0.0001789329534659418,
+        "elbow_above_shoulder_and_tool_m": 0.22343710524163796,
+        "collisions": [],
+        "accepted": true
+      },
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.570954708475187,
+          1.525051714737345,
+          -2.600333208408156,
+          2.2909175058803286,
+          3.1407933835189015,
+          -0.3551588005722925
+        ],
+        "position_error_m": 2.6697249268437517e-05,
+        "rotation_error_rad": 0.00014020606566055184,
+        "elbow_above_shoulder_and_tool_m": 0.22300675529609548,
+        "collisions": [
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          },
+          {
+            "a": "/World/HarvestRobot/Robot/link5/collisions/link5/node_STL_BINARY_/mesh",
+            "b": "/World/HarvestRobot/Robot/link3/collisions/link3/node_STL_BINARY_/mesh",
+            "a_name": null,
+            "b_name": null,
+            "intersection": true,
+            "distance_m": null,
+            "required_planning_clearance_m": 0.002
+          }
+        ],
+        "accepted": false
+      },
+      {
+        "ready_q": [
+          0.1772361584508187,
+          1.5711175302404998,
+          1.7621594990902452,
+          -2.6651738476103857,
+          1.635062538370919,
+          3.1408167718065094,
+          -0.8387447985577593
+        ],
+        "position_error_m": 5.414490765957493e-05,
+        "rotation_error_rad": 0.0003861479969209153,
+        "elbow_above_shoulder_and_tool_m": 0.21569292630648884,
+        "collisions": [],
+        "accepted": true
+      }
+    ],
+    "selected": {
+      "ready_q": [
+        0.1772361584508187,
+        1.570993448313052,
+        1.5626500396317382,
+        -2.6190331399902647,
+        2.1789180224435425,
+        3.1407875883445366,
+        -0.44825977571469977
+      ],
+      "position_error_m": 3.3231814379193104e-05,
+      "rotation_error_rad": 0.0001789329534659418,
+      "elbow_above_shoulder_and_tool_m": 0.22343710524163796,
+      "collisions": [],
+      "accepted": true
+    },
+    "initialization": "New independent zero-time spawn; no running pose write"
+  },
+  "status": "harvest_attempt_budget_exhausted",
+  "completed_harvest_motions": 1,
+  "assumed_harvest_count": 4,
+  "wall_s": 109.99314546503592,
+  "simulated_s": 41.09047317504883,
+  "actual_entry": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_009/actual_entry_angle.json",
+      "passed": true,
+      "samples": 1826,
+      "reference_forward_world": [
+        -0.9999999975015126,
+        -7.068928449586269e-05,
+        0.0
+      ],
+      "maximum_allowed_deg": 15.0,
+      "minimum_yaw_deg": -7.525093877584088,
+      "maximum_yaw_deg": -7.47947325185457,
+      "maximum_absolute_yaw_deg": 7.525093877584088,
+      "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+      "numerical_roundoff_tolerance_deg": 1e-08,
+      "elbow_posture": {
+        "required": "up",
+        "minimum_height_above_shoulder_and_tool_m": 0.007444620132446289,
+        "passed": true
+      },
+      "source": "Recorded actual GPU body poses; no additional physics",
+      "start_timestamp_s": 24.795127868652344,
+      "end_timestamp_s": 33.09059524536133,
+      "maximum_recorded_interval_s": 0.004547119140625
+    }
+  ],
+  "physics_segments": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_000/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "31cec94b8c863c13ba0fcd0ff6366ada20e5cf628292f3395cccc37e4525c2c6"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_001/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "cc481198c085900e54e52bc87fcd7683eaa7ee1040186b43101bb68855d38e22"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_002/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "16582959a83bfec212ad48c8da93a70207ea807c60f7e82de9c439bba36cd458"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_003/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "4695713d5f8a5683673b6814fd4b7678b9c4fe605551f46bcdbc319f4a7dabd9"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_005/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "9642ba3a938110f49a9e2677a2afb05e303ba16aee24e5bfcb6d5175cb6ecf7c"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_008/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "939db10fdd2c546057fd793089a17f7646d1c8220a11a4acd0c2763f62269475"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_elbow_up/headless/step_009/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0,
+      "states_sha256": "6c81fcbbd977b35b82574c7757c92f8f7c1801407f3fffe59f19c51b203a329b"
+    }
+  ],
+  "tests": {
+    "motion_ready_and_group_policy": {
+      "tests": 47,
+      "passed": 47
+    },
+    "native_camera_and_region": {
+      "tests": 32,
+      "passed": 32
+    },
+    "plan_adapter": {
+      "tests": 8,
+      "passed": 6,
+      "skipped": 2,
+      "reason": "Legacy source assets absent"
+    }
+  },
+  "video_paths": [
+    "/root/farmily_runtime/newton/runs/20261110_elbow_up/elbow_up_side.mp4",
+    "/root/farmily_runtime/newton/runs/20261110_elbow_up/elbow_up_harvest.mp4"
+  ],
+  "limitations": [
+    "Bounded one-motion smoke, not full-route qualification.",
+    "Completion is geometric fruit credit, not physical fruit detachment.",
+    "Rejected IK/preparation/self-collision candidates retained.",
+    "Posture/yaw actual-state verification is performed after execution using recorded physics states.",
+    "Preparation arm transfers are collision screened but not constrained to the entry elbow-height rule."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

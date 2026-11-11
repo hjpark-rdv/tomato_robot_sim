@@ -24,7 +24,8 @@ TOOL = REPO / 'gripper-design/inaho_gripper_v5/models/inaho_gripper_v5_assembly.
 
 
 def sha(path):
-    return hashlib.file_digest(Path(path).open('rb'), 'sha256').hexdigest()
+    with Path(path).open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
 def new_stage(path, root):
@@ -164,6 +165,44 @@ def tool_asset(output):
     return dict(parts=len(names),source_names=names,jaw_gap_mm=44,mode='fixed assembled pose; belt and jaw actuation not enabled')
 
 
+def s300_from_assembly_glb(source, output):
+    """Recover only the static chassis from the checked-in assembly export.
+
+    Robot joints and tool physics still come from their original USD/builders.
+    The GLB chassis is already stripped of the tank, pump and wheel covers.
+    """
+    metadata = json.loads(source.with_name('model.json').read_text())
+    if sha(source) != metadata['sha256']:
+        raise ValueError('Assembly GLB hash mismatch')
+    if metadata.get('export_axes') != 'glTF Y-up; x=x, y=z, z=-y; metres':
+        raise ValueError('Assembly GLB coordinate convention must be the known metre/Y-up export')
+    scene = trimesh.load(source, force='scene', process=False)
+    rotation = np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]], float)
+    stage = new_stage(output, '/S300')
+    kept = []
+    for name in sorted(scene.graph.nodes_geometry):
+        if not name.startswith('chassis_'):
+            continue
+        tf, key = scene.graph[name]
+        geometry = scene.geometry[key]
+        points = trimesh.transform_points(geometry.vertices, tf) @ rotation.T
+        material = getattr(geometry.visual, 'material', None)
+        rgba = getattr(material, 'baseColorFactor', None)
+        colors = None
+        if geometry.visual.kind == 'vertex':
+            colors = np.asarray(geometry.visual.vertex_colors[:, :3], float) / 255.
+        color = ([1., 1., 1.] if colors is not None else
+                 np.asarray(rgba if rgba is not None else [160, 160, 160, 255])[:3] / 255.)
+        mesh(stage, '/S300/' + name, points, geometry.faces, color, colors=colors)
+        kept.append(name)
+    if not kept:
+        raise ValueError('Assembly export has no chassis components')
+    stage.GetRootLayer().Save()
+    return dict(source=str(source), source_sha256=metadata['sha256'], parts=kept,
+                static_base=True, recovery='Original chassis visual surfaces from local assembly GLB',
+                robot_or_tool_physics_from_glb=False, deck_top_m=.309)
+
+
 def robot_asset(tool_path, output):
     s=new_stage(output,'/Robot')
     s.GetDefaultPrim().GetReferences().AddReference(str(ROBOT))
@@ -231,7 +270,8 @@ def build(a):
     assets=a.output/'assets';assets.mkdir(exist_ok=True)
     report={'schema':'s300-harvest-isaac-v1','source_sha256':{str(p):sha(p) for p in (FARM,ROBOT,TOOL,a.s300)},
             'training_eligible':False,'harvesting_validated':False}
-    report['s300']=s300_asset(a.s300,assets/'s300.usdc')
+    report['s300']=(s300_from_assembly_glb(a.s300, assets/'s300.usdc')
+                    if a.s300.suffix.lower() == '.glb' else s300_asset(a.s300,assets/'s300.usdc'))
     report['tool']=tool_asset(assets/'gripper_v51.usdc')
     report['robot']=robot_asset(assets/'gripper_v51.usdc',assets/'rb5_lift_v51.usda')
     if a.farm_layout == 'reviewed':

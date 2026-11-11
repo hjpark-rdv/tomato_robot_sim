@@ -84,5 +84,25 @@ class AttachmentTests(unittest.TestCase):
             self.assertEqual(stage.GetPrimAtPath('/joint').GetTypeName(),'PhysicsFixedJoint')
             with self.assertRaises(FileExistsError):revise(source,out)
 
+    def test_all_trusses_opt_in_configures_every_authored_attachment(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source=Path(folder)/'source';source.mkdir()
+            stage=Usd.Stage.CreateNew(str(source/'scene.usda'));fruits=[]
+            for i in range(2):
+                neck=f'/neck{i}';fruit=f'/fruit{i}';joint=f'/joint{i}'
+                for path in (neck,fruit):stage.DefinePrim(path,'Xform')
+                j=UsdPhysics.FixedJoint.Define(stage,joint)
+                j.CreateBody0Rel().SetTargets([neck]);j.CreateBody1Rel().SetTargets([fruit])
+                j.CreateLocalPos0Attr(Gf.Vec3f(.01,0,0));j.CreateLocalPos1Attr(Gf.Vec3f(.01,0,0))
+                fruits.append(dict(name=f'Truss_{i:02d}_Fruit_01',path=fruit,anchor=neck,joint=joint))
+            stage.GetRootLayer().Save()
+            (source/'motion_manifest.json').write_text(json.dumps(dict(scene_sha256=sha(source/'scene.usda'),target=fruits[0],plant=dict(fruits=fruits))))
+            np.savez(source/'skin.npz',data=np.array([1]))
+            out=Path(folder)/'all';revise(source,out,all_trusses=True)
+            result=Usd.Stage.Open(str(out/'scene.usda'))
+            for i in range(2):
+                self.assertEqual(result.GetPrimAtPath(f'/joint{i}').GetTypeName(),'PhysicsJoint')
+                self.assertAlmostEqual(result.GetPrimAtPath(f'/joint{i}').GetAttribute('physxLimit:rotX:stiffness').Get(),.01)
+
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,226 @@
+{
+  "schema": "s300-robot-forward-entry-cone-v1",
+  "date": "2026-11-10",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "policy": {
+    "reference_forward_world": [
+      -0.9999999999999857,
+      -1.6938676812539607e-07,
+      0.0
+    ],
+    "maximum_yaw_deg": 15.0,
+    "candidate_yaws_deg": [
+      0.0,
+      -7.5,
+      7.5,
+      -15.0,
+      15.0
+    ],
+    "reference": "Fixed authored robot ready Tool_fixed +Y in world XY"
+  },
+  "source_code_sha256": {
+    "run_newton_camera_patrol.py": "3fcaf0fd86a02b58e80704b9209adca98040e54cd5836d50982a41343d678f45",
+    "camera_region_policy.py": "d422c7f5551507a5e12181a94b73072d1e680c2e64eaa9ef76c7064daad7d0bc",
+    "newton_patrol_viewer.py": "1fab23fd4c665737fd3e10d9e3e5046afe4472352d67b11af4e56e08614b712c",
+    "test_newton_camera_patrol.py": "c7fc73a4c0fab5bc1a5065527da83079ef636bb4e82468983ece63020b01517f",
+    "test_camera_region_policy.py": "5e6fd2617c303dae09ee7e63662a270065a87c230760498b06823a8a29473f4e"
+  },
+  "run_invocation": {
+    "options": {
+      "assets": "/root/farmily_runtime/newton/assets/patrol_current",
+      "output": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless",
+      "headless": true,
+      "port": 5905,
+      "fresh_process": false,
+      "step": 0.15,
+      "end_station": null,
+      "max_decisions": 18,
+      "max_harvests": 1,
+      "camera_scale": 0.5,
+      "graph_batch": 4,
+      "proposals_per_view": 3,
+      "planning_python": "/root/farmily_tomato/nvidia-sim/.asset-venv/bin/python"
+    },
+    "source_code_sha256": {
+      "run_newton_camera_patrol.py": "cd85a161d923b84b40f58fc5aeac1b603a3bb4b8289612cb4f9025000577a1fe",
+      "newton_mounted_camera.py": "8663b4b2b7d3ef070a8e97df39cde1da3b36446936a2885294a7e90e9555d4cd",
+      "camera_patrol.py": "4e16c7e5d801b0475ed4c03b997c600d8c318e2efdf1e8d0d044efa19fbdbcdb",
+      "camera_region_policy.py": "10ba1d2745db0f9a1c17f77b69ac3a94364326feedcbb0e33ac1abd25466853c",
+      "harvest_group_policy.py": "08c3048770e43900a25b0dc35aec91370062cd799c5d39fcdbdd96e0ada51cb8",
+      "newton_geometric_harvest.py": "f8f0f9dd142ad5a11dc4d145af95c2422a7264a88fb05fdb363a381f56aa5bfa",
+      "newton_kernels.py": "3ca8e957b324d4944652055648113470e0b5db1e536bf691487d7ef860714df0",
+      "newton_contact_policy.py": "46fe54deceb024934a78eafa2972698227b1d221a9f0e8781ff97c2621775794",
+      "newton_patrol_viewer.py": "3826564e369863c4212ce960661cb21adef154b1192eb2e33126e7373d7e45f4"
+    }
+  },
+  "post_smoke_changes": "UI limit badge, regression fixture updates and observed-vs-reference direction evidence naming; generated entry axes and actual yaw checks unchanged.",
+  "run": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless",
+  "status": "harvest_attempt_budget_exhausted",
+  "completed_harvest_motions": 1,
+  "assumed_harvest_count": 2,
+  "planned_entry_checks": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_003/yaw_0_level_then_translate/planned_entry_angle.json",
+      "passed": true,
+      "samples": 498,
+      "reference_forward_world": [
+        -0.9999999999999857,
+        -1.6938676812539607e-07,
+        0.0
+      ],
+      "maximum_allowed_deg": 15.0,
+      "minimum_yaw_deg": -9.52191830994226e-07,
+      "maximum_yaw_deg": 3.091600888562924e-07,
+      "maximum_absolute_yaw_deg": 9.52191830994226e-07,
+      "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+      "numerical_roundoff_tolerance_deg": 1e-08,
+      "requested_direction": {
+        "passed": true,
+        "samples": 1,
+        "reference_forward_world": [
+          -0.9999999999999857,
+          -1.6938676812539607e-07,
+          0.0
+        ],
+        "maximum_allowed_deg": 15.0,
+        "minimum_yaw_deg": 0.0,
+        "maximum_yaw_deg": 0.0,
+        "maximum_absolute_yaw_deg": 0.0,
+        "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+        "numerical_roundoff_tolerance_deg": 1e-08
+      },
+      "source": "Actual native FK of sampled joint commands at60Hz"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_003/yaw_0_joint_branch/planned_entry_angle.json",
+      "passed": true,
+      "samples": 498,
+      "reference_forward_world": [
+        -0.9999999999999857,
+        -1.6938676812539607e-07,
+        0.0
+      ],
+      "maximum_allowed_deg": 15.0,
+      "minimum_yaw_deg": -3.317163329461957e-07,
+      "maximum_yaw_deg": 4.603221267300436e-07,
+      "maximum_absolute_yaw_deg": 4.603221267300436e-07,
+      "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+      "numerical_roundoff_tolerance_deg": 1e-08,
+      "requested_direction": {
+        "passed": true,
+        "samples": 1,
+        "reference_forward_world": [
+          -0.9999999999999857,
+          -1.6938676812539607e-07,
+          0.0
+        ],
+        "maximum_allowed_deg": 15.0,
+        "minimum_yaw_deg": 0.0,
+        "maximum_yaw_deg": 0.0,
+        "maximum_absolute_yaw_deg": 0.0,
+        "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+        "numerical_roundoff_tolerance_deg": 1e-08
+      },
+      "source": "Actual native FK of sampled joint commands at60Hz"
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_003/yaw_0_combined_cartesian/planned_entry_angle.json",
+      "passed": true,
+      "samples": 499,
+      "reference_forward_world": [
+        -0.9999999999999857,
+        -1.6938676812539607e-07,
+        0.0
+      ],
+      "maximum_allowed_deg": 15.0,
+      "minimum_yaw_deg": -9.528915848296961e-07,
+      "maximum_yaw_deg": 3.091601206618392e-07,
+      "maximum_absolute_yaw_deg": 9.528915848296961e-07,
+      "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+      "numerical_roundoff_tolerance_deg": 1e-08,
+      "requested_direction": {
+        "passed": true,
+        "samples": 1,
+        "reference_forward_world": [
+          -0.9999999999999857,
+          -1.6938676812539607e-07,
+          0.0
+        ],
+        "maximum_allowed_deg": 15.0,
+        "minimum_yaw_deg": 0.0,
+        "maximum_yaw_deg": 0.0,
+        "maximum_absolute_yaw_deg": 0.0,
+        "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+        "numerical_roundoff_tolerance_deg": 1e-08
+      },
+      "source": "Actual native FK of sampled joint commands at60Hz"
+    }
+  ],
+  "actual_entry_checks": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_004/actual_entry_angle.json",
+      "passed": true,
+      "samples": 1826,
+      "reference_forward_world": [
+        -0.9999999999999857,
+        -1.6938676812539607e-07,
+        0.0
+      ],
+      "maximum_allowed_deg": 15.0,
+      "minimum_yaw_deg": -0.00865381786399792,
+      "maximum_yaw_deg": 0.013487620811180804,
+      "maximum_absolute_yaw_deg": 0.013487620811180804,
+      "scope": "Horizontal Tool_fixed +Y yaw during approach, manipulation hold and withdraw; ready transfers excluded",
+      "numerical_roundoff_tolerance_deg": 1e-08,
+      "source": "Recorded actual GPU body poses; no additional physics",
+      "start_timestamp_s": 21.69525146484375,
+      "end_timestamp_s": 29.990262985229492,
+      "maximum_recorded_interval_s": 0.0045452117919921875
+    }
+  ],
+  "physics_segments": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_002/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_000/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_004/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_001/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0
+    },
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_entry_cone15/headless/step_003/physics/summary.json",
+      "status": "completed",
+      "max_active_penetration_m": 0.0
+    }
+  ],
+  "tests": {
+    "native_gpu_environment": {
+      "tests": 32,
+      "passed": 32
+    },
+    "usd_asset_environment": {
+      "tests": 44,
+      "passed": 44
+    },
+    "initial_wrong_environment": "Three harvest-policy imports failed in native Python without pxr; all passed when rerun in the existing USD asset Python."
+  },
+  "limitations": [
+    "Bounded one-motion smoke, not full-route success proof.",
+    "Actual yaw is checked on stored physics poses after each completed execution, not a new per-step GPU abort kernel.",
+    "Preparation/return-ready arm folding excluded; approach, work hold and withdraw constrained."
+  ],
+  "training_eligible": false,
+  "harvest_success": null
+}

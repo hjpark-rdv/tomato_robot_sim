@@ -27,7 +27,8 @@ class CameraRegionSelector:
                  height_offset_m=0., output=None, plant_source,
                  min_visible_pixels=12, min_valid_depth_pixels=None,
                  selected_truss=None, max_observation_age_s=1.,
-                 prefer_unattempted_trusses=False, yaw_offset_deg=0.):
+                 prefer_unattempted_trusses=False, yaw_offset_deg=0.,
+                 entry_forward_world=None,max_entry_yaw_deg=15.):
         if not re.fullmatch(r'/World/Greenhouse/Plants/Plant_\d+',str(plant_source)):
             raise ValueError('Exact source plant path required')
         if selected_truss is not None and not re.fullmatch(r'Truss_\d+',str(selected_truss)):
@@ -35,6 +36,16 @@ class CameraRegionSelector:
         if not isinstance(prefer_unattempted_trusses,bool):
             raise ValueError('Explicit boolean unattempted-truss preference required')
         self.prefer_unattempted_trusses=prefer_unattempted_trusses
+        self.entry_forward_world=None
+        if entry_forward_world is not None:
+            forward=np.asarray(entry_forward_world,float)
+            if (forward.shape!=(3,) or not np.isfinite(forward).all() or abs(forward[2])>1e-9 or
+                    np.linalg.norm(forward)<1e-9):
+                raise ValueError('Finite horizontal robot entry reference required')
+            self.entry_forward_world=forward/np.linalg.norm(forward)
+        if not np.isfinite(max_entry_yaw_deg) or not 0<max_entry_yaw_deg<=90:
+            raise ValueError('Finite positive entry yaw limit within90deg required')
+        self.max_entry_yaw_deg=float(max_entry_yaw_deg)
         self.yaw_offset_deg=yaw_offset_deg
         self.minimum=int(policy['minimum_fruits'])
         self.min_visible_pixels=self._count(min_visible_pixels,'min_visible_pixels')
@@ -70,7 +81,10 @@ class CameraRegionSelector:
 
     @yaw_offset_deg.setter
     def yaw_offset_deg(self,value):
-        self._yaw_offset_deg=self._validated_yaw_offset(value)
+        value=self._validated_yaw_offset(value)
+        if self.entry_forward_world is not None and abs(value)>self.max_entry_yaw_deg:
+            raise ValueError('Camera entry yaw offset exceeds robot forward limit')
+        self._yaw_offset_deg=value
 
     def set_yaw_offset_deg(self,value):
         """Change only the next visible-heading proposal; footprint is rerun."""
@@ -226,6 +240,9 @@ class CameraRegionSelector:
                 if np.dot(axis,sign_reference)<0:axis=-axis
                 method='horizontal_PCA_of_visible_approximate_centers'
             else:axis=hint/np.linalg.norm(hint);method='camera_to_visible_centroid_horizontal_fallback'
+            observed_axis=axis.copy()
+            if self.entry_forward_world is not None:
+                axis=self.entry_forward_world.copy()
             unrotated_axis=axis.copy()
             if yaw_offset:
                 angle=np.deg2rad(yaw_offset);c,s=np.cos(angle),np.sin(angle)
@@ -236,6 +253,11 @@ class CameraRegionSelector:
                 axis_sign_source='current camera to observed fruit centroid; direction hint only if ray is degenerate',
                 camera_to_observed_centroid_horizontal_m=inward.tolist(),
                 inward_alignment_cosine=float(np.dot(axis,sign_reference)/np.linalg.norm(sign_reference)))
+            if self.entry_forward_world is not None:
+                direction_evidence[key].update(observed_truss_direction_world=observed_axis.tolist(),
+                    entry_reference_world=self.entry_forward_world.tolist(),
+                    entry_yaw_deg=yaw_offset,maximum_entry_yaw_deg=self.max_entry_yaw_deg,
+                    yaw_reference='Fixed robot ready forward; not observed truss PCA')
             if yaw_offset:
                 direction_evidence[key].update(unrotated_direction_world=unrotated_axis.tolist(),
                     yaw_offset_deg=yaw_offset,rotation_axis_world=[0.,0.,1.],
@@ -294,7 +316,7 @@ class CameraRegionSelector:
             unobserved_target_fruits=sorted(fruit['name'] for key,fruit in by_key.items() if key not in seen_keys),
             direction_estimates=direction_evidence,observable_eligible_fruits=sorted(eligible),
             truss_exploration=exploration,
-            hidden_and_ineligible_fruit_preserved_as_footprint_obstacles=True,
+            hidden_and_ineligible_fruit_preserved_as_footprint_obstacles=not self.base.ignore_ineligible_obstacles,
             planning_and_physics_required=True,training_eligible=False)
         if yaw_offset:
             evidence.update(entry_yaw_offset_deg=yaw_offset,entry_direction_already_yaw_rotated=True,

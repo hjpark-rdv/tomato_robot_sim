@@ -1,0 +1,144 @@
+{
+  "old_min_m": [
+    -0.048,
+    0.0,
+    0.013
+  ],
+  "old_max_m": [
+    0.048,
+    0.158,
+    0.061
+  ],
+  "new_min_m": [
+    -0.048,
+    0.0,
+    -0.005
+  ],
+  "new_max_m": [
+    0.048,
+    0.158,
+    0.079
+  ],
+  "dimensions_mm": [
+    96,
+    158,
+    84
+  ],
+  "same_centre_z_mm": 37,
+  "physical_inputs_commands_initial_states_exact": true,
+  "regressions_passed": 66,
+  "gpu_summary": "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/summary.json",
+  "completed_motions": 2,
+  "harvested": 13,
+  "expanded_height_fruit": [
+    {
+      "name": "Truss_02_Fruit_02",
+      "center_tool_m": [
+        -0.010815866357148816,
+        0.13964844989345404,
+        0.06585154253282414
+      ]
+    },
+    {
+      "name": "Truss_02_Fruit_07",
+      "center_tool_m": [
+        0.012240427198455483,
+        0.14109003094721367,
+        -0.0011675967583944327
+      ]
+    },
+    {
+      "name": "Truss_02_Fruit_08",
+      "center_tool_m": [
+        -0.014128252898564946,
+        0.13973085338654334,
+        -0.003166756809273099
+      ]
+    },
+    {
+      "name": "Truss_01_Fruit_01",
+      "center_tool_m": [
+        0.01663266029219201,
+        0.14473895081113908,
+        0.07846595497440371
+      ]
+    },
+    {
+      "name": "Truss_01_Fruit_02",
+      "center_tool_m": [
+        -0.007213972683832248,
+        0.14386704748483964,
+        0.06221352825026724
+      ]
+    },
+    {
+      "name": "Truss_01_Fruit_07",
+      "center_tool_m": [
+        0.01399670639181344,
+        0.12406016862965542,
+        -0.0026969870574480863
+      ]
+    },
+    {
+      "name": "Truss_01_Fruit_08",
+      "center_tool_m": [
+        -0.012486731301204623,
+        0.12128676169944703,
+        -0.0046961254612544155
+      ]
+    }
+  ],
+  "all_segments_finite_capacity_and_1mm_passed": true,
+  "max_active_penetration_m": 0,
+  "simulated_s": 62.34293746948242,
+  "wall_s": 42.94228859699797,
+  "assets": "/root/farmily_runtime/newton/assets/patrol_capture_height84_20261110",
+  "code_sha256": {
+    "nvidia-sim/harvest_s300/newton_geometric_harvest.py": "4d1fe845d5fe2fa920910225e8f0b1284ede81c1cb859afbe25b0ee91192ce88",
+    "nvidia-sim/harvest_s300/harvest_group_policy.py": "618a7805ec416296548beb17523fe057f7e133ddbc3ff6ceae19605be8ba609b",
+    "nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "fe59f630210f84563036391c4d07046259d79d92639a3661be190ab774e61dcd",
+    "nvidia-sim/harvest_s300/newton_patrol_viewer.py": "13d048548e8db2d0cb84f5a710732781bb331aa2a2b72e7cccbe3efb20e81f80",
+    "nvidia-sim/harvest_s300/render_newton_patrol.py": "a25b2c7d7b4380a9be2ab4348aa11b1a8a4f499d69b205b7258f4494c20f506b"
+  },
+  "videos": [
+    "/root/farmily_runtime/newton/runs/20261110_capture_height84/height84_harvest_actual.mp4"
+  ],
+  "ready_server_pid": 252538,
+  "training_eligible": false,
+  "harvest_success": null,
+  "gui_preview": {
+    "url": "http://127.0.0.1:5905",
+    "start_button_visible": true,
+    "start_not_clicked": true,
+    "script_errors": [],
+    "text": "Farmily camera patrol\n\n시작 자세: 엘보우 위\n\n자세를 선택한 뒤 순회 시작을 누르세요.\n\n시작 자세\n\n순회 시작\n순회 중지 / 화면 닫기"
+  },
+  "video_render": {
+    "renderer_source_sha256": "a25b2c7d7b4380a9be2ab4348aa11b1a8a4f499d69b205b7258f4494c20f506b",
+    "actual_recorded_states": true,
+    "physics_steps_executed": 0,
+    "geometric_assumed_harvest": true,
+    "fps": 12,
+    "frames": 749,
+    "render_wall_s": 58.90872298704926,
+    "sources": [
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_000/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_001/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_002/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_003/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_004/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_capture_height84/sample_two/step_005/physics/states.npz"
+    ],
+    "eye_offset": [
+      -0.8,
+      -0.8,
+      1.5
+    ],
+    "look_at_offset": [
+      -0.15,
+      -0.1,
+      1.0
+    ]
+  },
+  "video_sha256": "6fda3f541300a04a6495327faacfce09695138ec473d07c12f88b7fb299d8b2a"
+}

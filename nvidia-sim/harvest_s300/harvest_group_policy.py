@@ -76,6 +76,13 @@ class HarvestGroupSelector:
     """
     def __init__(self, policy, direction, *, depth_m=.065, height_offset_m=0., output=None, depth_for_truss=None):
         self.minimum = policy['minimum_fruits']
+        self.ignore_ineligible_obstacles = policy.get('harvest_mode') == 'main_stem_only_geometric_harvest'
+        height=np.asarray(policy.get('tool_height_interval_m',(.013,.061)),float)
+        if height.shape!=(2,) or not np.isfinite(height).all() or height[0]>=height[1]:
+            raise ValueError('Finite ordered tool height interval required')
+        self.height_min_m,self.height_max_m=map(float,height)
+        self.height_center_m=float(height.mean())
+        self.height_half_span_m=float(np.diff(height)[0]/2)
         self.eligible = {e['name'] for e in policy['fruit_eligibility'] if e['eligible']}
         self.direction = direction
         self.depth_m = depth_m
@@ -127,6 +134,7 @@ class HarvestGroupSelector:
             radii = np.array([max(f['dimensions_m'])/2 for f in subset])
             if not np.isfinite(points).all() or not np.isfinite(radii).all() or np.any(radii <= 0):
                 raise ValueError('Invalid fruit center or radius')
+            fit_radii = np.zeros_like(radii) if self.ignore_ineligible_obstacles else radii
             direction = np.asarray(self.direction(key, fruits, breaks, paths, coords), float)
             if direction.shape != (3,) or not np.isfinite(direction).all() or abs(direction[2]) > 1e-8 or np.linalg.norm(direction) < 1e-9:
                 raise ValueError('Finite horizontal group direction required')
@@ -146,15 +154,15 @@ class HarvestGroupSelector:
             seeds += [(points[i]+points[j])/2 for i,j in itertools.combinations(np.flatnonzero(available), 2)]
             seen = set()
             for seed in seeds:
-                for dz in (0., -.024, .024):
+                for dz in (0., -self.height_half_span_m, self.height_half_span_m):
                     aim = seed.copy(); aim[2] += dz
                     actual_center = aim + [0., 0., self.height_offset_m]
-                    local = (points-actual_center)@rotation + [0., .158-depth_m, .037]
-                    inside = ((np.abs(local[:,0])+radii <= .048+1e-10) &
-                              (local[:,1]-radii >= -1e-10) & (local[:,1]+radii <= .158+1e-10) &
-                              (local[:,2] >= .013-1e-10) & (local[:,2] <= .061+1e-10))
+                    local = (points-actual_center)@rotation + [0., .158-depth_m, self.height_center_m]
+                    inside = ((np.abs(local[:,0])+fit_radii <= .048+1e-10) &
+                              (local[:,1]-fit_radii >= -1e-10) & (local[:,1]+fit_radii <= .158+1e-10) &
+                              (local[:,2] >= self.height_min_m-1e-10) & (local[:,2] <= self.height_max_m+1e-10))
                     count = int(np.sum(inside & available))
-                    if np.any(inside & ~ripe): continue
+                    if not self.ignore_ineligible_obstacles and np.any(inside & ~ripe): continue
                     best_geometric_count = max(best_geometric_count, count)
                     if count < self.minimum: continue
                     ids = np.flatnonzero(inside & available)
@@ -165,14 +173,14 @@ class HarvestGroupSelector:
                     lateral_shift = float(local[ids, 0].mean())
                     aim = seed_aim + rotation[:, 0]*lateral_shift
                     actual_center = aim + [0., 0., self.height_offset_m]
-                    local = (points-actual_center)@rotation + [0., .158-depth_m, .037]
-                    inside = ((np.abs(local[:,0])+radii <= .048+1e-10) &
-                              (local[:,1]-radii >= -1e-10) & (local[:,1]+radii <= .158+1e-10) &
-                              (local[:,2] >= .013-1e-10) & (local[:,2] <= .061+1e-10))
+                    local = (points-actual_center)@rotation + [0., .158-depth_m, self.height_center_m]
+                    inside = ((np.abs(local[:,0])+fit_radii <= .048+1e-10) &
+                              (local[:,1]-fit_radii >= -1e-10) & (local[:,1]+fit_radii <= .158+1e-10) &
+                              (local[:,2] >= self.height_min_m-1e-10) & (local[:,2] <= self.height_max_m+1e-10))
                     if not np.all(inside[ids]):
                         centering_rejections['selected_fruit_outside'] += 1
                         continue
-                    if np.any(inside & ~ripe):
+                    if not self.ignore_ineligible_obstacles and np.any(inside & ~ripe):
                         centering_rejections['ineligible_fruit_inside'] += 1
                         continue
                     identity = (group_names, tuple(np.round(seed_aim, 10)))
@@ -180,7 +188,7 @@ class HarvestGroupSelector:
                     seen.add(identity)
                     nearby = ((np.abs(local[:,0])-radii <= .048) &
                               (local[:,1]+radii >= 0) & (local[:,1]-radii <= .158) &
-                              (local[:,2]+radii >= .013) & (local[:,2]-radii <= .061))
+                              (local[:,2]+radii >= self.height_min_m) & (local[:,2]-radii <= self.height_max_m))
                     group = dict(fruits=[names[i] for i in ids], truss_key=key,
                         measured_centers_world_m=centers.tolist(),
                         measured_centroid_world_m=centers.mean(0).tolist(),
@@ -188,6 +196,7 @@ class HarvestGroupSelector:
                         group_selection=dict(eligible_count=count, minimum_fruits=self.minimum,
                             direction_world=y.tolist(), belt_aim_world_m=actual_center.tolist(),
                             depth_m=depth_m, height_offset_m=self.height_offset_m,
+                            tool_height_interval_m=[self.height_min_m,self.height_max_m],
                             fruit_centers_tool_m=local[ids].tolist(),
                             lateral_centering=dict(method='selected_group_centroid_tool_x',
                                 seed_aim_world_m=seed_aim.tolist(),

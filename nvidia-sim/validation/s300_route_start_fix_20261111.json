@@ -1,0 +1,264 @@
+{
+  "schema": "s300-route-start-fix-v1",
+  "assets": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111",
+  "source_assets": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111/up",
+  "preparation": {
+    "assets": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111",
+    "end_station_m": 3.85,
+    "plants": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "model_counts": {
+      "nq": 10,
+      "nv": 10,
+      "nbody": 1133,
+      "ngeom": 1279,
+      "neq": 90
+    },
+    "source_inputs": "/root/farmily_runtime/newton/assets/patrol_reuse3m_20261111/up/inputs",
+    "source_model_sha256": "daf8093644228a5fac6f1928ff8896471e8e13afa459a81219cb8e04a36b7b8b",
+    "registration": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111/registration.json",
+    "registration_sha256": "ff733abdd53846deda758bf8c110342150d191bce826a3d9acd19769eed0d44d",
+    "added_static_bodies": 104,
+    "added_main_stem_colliders": 64,
+    "added_fruit_instances": 40,
+    "plant_joints_created": 0,
+    "mesh_files_created": 0,
+    "original_robot_and_colliders_preserved": true,
+    "physical_detachment_enabled": false,
+    "harvest_success": null,
+    "route_execution_still_requires_validation": true,
+    "preparation_wall_s": 46.419780561933294
+  },
+  "asset_invariants": {
+    "passed": true,
+    "route_end_m": 3.85,
+    "plants": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "fruit_bodies": 260,
+    "nq": 10,
+    "nv": 10,
+    "nbody": 1133,
+    "ngeom": 1279,
+    "main_stem_colliders": 224,
+    "robot_body_properties_unchanged": 14,
+    "initial_states_unchanged": [
+      "up",
+      "down"
+    ],
+    "camera_extrinsics_intrinsics_unchanged": true,
+    "harvest_volume_unchanged": true,
+    "source_assets": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111/up",
+    "new_assets": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111"
+  },
+  "visual_invariants": {
+    "passed": true,
+    "visual_geoms": 31468,
+    "unique_meshes": 3471,
+    "mesh_vertices_faces_colors_unchanged": true,
+    "max_world_position_difference_m": 0.0,
+    "max_world_rotation_difference": 0.0
+  },
+  "actual_run": {
+    "status": "stopped",
+    "reason": "configured_route_budget_end_reached",
+    "station_m": 3.85021710395813,
+    "reached_3_85m": true,
+    "actual_gpu_physics": true,
+    "actual_gpu_camera": true,
+    "gui": true,
+    "completed_harvest_motions": 19,
+    "geometric_fruit_count": 126,
+    "trusses_with_at_least_one_capture": [
+      "/World/Greenhouse/Plants/Plant_17/Truss_01",
+      "/World/Greenhouse/Plants/Plant_17/Truss_02",
+      "/World/Greenhouse/Plants/Plant_18/Truss_01",
+      "/World/Greenhouse/Plants/Plant_18/Truss_02",
+      "/World/Greenhouse/Plants/Plant_19/Truss_02",
+      "/World/Greenhouse/Plants/Plant_20/Truss_00",
+      "/World/Greenhouse/Plants/Plant_20/Truss_01",
+      "/World/Greenhouse/Plants/Plant_20/Truss_02",
+      "/World/Greenhouse/Plants/Plant_21/Truss_01",
+      "/World/Greenhouse/Plants/Plant_21/Truss_02",
+      "/World/Greenhouse/Plants/Plant_22/Truss_00",
+      "/World/Greenhouse/Plants/Plant_22/Truss_01",
+      "/World/Greenhouse/Plants/Plant_22/Truss_02",
+      "/World/Greenhouse/Plants/Plant_23/Truss_00",
+      "/World/Greenhouse/Plants/Plant_27/Truss_00",
+      "/World/Greenhouse/Plants/Plant_28/Truss_00",
+      "/World/Greenhouse/Plants/Plant_29/Truss_00",
+      "/World/Greenhouse/Plants/Plant_31/Truss_00"
+    ],
+    "all_fruit_of_all_trusses_harvested": false,
+    "simulation_s": 169.97520446777344,
+    "wall_s": 360.31029775505885,
+    "cold_preparation_s": 23.871007204055786,
+    "all_physics_segments_completed": true,
+    "no_active_physics_violation": true,
+    "entry_angles_all_passed": true,
+    "max_entry_yaw_deg": 0.14873885557124938,
+    "max_capture_position_error_m": 0.0009623131927615664,
+    "phases": {
+      "initial_scan_pose": {
+        "segments": 1,
+        "simulated_s": 0.10757578164339066,
+        "orchestration_wall_s": 7.959028432029299,
+        "simulation_time_per_orchestration_wall_time": 0.013516195169058122
+      },
+      "move": {
+        "segments": 19,
+        "simulated_s": 41.96997939795256,
+        "orchestration_wall_s": 78.5888182799099,
+        "simulation_time_per_orchestration_wall_time": 0.5340451773745728
+      },
+      "brake_for_observation": {
+        "segments": 8,
+        "simulated_s": 6.134974479675293,
+        "orchestration_wall_s": 17.46800804976374,
+        "simulation_time_per_orchestration_wall_time": 0.35121202498863463
+      },
+      "harvest": {
+        "segments": 19,
+        "simulated_s": 121.65510416030884,
+        "orchestration_wall_s": 155.60553482035175,
+        "simulation_time_per_orchestration_wall_time": 0.7818173325310115
+      },
+      "scan": {
+        "segments": 1,
+        "simulated_s": 0.10757064819335938,
+        "orchestration_wall_s": 1.4234063429757953,
+        "simulation_time_per_orchestration_wall_time": 0.07557269132893599
+      }
+    },
+    "scene_stream": {
+      "schema": "s300-visual-stream-evidence-v1",
+      "events": [
+        {
+          "event": "prefetch_start",
+          "index": 0,
+          "wall_s": 1047709.708126476
+        },
+        {
+          "event": "prefetch_ready",
+          "index": 0,
+          "wall_s": 1047718.478087003,
+          "load_wall_s": 8.764329625060782
+        },
+        {
+          "event": "reuse_ready_scene",
+          "index": 1,
+          "wall_s": 1047718.478107322
+        },
+        {
+          "event": "switch",
+          "previous": 0,
+          "index": 1,
+          "station_m": 2.046511650085449,
+          "wall_s": 1047959.537091405,
+          "switch_wall_s": 3.6570942029356956e-05,
+          "load_wait_s": 0.0,
+          "reused_gpu_scene": true
+        }
+      ],
+      "manifest": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111/up/scene_stream/manifest.json",
+      "manifest_sha256": "507b96ac34612550da8e9e0f9fc5b84ac18884b6d720167a95cc2bd0b8960bb9",
+      "source_hashes": {
+        "patrol_assets.json": "9eb0fd64c1b1b340e4a463e2388a51ed62a00d42de51cf9af818b01059cf7182",
+        "model/scene.xml": "4bb41371e64ff7226f15129ea92582684d6e640add68780179dc9c7b7fcf6392",
+        "sensor_catalog.json": "370865e40f39e89a128627ef12bda23d594d0bde701c68f7322d47d66f0a66dc",
+        "inputs/input_model.mjb": "1f79415ffc07007941023b02ab54d053ca1ba21d97734b44e4d22aa927f082ed"
+      },
+      "switches": 1,
+      "runtime_load_wait_s": 0.0,
+      "deadline_misses": 0,
+      "max_resident_workers": 1,
+      "scope": "Visual camera/display sections only; physics, prepared route and harvest ledger unchanged",
+      "initial_preparation_wall_s": 9.147712470963597
+    }
+  },
+  "tests": {
+    "camera_patrol_motion_and_scene_stream": 33
+  },
+  "limitations": [
+    "Geometric harvest credit only; no physical fruit detachment.",
+    "One elbow-up GUI trial; no fresh3.85m headless/GUI equivalence claim.",
+    "Full farm visuals retained; only selected route plants have thick-main-stem colliders.",
+    "Camera/planning and state-saving pauses remain; preparation speed is not runtime RTF."
+  ],
+  "videos": [
+    "/root/farmily_runtime/newton/runs/20261111_route_start_fix/route385m_live.mp4",
+    "/root/farmily_runtime/newton/runs/20261111_route_start_fix/failed_tail_route385m_live.webm"
+  ],
+  "tail_failure": {
+    "error": "ValueError('No monotone rail cruise fits the command speed/acceleration limits')",
+    "measured_station_m": 0.8482915759086609,
+    "route_end_m": 3.85,
+    "remaining_m": 3.001708424091339,
+    "full_step_m": 0.15,
+    "tail_m": 0.0017084240913393112,
+    "old_boundary_speed_m_s": 0.12,
+    "minimum_constant_acceleration_stop_distance_m": 0.024,
+    "fix": "Limit cruise boundary speed by remaining braking distance and per-step acceleration; unchanged speed/acceleration limits."
+  },
+  "default_change": {
+    "previous": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111",
+    "current": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111",
+    "requested_end_station_m": 3.85
+  },
+  "preflight_rejection": {
+    "returncode": 1,
+    "wall_s": 0.45612573402468115,
+    "summary": {
+      "status": "error",
+      "stage": "configuration",
+      "error": "Requested --end-station 3.85m exceeds the usable route 0 < end <= 0.85m. Use --end-station 0.85 (or omit it), or select extended ASSETS. To extend existing farm instances: prepare-route REFERENCE_ASSETS OUTPUT --end-station METRES.",
+      "physics_started": false,
+      "assets": "/root/farmily_runtime/newton/assets/patrol_prefetch_20261111",
+      "requested_end_station_m": "3.85"
+    },
+    "start_selection_created": false
+  },
+  "browser": {
+    "events": [
+      {
+        "wall_since_click_s": 62.70753016206436,
+        "action": "viewer camera orbit"
+      }
+    ],
+    "errors": [],
+    "final_status": "stopped",
+    "text": "Farmily camera patrol\n\n순회 종료: stopped\n\n수확 시도 19회 · 영역 기준 수확 126개\n\n마지막 위치: 입구에서 3.85m\n\n종료 원인\n\nconfigured_route_budget_end_reached\n\n시작 자세\n\n완료\n순회 중지 / 화면 닫기\n\n장착 카메라 · 현재 관측\n\nLIVE browser | route 0-3.85m | wall 378.2 s | includes camera and planning waits"
+  },
+  "ready_viewer": {
+    "start_enabled": true,
+    "text": "Farmily camera patrol\n\n시작 자세: 엘보우 위\n\n순회 구간: 입구 → 3.85m\n\n자세를 선택한 뒤 순회 시작을 누르세요.\n\n시작 자세\n\n순회 시작\n순회 중지 / 화면 닫기",
+    "errors": []
+  }
+}

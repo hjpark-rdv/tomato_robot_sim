@@ -346,7 +346,12 @@ class HarvestGPUController:
         self.dead = arr(np.deg2rad([s['deadband_deg'] for s in specs]))
         self.force_limit = arr([s['force_n'] for s in specs])
         self.torque_limit = arr([s['torque_nm'] for s in specs])
-        self.damping_adr = arr(attachment_damping_addresses(m, metadata), int)
+        addresses = attachment_damping_addresses(m, metadata)
+        self.damping_adr = arr(addresses, int)
+        # The explicitly requested ideal harvest experiment credits measured
+        # volume entry. Keep elastic mechanics but disable physical breakage.
+        ideal = metadata.get('geometric_harvest', {}).get('mode') == 'main_stem_only_geometric_harvest'
+        self.release_damping_adr = arr(np.full_like(addresses, -1), int) if ideal else self.damping_adr
         n = len(specs)
         self.torque = wp.zeros((worlds, n), wp.vec3, device=self.device)
         self.implicit = wp.zeros_like(self.torque)
@@ -375,12 +380,14 @@ class HarvestGPUController:
         self.gutter_pair_steps = wp.zeros((worlds, steps), int, device=self.device)
         allowed = np.zeros((n, m.ngeom), bool)
         tools = set(metadata['tools']) | {'Robot_world', 'Robot_S300Carrier'}
+        geometry_names=[m.geom(g).name or '' for g in range(m.ngeom)]
+        geometry_bodies=[m.body(int(body)).name for body in m.geom_bodyid]
+        fixed_allowed=np.array([name in tools or (m.geom_bodyid[g]==0 and
+            ('ground' in geometry_names[g].lower() or geometry_names[g]=='CatchFloor')) or gutter_mask[g]
+            for g,name in enumerate(geometry_bodies)],bool)
         for i, spec in enumerate(specs):
             truss = spec['name'].split('_Fruit_', 1)[0]
-            for g in range(m.ngeom):
-                name = m.body(int(m.geom_bodyid[g])).name
-                gn = m.geom(g).name or ''
-                allowed[i, g] = name in tools or name.startswith(truss + '_') or (m.geom_bodyid[g] == 0 and ('ground' in gn.lower() or gn == 'CatchFloor')) or gutter_mask[g]
+            allowed[i]=fixed_allowed | np.array([name.startswith(truss+'_') for name in geometry_bodies],bool)
         self.allowed_release = arr(allowed, bool)
         self.active_max = wp.zeros((worlds, steps), float, device=self.device)
         self.released_max = wp.zeros_like(self.active_max)
@@ -425,7 +432,7 @@ class HarvestGPUController:
             self.nefc_log, self.overflow_log, self.qacc_abs_max, self.time_log,
             self.first_qacc_nonfinite, self.first_capacity_overflow], device=self.device)
         wp.launch(release_attachments, self.torque.shape, inputs=[self.tick, 0., self.bodies, self.eqids,
-            self.damping_adr, self.attached, self.magnitude, self.force_limit, self.torque_limit,
+            self.release_damping_adr, self.attached, self.magnitude, self.force_limit, self.torque_limit,
             d.nefc, d.efc.type, d.efc.id, d.efc.force, d.eq_active, m.dof_damping,
             self.break_step, self.force_log, self.torque_log], device=self.device)
         wp.launch(audit_contacts, d.naconmax, inputs=[self.tick, d.nacon, d.njmax, int(self.solver.mj_model.opt.cone),

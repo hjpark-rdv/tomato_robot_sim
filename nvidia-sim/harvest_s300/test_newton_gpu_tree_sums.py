@@ -16,7 +16,7 @@ import numpy as np
 import warp as wp
 
 from newton_gpu_tree_sums import (FixedOrderTreeSums, _plans, _sum_vec3, _sum_vec10,
-                                 _sum_spatial, _flat_crb, _flat_rne)
+                                 _sum_spatial, _flat_crb, _flat_rne, descendant_csr)
 
 
 TREE_XML = """<mujoco model="branched_tree_control">
@@ -43,6 +43,13 @@ TREE_XML = """<mujoco model="branched_tree_control">
 
 
 class TestFixedOrderTreeSums(unittest.TestCase):
+    def test_descendant_layout_preserves_ascending_float_reduction_order(self):
+        offsets,children=descendant_csr(np.array([0,0,1,1,0,4],np.int32))
+        np.testing.assert_array_equal(offsets,[0,6,9,10,11,13,14])
+        np.testing.assert_array_equal(children,[0,1,2,3,4,5,1,2,3,2,3,4,5,5])
+        for parents in (np.array([0,2,1]),np.array([0,9]),np.array([1,0])):
+            with self.assertRaises(ValueError):descendant_csr(parents)
+
     @classmethod
     def setUpClass(cls):
         wp.init()

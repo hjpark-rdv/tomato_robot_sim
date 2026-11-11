@@ -11,7 +11,7 @@ import mujoco as mj
 import numpy as np
 import warp as wp
 
-from newton_frozen_constraints import frozen_connect_ids, configure_frozen_connects
+from newton_frozen_constraints import frozen_connect_ids, configure_frozen_connects, restore_frozen_connect_launch_list
 
 
 class FrozenConnectTests(unittest.TestCase):
@@ -179,6 +179,19 @@ class FrozenConnectTests(unittest.TestCase):
         # No GPU fields are provided: a legacy run must never inspect them.
         self.assertEqual(configure_frozen_connects(solver, metadata),
             dict(enabled=False, omitted_static_connect_ids=[]))
+
+    def test_new_segment_reconfigures_after_exact_verified_upload_list_restoration(self):
+        model,metadata=self.fixture();solver=self.fake_gpu(model)
+        configure_frozen_connects(solver,metadata)
+        self.assertTrue(restore_frozen_connect_launch_list(solver))
+        np.testing.assert_array_equal(solver.mjw_model.eq_connect_adr.numpy(),[2,1,0])
+        changed=dict(metadata,segment_state_sha256='new measured state')
+        proof=configure_frozen_connects(solver,changed)
+        self.assertFalse(proof['idempotent_reuse'])
+        np.testing.assert_array_equal(solver.mjw_model.eq_connect_adr.numpy(),[2,0])
+        model.body_mass[model.body('dynamic').id]+=.001
+        with self.assertRaisesRegex(ValueError,'source changed'):
+            restore_frozen_connect_launch_list(solver)
 
     def test_configuration_requires_pre_step_gpu_and_complete_exact_launch_identity(self):
         model, metadata = self.fixture()

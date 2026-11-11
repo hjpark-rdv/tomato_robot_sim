@@ -1,0 +1,2580 @@
+{
+  "schema": "s300-fluid-camera-patrol-validation-v1",
+  "date": "2026-11-11",
+  "physical_model_changed": false,
+  "actual_newton_gpu_physics": true,
+  "actual_mounted_gpu_camera": true,
+  "harvest_policy": "Existing noncolliding fruit, reached tool-volume geometric credit; not physical fruit detachment",
+  "baseline_profile_is_instrumented_not_valid_for_wall_speed_ratio": true,
+  "motion_changes": [
+    "Distance-based timing of unchanged IK waypoint geometry",
+    "Gripper stays open between entries",
+    "No fixed0.5s stop at each15cm observation",
+    "Cruise carries nonzero rail velocity through intermediate observations in one physical segment",
+    "Actual camera decision ends cruise; physical braking and stopped-pose reacquisition precede harvest"
+  ],
+  "limits": {
+    "rail_velocity_m_s": 0.12,
+    "rail_acceleration_m_s2": 0.3,
+    "maximum_observation_spacing_m": 0.2,
+    "commanded_entry_yaw_deg": 15,
+    "penetration_guard_m": 0.001,
+    "prepared_route_end_m": 0.85,
+    "speed_limits_scope": "Simulation command timing, not certified hardware limits"
+  },
+  "original_harvest_duration_s": 24.35,
+  "cache_only_equal_commands_comparison": {
+    "left": "baseline_profiled",
+    "right": "cache_optimized",
+    "prefix_only": false,
+    "segments": [
+      {
+        "step": 0,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 1,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 2,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 3,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 4,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      }
+    ],
+    "passed": true,
+    "capture_events_equal": true
+  },
+  "whole_gui_headless_comparison": {
+    "left": "verified_headless",
+    "right": "final_gui",
+    "prefix_only": false,
+    "segments": [
+      {
+        "step": 0,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 1,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 2,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 3,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 4,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 5,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 6,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 8,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 9,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 11,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 12,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 13,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 16,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 18,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 19,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      }
+    ],
+    "passed": true,
+    "capture_events_equal": true
+  },
+  "final_display_cadence_comparison": {
+    "left": "verified_headless",
+    "right": "cadence_gui",
+    "prefix_only": true,
+    "segments": [
+      {
+        "step": 0,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 1,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 2,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 3,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      },
+      {
+        "step": 4,
+        "same_action": true,
+        "states.npz": true,
+        "physics_metrics.npz": true,
+        "contact_policy_metrics.npz": true,
+        "executed_commands.npz": true
+      }
+    ],
+    "passed": true,
+    "capture_events_equal": true
+  },
+  "runs": {
+    "verified_headless": {
+      "summary": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/summary.json",
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "cold_preparation_wall_s": 15.69891385291703,
+      "camera_setup_wall_s": 12.828115417039953,
+      "wall_s": 54.72721361101139,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "assumed_harvest_names": [
+        "Truss_01_Fruit_02",
+        "Truss_01_Fruit_03",
+        "Truss_01_Fruit_04",
+        "Truss_01_Fruit_05",
+        "Truss_01_Fruit_07",
+        "Truss_01_Fruit_08",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "p18_Truss_01_Fruit_02",
+        "p18_Truss_01_Fruit_03",
+        "p18_Truss_01_Fruit_04",
+        "p18_Truss_01_Fruit_05",
+        "p18_Truss_01_Fruit_07",
+        "p18_Truss_01_Fruit_08",
+        "p18_Truss_01_Fruit_11",
+        "p18_Truss_02_Fruit_01",
+        "p18_Truss_02_Fruit_02",
+        "p18_Truss_02_Fruit_03",
+        "p18_Truss_02_Fruit_04",
+        "p18_Truss_02_Fruit_05",
+        "p18_Truss_02_Fruit_07",
+        "p18_Truss_02_Fruit_08",
+        "p19_Truss_02_Fruit_01",
+        "p19_Truss_02_Fruit_02",
+        "p19_Truss_02_Fruit_03",
+        "p19_Truss_02_Fruit_04",
+        "p19_Truss_02_Fruit_05",
+        "p19_Truss_02_Fruit_07",
+        "p19_Truss_02_Fruit_08"
+      ],
+      "last_station_m": 0.8501196503639221,
+      "rtf_with_segment_initialization": 0.7815252362630353,
+      "segments": [
+        {
+          "step": 0,
+          "action": "initial_scan_pose",
+          "target": null,
+          "simulated_s": 0.10757578164339066,
+          "orchestration_wall_s": 6.341065572923981,
+          "setup_wall_s": 6.188139225007035,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 1,
+          "action": "move",
+          "target": null,
+          "simulated_s": 4.43487273901701,
+          "orchestration_wall_s": 2.8040644710417837,
+          "setup_wall_s": 0.7167558860965073,
+          "status": "completed",
+          "online_camera_boundary": {
+            "evidence": {
+              "observation": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/rolling_camera/frame_003/observation.json",
+              "decision": {
+                "action": "harvest",
+                "reason": "current_visible_group_bounded_arm_service_proposal",
+                "target_key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                "target": {
+                  "key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "plant_id": 17,
+                  "truss_index": 2,
+                  "truss_key": "Truss_02",
+                  "first_observation_index": 2,
+                  "fruit_evidence": {
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                      "instance_id": 1117742571,
+                      "estimated_center_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                      "instance_id": 1260988864,
+                      "estimated_center_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                      "instance_id": 3525343354,
+                      "estimated_center_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                      "instance_id": 3578641507,
+                      "estimated_center_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                      "instance_id": 994303311,
+                      "estimated_center_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                      "instance_id": 2722794741,
+                      "estimated_center_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    }
+                  },
+                  "blockers": [],
+                  "planning_failures": [],
+                  "service_probe_offset_m": 0.0,
+                  "status": "pending",
+                  "last_observation_index": 3,
+                  "last_observation": {
+                    "observation_id": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/rolling_camera/frame_003/observation.json",
+                    "timestamp_s": 4.5424485206604,
+                    "current_timestamp_s": 4.5424485206604,
+                    "pose_source": "measured Newton GPU state, CPU FK only; render-only Newton SensorCamera CUDA ray tracing"
+                  },
+                  "visible_now": true,
+                  "last_visible_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03"
+                  ],
+                  "aim_world_m": [
+                    -0.5994243270948648,
+                    0.3768460785837193,
+                    1.0837128911991774
+                  ],
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "suggested_lift_m": 0.3767130858148481,
+                  "observed_camera_world_m": [
+                    -0.06999641888154612,
+                    0.2511146259368447,
+                    1.2039081561430025
+                  ],
+                  "calibration": {
+                    "camera_foreaft_m": 2.138854794914158e-06,
+                    "camera_to_grasp_height_m": -0.3169083138037935
+                  },
+                  "target_position_source": "visible_depth_surface_median_plus_optional_known_radius",
+                  "uses_inventory_centroid_for_aim": false,
+                  "observed_attached_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08"
+                  ],
+                  "native_detached_fruit_keys": [],
+                  "reachability": "unknown; requires existing IK, full path audit and actual physics",
+                  "current_station_service_proposal": {
+                    "decision_index": 3,
+                    "actual_station_y_m": 0.45111826062202454,
+                    "observed_service_station_y_m": 0.5768475744141043,
+                    "service_station_y_m": 0.5768475744141043,
+                    "along_row_offset_m": 0.12572931379207974,
+                    "maximum_proposal_offset_m": 0.2,
+                    "ordinary_arrival_tolerance_m": 0.06,
+                    "arrival_tolerance_changed": false,
+                    "rail_move_requested": false,
+                    "requires_existing_ik_full_audit": true,
+                    "uses_current_visible_depth": true,
+                    "reachability": "proposal only; existing robot planner and actual physics must decide"
+                  }
+                },
+                "current_station_y_m": 0.45111826062202454,
+                "next_station_y_m": 0.45111826062202454,
+                "requires_window_switch": false,
+                "service_offset_proposal": {
+                  "decision_index": 3,
+                  "actual_station_y_m": 0.45111826062202454,
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "along_row_offset_m": 0.12572931379207974,
+                  "maximum_proposal_offset_m": 0.2,
+                  "ordinary_arrival_tolerance_m": 0.06,
+                  "arrival_tolerance_changed": false,
+                  "rail_move_requested": false,
+                  "requires_existing_ik_full_audit": true,
+                  "uses_current_visible_depth": true,
+                  "reachability": "proposal only; existing robot planner and actual physics must decide"
+                },
+                "active_window_priority": {
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "active_pending_target_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02"
+                  ],
+                  "other_pending_targets_retained": [],
+                  "avoids_freezing_unresolved_active_groups": true
+                },
+                "index": 3,
+                "training_eligible": false,
+                "harvest_success": null,
+                "physics_execution_required": true,
+                "finite_blocked_target_keys": [],
+                "operational_quarantined_source_plants": [],
+                "quarantined_target_keys": [],
+                "rail_measurement": {
+                  "actual_station_y_m": 0.45111826062202454,
+                  "nominal_physical_bounds_m": [
+                    0.0,
+                    0.85
+                  ],
+                  "existing_measurement_envelope_m": 0.002,
+                  "outside_nominal_bounds": false,
+                  "actual_measurement_clamped": false,
+                  "physical_limits_changed": false,
+                  "collision_tolerances_changed": false
+                }
+              },
+              "actual_station_m": 0.45111826062202454,
+              "solver_step": 973
+            },
+            "maximum_planned_steps": 1806,
+            "executed_steps": 973,
+            "proposed_commands_sha256": "4ddd428b18bfacd6ad79e518c90a23e9dde33b6c50ca7d699df5e244fd752570",
+            "unexecuted_suffix_discarded": true,
+            "completion_kind": "online_observation_endpoint"
+          },
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 2,
+          "action": "brake_for_observation",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 0.7667055130004883,
+          "orchestration_wall_s": 1.1193188459146768,
+          "setup_wall_s": 0.7338335510576144,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 58,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 3,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 6.702927112579346,
+          "orchestration_wall_s": 1.9071590070379898,
+          "setup_wall_s": 0.7485655479831621,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 4,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_01",
+          "simulated_s": 5.968013763427734,
+          "orchestration_wall_s": 1.815066920942627,
+          "setup_wall_s": 0.7457760139368474,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 5,
+          "action": "move",
+          "target": null,
+          "simulated_s": 1.9256553649902344,
+          "orchestration_wall_s": 1.6992481579072773,
+          "setup_wall_s": 0.7605093049351126,
+          "status": "completed",
+          "online_camera_boundary": {
+            "evidence": {
+              "observation": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_005/rolling_camera/frame_001/observation.json",
+              "decision": {
+                "action": "harvest",
+                "reason": "current_visible_group_bounded_arm_service_proposal",
+                "target_key": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                "target": {
+                  "key": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                  "source_plant": "/World/Greenhouse/Plants/Plant_18",
+                  "plant_id": 18,
+                  "truss_index": 2,
+                  "truss_key": "Truss_02",
+                  "first_observation_index": 8,
+                  "fruit_evidence": {
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08",
+                      "instance_id": 16839461,
+                      "estimated_center_world_m": [
+                        -0.5634676917902844,
+                        0.6198710612174343,
+                        0.6483667169853506
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5634676917902844,
+                        0.6198710612174343,
+                        0.6483667169853506
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                      "instance_id": 146194190,
+                      "estimated_center_world_m": [
+                        -0.5836683305473396,
+                        0.6397050980782236,
+                        0.6826267056167264
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5836683305473396,
+                        0.6397050980782236,
+                        0.6826267056167264
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                      "instance_id": 2027703169,
+                      "estimated_center_world_m": [
+                        -0.5799779700832739,
+                        0.6645945788225565,
+                        0.7274020732835793
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5799779700832739,
+                        0.6645945788225565,
+                        0.7274020732835793
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                      "instance_id": 2142343064,
+                      "estimated_center_world_m": [
+                        -0.5674571575755346,
+                        0.6549702939684949,
+                        0.6693719766097059
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5674571575755346,
+                        0.6549702939684949,
+                        0.6693719766097059
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                      "instance_id": 2445274804,
+                      "estimated_center_world_m": [
+                        -0.556471767708919,
+                        0.647972781465017,
+                        0.6487018514758277
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.556471767708919,
+                        0.647972781465017,
+                        0.6487018514758277
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                      "instance_id": 2530355885,
+                      "estimated_center_world_m": [
+                        -0.5751861995460879,
+                        0.6584283712692705,
+                        0.6941846528902086
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5751861995460879,
+                        0.6584283712692705,
+                        0.6941846528902086
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02",
+                      "instance_id": 3788839483,
+                      "estimated_center_world_m": [
+                        -0.590348067196597,
+                        0.6451364887320965,
+                        0.710522041188897
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.590348067196597,
+                        0.6451364887320965,
+                        0.710522041188897
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    }
+                  },
+                  "blockers": [],
+                  "planning_failures": [],
+                  "service_probe_offset_m": 0.0,
+                  "status": "pending",
+                  "last_observation_index": 8,
+                  "last_observation": {
+                    "observation_id": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_005/rolling_camera/frame_001/observation.json",
+                    "timestamp_s": 19.905750274658203,
+                    "current_timestamp_s": 19.905750274658203,
+                    "pose_source": "measured Newton GPU state, CPU FK only; render-only Newton SensorCamera CUDA ray tracing"
+                  },
+                  "visible_now": true,
+                  "last_visible_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02"
+                  ],
+                  "aim_world_m": [
+                    -0.5751861995460879,
+                    0.647972781465017,
+                    0.6826267056167264
+                  ],
+                  "observed_service_station_y_m": 0.8476160357436305,
+                  "service_station_y_m": 0.8476160357436305,
+                  "suggested_lift_m": -0.023658736382913048,
+                  "observed_camera_world_m": [
+                    -0.06983320337289173,
+                    0.4497153828141624,
+                    1.2030995131114393
+                  ],
+                  "calibration": {
+                    "camera_foreaft_m": 2.138854794914158e-06,
+                    "camera_to_grasp_height_m": -0.3169083138037935
+                  },
+                  "target_position_source": "visible_depth_surface_median_plus_optional_known_radius",
+                  "uses_inventory_centroid_for_aim": false,
+                  "observed_attached_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08"
+                  ],
+                  "native_detached_fruit_keys": [],
+                  "reachability": "unknown; requires existing IK, full path audit and actual physics",
+                  "current_station_service_proposal": {
+                    "decision_index": 8,
+                    "actual_station_y_m": 0.6493607759475708,
+                    "observed_service_station_y_m": 0.8476160357436305,
+                    "service_station_y_m": 0.8476160357436305,
+                    "along_row_offset_m": 0.19825525979605974,
+                    "maximum_proposal_offset_m": 0.2,
+                    "ordinary_arrival_tolerance_m": 0.06,
+                    "arrival_tolerance_changed": false,
+                    "rail_move_requested": false,
+                    "requires_existing_ik_full_audit": true,
+                    "uses_current_visible_depth": true,
+                    "reachability": "proposal only; existing robot planner and actual physics must decide"
+                  }
+                },
+                "current_station_y_m": 0.6493607759475708,
+                "next_station_y_m": 0.6493607759475708,
+                "requires_window_switch": true,
+                "service_offset_proposal": {
+                  "decision_index": 8,
+                  "actual_station_y_m": 0.6493607759475708,
+                  "observed_service_station_y_m": 0.8476160357436305,
+                  "service_station_y_m": 0.8476160357436305,
+                  "along_row_offset_m": 0.19825525979605974,
+                  "maximum_proposal_offset_m": 0.2,
+                  "ordinary_arrival_tolerance_m": 0.06,
+                  "arrival_tolerance_changed": false,
+                  "rail_move_requested": false,
+                  "requires_existing_ik_full_audit": true,
+                  "uses_current_visible_depth": true,
+                  "reachability": "proposal only; existing robot planner and actual physics must decide"
+                },
+                "active_window_priority": {
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "active_pending_target_keys": [],
+                  "other_pending_targets_retained": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                    "/World/Greenhouse/Plants/Plant_19/Truss_00",
+                    "/World/Greenhouse/Plants/Plant_19/Truss_01"
+                  ],
+                  "avoids_freezing_unresolved_active_groups": true
+                },
+                "index": 8,
+                "training_eligible": false,
+                "harvest_success": null,
+                "physics_execution_required": true,
+                "finite_blocked_target_keys": [],
+                "operational_quarantined_source_plants": [],
+                "quarantined_target_keys": [],
+                "rail_measurement": {
+                  "actual_station_y_m": 0.6493607759475708,
+                  "nominal_physical_bounds_m": [
+                    0.0,
+                    0.85
+                  ],
+                  "existing_measurement_envelope_m": 0.002,
+                  "outside_nominal_bounds": false,
+                  "actual_measurement_clamped": false,
+                  "physical_limits_changed": false,
+                  "collision_tolerances_changed": false
+                }
+              },
+              "actual_station_m": 0.6493607759475708,
+              "solver_step": 421
+            },
+            "maximum_planned_steps": 857,
+            "executed_steps": 421,
+            "proposed_commands_sha256": "bef7fbc0ec787d5487661a501d34c826b3e72692b97db8cddc917548f9b66c2a",
+            "unexecuted_suffix_discarded": true,
+            "completion_kind": "online_observation_endpoint"
+          },
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 53,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 6,
+          "action": "brake_for_observation",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+          "simulated_s": 0.7666263580322266,
+          "orchestration_wall_s": 1.1319359060144052,
+          "setup_wall_s": 0.7637517109978944,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 8,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_00",
+          "simulated_s": 1.1075172424316406,
+          "orchestration_wall_s": 1.2686118959682062,
+          "setup_wall_s": 0.7829760699532926,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 9,
+          "action": "scan",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_00",
+          "simulated_s": 0.10757064819335938,
+          "orchestration_wall_s": 0.90003943501506,
+          "setup_wall_s": 0.7545704750809819,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 11,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_01",
+          "simulated_s": 5.911954879760742,
+          "orchestration_wall_s": 1.9526173030026257,
+          "setup_wall_s": 0.8008979780133814,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 476,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 12,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+          "simulated_s": 6.846912384033203,
+          "orchestration_wall_s": 2.202019355027005,
+          "setup_wall_s": 0.8175916749751195,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 850,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 13,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_01",
+          "simulated_s": 1.1079750061035156,
+          "orchestration_wall_s": 1.3080689639318734,
+          "setup_wall_s": 0.8233287769835442,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 52,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 16,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_00",
+          "simulated_s": 1.1079750061035156,
+          "orchestration_wall_s": 1.3134747019503266,
+          "setup_wall_s": 0.8310277309501544,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 53,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 18,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_02",
+          "simulated_s": 5.618923187255859,
+          "orchestration_wall_s": 1.9134999229572713,
+          "setup_wall_s": 0.8422732740873471,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 19,
+          "action": "move",
+          "target": null,
+          "simulated_s": 0.2894935607910156,
+          "orchestration_wall_s": 1.0737307739909738,
+          "setup_wall_s": 0.8626643989700824,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        }
+      ],
+      "moving_observations": [
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.15002372860908508,
+          "physics_clock_s": 2.0333316326141357,
+          "campaign_wall_s": 8.815535549074411,
+          "visible_red_fruits": 0,
+          "queued": [],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/rolling_camera/frame_001",
+          "sensor_wall_s": 0.02077427599579096,
+          "distance_since_observation_m": 0.15002372796815422,
+          "actual_rail_velocity_m_s": 0.12007298320531845
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.30057287216186523,
+          "physics_clock_s": 3.2878758907318115,
+          "campaign_wall_s": 9.325335407047532,
+          "visible_red_fruits": 7,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_02",
+            "/World/Greenhouse/Plants/Plant_17/Truss_01"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/rolling_camera/frame_002",
+          "sensor_wall_s": 0.04139765095897019,
+          "distance_since_observation_m": 0.15054914355278015,
+          "actual_rail_velocity_m_s": 0.12000054121017456
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.45111826062202454,
+          "physics_clock_s": 4.5424485206604,
+          "campaign_wall_s": 9.86940438207239,
+          "visible_red_fruits": 14,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_01",
+            "/World/Greenhouse/Plants/Plant_17/Truss_02"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/rolling_camera/frame_003",
+          "sensor_wall_s": 0.06141766509972513,
+          "distance_since_observation_m": 0.1505453884601593,
+          "actual_rail_velocity_m_s": 0.1200004443526268
+        },
+        {
+          "index": 5,
+          "in_motion": true,
+          "station_m": 0.6493607759475708,
+          "physics_clock_s": 19.905750274658203,
+          "campaign_wall_s": 20.491199991083704,
+          "visible_red_fruits": 25,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_18/Truss_02",
+            "/World/Greenhouse/Plants/Plant_19/Truss_01",
+            "/World/Greenhouse/Plants/Plant_19/Truss_00",
+            "/World/Greenhouse/Plants/Plant_18/Truss_01"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_005/rolling_camera/frame_001",
+          "sensor_wall_s": 0.08748282794840634,
+          "distance_since_observation_m": 0.15002378821372986,
+          "actual_rail_velocity_m_s": 0.12007154524326324
+        }
+      ],
+      "display": null
+    },
+    "final_gui": {
+      "summary": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/summary.json",
+      "status": "stopped",
+      "reason": "configured_route_budget_end_reached",
+      "cold_preparation_wall_s": 15.744923307094723,
+      "camera_setup_wall_s": 12.847378608072177,
+      "wall_s": 95.45667249592952,
+      "physics_clock_s": 42.77069854736328,
+      "completed_harvest_motions": 5,
+      "assumed_harvest_count": 33,
+      "assumed_harvest_names": [
+        "Truss_01_Fruit_02",
+        "Truss_01_Fruit_03",
+        "Truss_01_Fruit_04",
+        "Truss_01_Fruit_05",
+        "Truss_01_Fruit_07",
+        "Truss_01_Fruit_08",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "p18_Truss_01_Fruit_02",
+        "p18_Truss_01_Fruit_03",
+        "p18_Truss_01_Fruit_04",
+        "p18_Truss_01_Fruit_05",
+        "p18_Truss_01_Fruit_07",
+        "p18_Truss_01_Fruit_08",
+        "p18_Truss_01_Fruit_11",
+        "p18_Truss_02_Fruit_01",
+        "p18_Truss_02_Fruit_02",
+        "p18_Truss_02_Fruit_03",
+        "p18_Truss_02_Fruit_04",
+        "p18_Truss_02_Fruit_05",
+        "p18_Truss_02_Fruit_07",
+        "p18_Truss_02_Fruit_08",
+        "p19_Truss_02_Fruit_01",
+        "p19_Truss_02_Fruit_02",
+        "p19_Truss_02_Fruit_03",
+        "p19_Truss_02_Fruit_04",
+        "p19_Truss_02_Fruit_05",
+        "p19_Truss_02_Fruit_07",
+        "p19_Truss_02_Fruit_08"
+      ],
+      "last_station_m": 0.8501196503639221,
+      "rtf_with_segment_initialization": 0.4480640004415314,
+      "segments": [
+        {
+          "step": 0,
+          "action": "initial_scan_pose",
+          "target": null,
+          "simulated_s": 0.10757578164339066,
+          "orchestration_wall_s": 7.259404471027665,
+          "setup_wall_s": 6.74161442311015,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 1,
+          "action": "move",
+          "target": null,
+          "simulated_s": 4.43487273901701,
+          "orchestration_wall_s": 6.50423616997432,
+          "setup_wall_s": 0.7276316710049286,
+          "status": "completed",
+          "online_camera_boundary": {
+            "evidence": {
+              "observation": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_001/rolling_camera/frame_003/observation.json",
+              "decision": {
+                "action": "harvest",
+                "reason": "current_visible_group_bounded_arm_service_proposal",
+                "target_key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                "target": {
+                  "key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "plant_id": 17,
+                  "truss_index": 2,
+                  "truss_key": "Truss_02",
+                  "first_observation_index": 2,
+                  "fruit_evidence": {
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                      "instance_id": 1117742571,
+                      "estimated_center_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                      "instance_id": 1260988864,
+                      "estimated_center_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                      "instance_id": 3525343354,
+                      "estimated_center_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                      "instance_id": 3578641507,
+                      "estimated_center_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                      "instance_id": 994303311,
+                      "estimated_center_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                      "instance_id": 2722794741,
+                      "estimated_center_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    }
+                  },
+                  "blockers": [],
+                  "planning_failures": [],
+                  "service_probe_offset_m": 0.0,
+                  "status": "pending",
+                  "last_observation_index": 3,
+                  "last_observation": {
+                    "observation_id": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_001/rolling_camera/frame_003/observation.json",
+                    "timestamp_s": 4.5424485206604,
+                    "current_timestamp_s": 4.5424485206604,
+                    "pose_source": "measured Newton GPU state, CPU FK only; render-only Newton SensorCamera CUDA ray tracing"
+                  },
+                  "visible_now": true,
+                  "last_visible_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03"
+                  ],
+                  "aim_world_m": [
+                    -0.5994243270948648,
+                    0.3768460785837193,
+                    1.0837128911991774
+                  ],
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "suggested_lift_m": 0.3767130858148481,
+                  "observed_camera_world_m": [
+                    -0.06999641888154612,
+                    0.2511146259368447,
+                    1.2039081561430025
+                  ],
+                  "calibration": {
+                    "camera_foreaft_m": 2.138854794914158e-06,
+                    "camera_to_grasp_height_m": -0.3169083138037935
+                  },
+                  "target_position_source": "visible_depth_surface_median_plus_optional_known_radius",
+                  "uses_inventory_centroid_for_aim": false,
+                  "observed_attached_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08"
+                  ],
+                  "native_detached_fruit_keys": [],
+                  "reachability": "unknown; requires existing IK, full path audit and actual physics",
+                  "current_station_service_proposal": {
+                    "decision_index": 3,
+                    "actual_station_y_m": 0.45111826062202454,
+                    "observed_service_station_y_m": 0.5768475744141043,
+                    "service_station_y_m": 0.5768475744141043,
+                    "along_row_offset_m": 0.12572931379207974,
+                    "maximum_proposal_offset_m": 0.2,
+                    "ordinary_arrival_tolerance_m": 0.06,
+                    "arrival_tolerance_changed": false,
+                    "rail_move_requested": false,
+                    "requires_existing_ik_full_audit": true,
+                    "uses_current_visible_depth": true,
+                    "reachability": "proposal only; existing robot planner and actual physics must decide"
+                  }
+                },
+                "current_station_y_m": 0.45111826062202454,
+                "next_station_y_m": 0.45111826062202454,
+                "requires_window_switch": false,
+                "service_offset_proposal": {
+                  "decision_index": 3,
+                  "actual_station_y_m": 0.45111826062202454,
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "along_row_offset_m": 0.12572931379207974,
+                  "maximum_proposal_offset_m": 0.2,
+                  "ordinary_arrival_tolerance_m": 0.06,
+                  "arrival_tolerance_changed": false,
+                  "rail_move_requested": false,
+                  "requires_existing_ik_full_audit": true,
+                  "uses_current_visible_depth": true,
+                  "reachability": "proposal only; existing robot planner and actual physics must decide"
+                },
+                "active_window_priority": {
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "active_pending_target_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02"
+                  ],
+                  "other_pending_targets_retained": [],
+                  "avoids_freezing_unresolved_active_groups": true
+                },
+                "index": 3,
+                "training_eligible": false,
+                "harvest_success": null,
+                "physics_execution_required": true,
+                "finite_blocked_target_keys": [],
+                "operational_quarantined_source_plants": [],
+                "quarantined_target_keys": [],
+                "rail_measurement": {
+                  "actual_station_y_m": 0.45111826062202454,
+                  "nominal_physical_bounds_m": [
+                    0.0,
+                    0.85
+                  ],
+                  "existing_measurement_envelope_m": 0.002,
+                  "outside_nominal_bounds": false,
+                  "actual_measurement_clamped": false,
+                  "physical_limits_changed": false,
+                  "collision_tolerances_changed": false
+                }
+              },
+              "actual_station_m": 0.45111826062202454,
+              "solver_step": 973
+            },
+            "maximum_planned_steps": 1806,
+            "executed_steps": 973,
+            "proposed_commands_sha256": "4ddd428b18bfacd6ad79e518c90a23e9dde33b6c50ca7d699df5e244fd752570",
+            "unexecuted_suffix_discarded": true,
+            "completion_kind": "online_observation_endpoint"
+          },
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 2,
+          "action": "brake_for_observation",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 0.7667055130004883,
+          "orchestration_wall_s": 1.8096239289734513,
+          "setup_wall_s": 0.7377563470508903,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 58,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 3,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 6.702927112579346,
+          "orchestration_wall_s": 8.10588467901107,
+          "setup_wall_s": 0.7465212809620425,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 4,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_01",
+          "simulated_s": 5.968013763427734,
+          "orchestration_wall_s": 7.3432667119195685,
+          "setup_wall_s": 0.715261489036493,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 5,
+          "action": "move",
+          "target": null,
+          "simulated_s": 1.9256553649902344,
+          "orchestration_wall_s": 3.3537536520743743,
+          "setup_wall_s": 0.734736911021173,
+          "status": "completed",
+          "online_camera_boundary": {
+            "evidence": {
+              "observation": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_005/rolling_camera/frame_001/observation.json",
+              "decision": {
+                "action": "harvest",
+                "reason": "current_visible_group_bounded_arm_service_proposal",
+                "target_key": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                "target": {
+                  "key": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                  "source_plant": "/World/Greenhouse/Plants/Plant_18",
+                  "plant_id": 18,
+                  "truss_index": 2,
+                  "truss_key": "Truss_02",
+                  "first_observation_index": 8,
+                  "fruit_evidence": {
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08",
+                      "instance_id": 16839461,
+                      "estimated_center_world_m": [
+                        -0.5634676917902844,
+                        0.6198710612174343,
+                        0.6483667169853506
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5634676917902844,
+                        0.6198710612174343,
+                        0.6483667169853506
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                      "instance_id": 146194190,
+                      "estimated_center_world_m": [
+                        -0.5836683305473396,
+                        0.6397050980782236,
+                        0.6826267056167264
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5836683305473396,
+                        0.6397050980782236,
+                        0.6826267056167264
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                      "instance_id": 2027703169,
+                      "estimated_center_world_m": [
+                        -0.5799779700832739,
+                        0.6645945788225565,
+                        0.7274020732835793
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5799779700832739,
+                        0.6645945788225565,
+                        0.7274020732835793
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                      "instance_id": 2142343064,
+                      "estimated_center_world_m": [
+                        -0.5674571575755346,
+                        0.6549702939684949,
+                        0.6693719766097059
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5674571575755346,
+                        0.6549702939684949,
+                        0.6693719766097059
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                      "instance_id": 2445274804,
+                      "estimated_center_world_m": [
+                        -0.556471767708919,
+                        0.647972781465017,
+                        0.6487018514758277
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.556471767708919,
+                        0.647972781465017,
+                        0.6487018514758277
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                      "instance_id": 2530355885,
+                      "estimated_center_world_m": [
+                        -0.5751861995460879,
+                        0.6584283712692705,
+                        0.6941846528902086
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5751861995460879,
+                        0.6584283712692705,
+                        0.6941846528902086
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02": {
+                      "key": "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02",
+                      "instance_id": 3788839483,
+                      "estimated_center_world_m": [
+                        -0.590348067196597,
+                        0.6451364887320965,
+                        0.710522041188897
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.590348067196597,
+                        0.6451364887320965,
+                        0.710522041188897
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    }
+                  },
+                  "blockers": [],
+                  "planning_failures": [],
+                  "service_probe_offset_m": 0.0,
+                  "status": "pending",
+                  "last_observation_index": 8,
+                  "last_observation": {
+                    "observation_id": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_005/rolling_camera/frame_001/observation.json",
+                    "timestamp_s": 19.905750274658203,
+                    "current_timestamp_s": 19.905750274658203,
+                    "pose_source": "measured Newton GPU state, CPU FK only; render-only Newton SensorCamera CUDA ray tracing"
+                  },
+                  "visible_now": true,
+                  "last_visible_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02"
+                  ],
+                  "aim_world_m": [
+                    -0.5751861995460879,
+                    0.647972781465017,
+                    0.6826267056167264
+                  ],
+                  "observed_service_station_y_m": 0.8476160357436305,
+                  "service_station_y_m": 0.8476160357436305,
+                  "suggested_lift_m": -0.023658736382913048,
+                  "observed_camera_world_m": [
+                    -0.06983320337289173,
+                    0.4497153828141624,
+                    1.2030995131114393
+                  ],
+                  "calibration": {
+                    "camera_foreaft_m": 2.138854794914158e-06,
+                    "camera_to_grasp_height_m": -0.3169083138037935
+                  },
+                  "target_position_source": "visible_depth_surface_median_plus_optional_known_radius",
+                  "uses_inventory_centroid_for_aim": false,
+                  "observed_attached_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08"
+                  ],
+                  "native_detached_fruit_keys": [],
+                  "reachability": "unknown; requires existing IK, full path audit and actual physics",
+                  "current_station_service_proposal": {
+                    "decision_index": 8,
+                    "actual_station_y_m": 0.6493607759475708,
+                    "observed_service_station_y_m": 0.8476160357436305,
+                    "service_station_y_m": 0.8476160357436305,
+                    "along_row_offset_m": 0.19825525979605974,
+                    "maximum_proposal_offset_m": 0.2,
+                    "ordinary_arrival_tolerance_m": 0.06,
+                    "arrival_tolerance_changed": false,
+                    "rail_move_requested": false,
+                    "requires_existing_ik_full_audit": true,
+                    "uses_current_visible_depth": true,
+                    "reachability": "proposal only; existing robot planner and actual physics must decide"
+                  }
+                },
+                "current_station_y_m": 0.6493607759475708,
+                "next_station_y_m": 0.6493607759475708,
+                "requires_window_switch": true,
+                "service_offset_proposal": {
+                  "decision_index": 8,
+                  "actual_station_y_m": 0.6493607759475708,
+                  "observed_service_station_y_m": 0.8476160357436305,
+                  "service_station_y_m": 0.8476160357436305,
+                  "along_row_offset_m": 0.19825525979605974,
+                  "maximum_proposal_offset_m": 0.2,
+                  "ordinary_arrival_tolerance_m": 0.06,
+                  "arrival_tolerance_changed": false,
+                  "rail_move_requested": false,
+                  "requires_existing_ik_full_audit": true,
+                  "uses_current_visible_depth": true,
+                  "reachability": "proposal only; existing robot planner and actual physics must decide"
+                },
+                "active_window_priority": {
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "active_pending_target_keys": [],
+                  "other_pending_targets_retained": [
+                    "/World/Greenhouse/Plants/Plant_18/Truss_01",
+                    "/World/Greenhouse/Plants/Plant_18/Truss_02",
+                    "/World/Greenhouse/Plants/Plant_19/Truss_00",
+                    "/World/Greenhouse/Plants/Plant_19/Truss_01"
+                  ],
+                  "avoids_freezing_unresolved_active_groups": true
+                },
+                "index": 8,
+                "training_eligible": false,
+                "harvest_success": null,
+                "physics_execution_required": true,
+                "finite_blocked_target_keys": [],
+                "operational_quarantined_source_plants": [],
+                "quarantined_target_keys": [],
+                "rail_measurement": {
+                  "actual_station_y_m": 0.6493607759475708,
+                  "nominal_physical_bounds_m": [
+                    0.0,
+                    0.85
+                  ],
+                  "existing_measurement_envelope_m": 0.002,
+                  "outside_nominal_bounds": false,
+                  "actual_measurement_clamped": false,
+                  "physical_limits_changed": false,
+                  "collision_tolerances_changed": false
+                }
+              },
+              "actual_station_m": 0.6493607759475708,
+              "solver_step": 421
+            },
+            "maximum_planned_steps": 857,
+            "executed_steps": 421,
+            "proposed_commands_sha256": "bef7fbc0ec787d5487661a501d34c826b3e72692b97db8cddc917548f9b66c2a",
+            "unexecuted_suffix_discarded": true,
+            "completion_kind": "online_observation_endpoint"
+          },
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 53,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 6,
+          "action": "brake_for_observation",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+          "simulated_s": 0.7666263580322266,
+          "orchestration_wall_s": 1.8253706169780344,
+          "setup_wall_s": 0.7625448220642284,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 8,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_00",
+          "simulated_s": 1.1075172424316406,
+          "orchestration_wall_s": 2.2321358419721946,
+          "setup_wall_s": 0.7795938550261781,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 9,
+          "action": "scan",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_00",
+          "simulated_s": 0.10757064819335938,
+          "orchestration_wall_s": 1.3062552199698985,
+          "setup_wall_s": 0.782556917052716,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 11,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_01",
+          "simulated_s": 5.911954879760742,
+          "orchestration_wall_s": 7.359207796980627,
+          "setup_wall_s": 0.8067443749168888,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 476,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 12,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_18/Truss_02",
+          "simulated_s": 6.846912384033203,
+          "orchestration_wall_s": 8.35038442898076,
+          "setup_wall_s": 0.8258071950403973,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 850,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 13,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_01",
+          "simulated_s": 1.1079750061035156,
+          "orchestration_wall_s": 2.3243873100727797,
+          "setup_wall_s": 0.8280049479799345,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 52,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 16,
+          "action": "move",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_00",
+          "simulated_s": 1.1079750061035156,
+          "orchestration_wall_s": 2.325089906924404,
+          "setup_wall_s": 0.8444948149845004,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 53,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        },
+        {
+          "step": 18,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_19/Truss_02",
+          "simulated_s": 5.618923187255859,
+          "orchestration_wall_s": 7.130693405983038,
+          "setup_wall_s": 0.849981221021153,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 19,
+          "action": "move",
+          "target": null,
+          "simulated_s": 0.2894935607910156,
+          "orchestration_wall_s": 1.4009808929404244,
+          "setup_wall_s": 0.8608877969672903,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 1
+          },
+          "active_violations": []
+        }
+      ],
+      "moving_observations": [
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.15002372860908508,
+          "physics_clock_s": 2.0333316326141357,
+          "campaign_wall_s": 11.279143385938369,
+          "visible_red_fruits": 0,
+          "queued": [],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_001/rolling_camera/frame_001",
+          "sensor_wall_s": 0.0383685469860211,
+          "distance_since_observation_m": 0.15002372796815422,
+          "actual_rail_velocity_m_s": 0.12007298320531845
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.30057287216186523,
+          "physics_clock_s": 3.2878758907318115,
+          "campaign_wall_s": 12.825148817966692,
+          "visible_red_fruits": 7,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_02",
+            "/World/Greenhouse/Plants/Plant_17/Truss_01"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_001/rolling_camera/frame_002",
+          "sensor_wall_s": 0.06679534399881959,
+          "distance_since_observation_m": 0.15054914355278015,
+          "actual_rail_velocity_m_s": 0.12000054121017456
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.45111826062202454,
+          "physics_clock_s": 4.5424485206604,
+          "campaign_wall_s": 14.445699632982723,
+          "visible_red_fruits": 14,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_01",
+            "/World/Greenhouse/Plants/Plant_17/Truss_02"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_001/rolling_camera/frame_003",
+          "sensor_wall_s": 0.08645336900372058,
+          "distance_since_observation_m": 0.1505453884601593,
+          "actual_rail_velocity_m_s": 0.1200004443526268
+        },
+        {
+          "index": 5,
+          "in_motion": true,
+          "station_m": 0.6493607759475708,
+          "physics_clock_s": 19.905750274658203,
+          "campaign_wall_s": 39.32249056792352,
+          "visible_red_fruits": 25,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_18/Truss_02",
+            "/World/Greenhouse/Plants/Plant_19/Truss_01",
+            "/World/Greenhouse/Plants/Plant_19/Truss_00",
+            "/World/Greenhouse/Plants/Plant_18/Truss_01"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/final_gui/step_005/rolling_camera/frame_001",
+          "sensor_wall_s": 0.11760340095497668,
+          "distance_since_observation_m": 0.15002378821372986,
+          "actual_rail_velocity_m_s": 0.12007154524326324
+        }
+      ],
+      "display": {
+        "measured_frames": 845,
+        "during_segment_frame_interval_s": {
+          "median": 0.04502684099134058,
+          "p95": 0.07851241228636355,
+          "max": 0.28625679400283843
+        },
+        "transition_gaps_s": [
+          1.6936001769499853,
+          1.9127687190193683,
+          3.206511153955944,
+          2.6407790309749544,
+          2.0110471619991586,
+          1.9385468669934198,
+          4.233466695994139,
+          2.0017461410025135,
+          5.321181281935424,
+          3.494504641974345,
+          2.336192121030763,
+          6.842422146932222,
+          5.395680736051872,
+          2.4176934260176495
+        ],
+        "scope": "Server applied actual latest frame; excludes browser network/display refresh timing"
+      }
+    },
+    "cadence_gui": {
+      "summary": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/summary.json",
+      "status": "harvest_attempt_budget_exhausted",
+      "reason": null,
+      "cold_preparation_wall_s": 15.689290462061763,
+      "camera_setup_wall_s": 12.774932188913226,
+      "wall_s": 35.54689859703649,
+      "physics_clock_s": 17.98009490966797,
+      "completed_harvest_motions": 2,
+      "assumed_harvest_count": 12,
+      "assumed_harvest_names": [
+        "Truss_01_Fruit_02",
+        "Truss_01_Fruit_03",
+        "Truss_01_Fruit_04",
+        "Truss_01_Fruit_05",
+        "Truss_01_Fruit_07",
+        "Truss_01_Fruit_08",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08"
+      ],
+      "last_station_m": 0.49933698773384094,
+      "rtf_with_segment_initialization": 0.5058133232238424,
+      "segments": [
+        {
+          "step": 0,
+          "action": "initial_scan_pose",
+          "target": null,
+          "simulated_s": 0.10757578164339066,
+          "orchestration_wall_s": 6.781165843014605,
+          "setup_wall_s": 6.248823561007157,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 1,
+          "action": "move",
+          "target": null,
+          "simulated_s": 4.43487273901701,
+          "orchestration_wall_s": 6.435258477111347,
+          "setup_wall_s": 0.7282044399762526,
+          "status": "completed",
+          "online_camera_boundary": {
+            "evidence": {
+              "observation": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/step_001/rolling_camera/frame_003/observation.json",
+              "decision": {
+                "action": "harvest",
+                "reason": "current_visible_group_bounded_arm_service_proposal",
+                "target_key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                "target": {
+                  "key": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "plant_id": 17,
+                  "truss_index": 2,
+                  "truss_key": "Truss_02",
+                  "first_observation_index": 2,
+                  "fruit_evidence": {
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                      "instance_id": 1117742571,
+                      "estimated_center_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.599441235222498,
+                        0.35856790103103653,
+                        1.0396144202889777
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                      "instance_id": 1260988864,
+                      "estimated_center_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.6006880978864704,
+                        0.3647959166673133,
+                        1.0764191583758542
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                      "instance_id": 3525343354,
+                      "estimated_center_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.602282964258982,
+                        0.3836287027682555,
+                        1.0389329782969465
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                      "instance_id": 3578641507,
+                      "estimated_center_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5994074189672316,
+                        0.38518933551449264,
+                        1.0910066240225005
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                      "instance_id": 994303311,
+                      "estimated_center_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5889746048478521,
+                        0.3859058212513954,
+                        1.1209020762579012
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    },
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02": {
+                      "key": "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                      "instance_id": 2722794741,
+                      "estimated_center_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "visible_surface_median_world_m": [
+                        -0.5973903163219947,
+                        0.3700634543991831,
+                        1.1055910351914728
+                      ],
+                      "known_bounding_radius_m": 0.0,
+                      "position_estimate_exact": false,
+                      "uses_hidden_gt_center": false
+                    }
+                  },
+                  "blockers": [],
+                  "planning_failures": [],
+                  "service_probe_offset_m": 0.0,
+                  "status": "pending",
+                  "last_observation_index": 3,
+                  "last_observation": {
+                    "observation_id": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/step_001/rolling_camera/frame_003/observation.json",
+                    "timestamp_s": 4.5424485206604,
+                    "current_timestamp_s": 4.5424485206604,
+                    "pose_source": "measured Newton GPU state, CPU FK only; render-only Newton SensorCamera CUDA ray tracing"
+                  },
+                  "visible_now": true,
+                  "last_visible_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03"
+                  ],
+                  "aim_world_m": [
+                    -0.5994243270948648,
+                    0.3768460785837193,
+                    1.0837128911991774
+                  ],
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "suggested_lift_m": 0.3767130858148481,
+                  "observed_camera_world_m": [
+                    -0.06999641888154612,
+                    0.2511146259368447,
+                    1.2039081561430025
+                  ],
+                  "calibration": {
+                    "camera_foreaft_m": 2.138854794914158e-06,
+                    "camera_to_grasp_height_m": -0.3169083138037935
+                  },
+                  "target_position_source": "visible_depth_surface_median_plus_optional_known_radius",
+                  "uses_inventory_centroid_for_aim": false,
+                  "observed_attached_fruit_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08"
+                  ],
+                  "native_detached_fruit_keys": [],
+                  "reachability": "unknown; requires existing IK, full path audit and actual physics",
+                  "current_station_service_proposal": {
+                    "decision_index": 3,
+                    "actual_station_y_m": 0.45111826062202454,
+                    "observed_service_station_y_m": 0.5768475744141043,
+                    "service_station_y_m": 0.5768475744141043,
+                    "along_row_offset_m": 0.12572931379207974,
+                    "maximum_proposal_offset_m": 0.2,
+                    "ordinary_arrival_tolerance_m": 0.06,
+                    "arrival_tolerance_changed": false,
+                    "rail_move_requested": false,
+                    "requires_existing_ik_full_audit": true,
+                    "uses_current_visible_depth": true,
+                    "reachability": "proposal only; existing robot planner and actual physics must decide"
+                  }
+                },
+                "current_station_y_m": 0.45111826062202454,
+                "next_station_y_m": 0.45111826062202454,
+                "requires_window_switch": false,
+                "service_offset_proposal": {
+                  "decision_index": 3,
+                  "actual_station_y_m": 0.45111826062202454,
+                  "observed_service_station_y_m": 0.5768475744141043,
+                  "service_station_y_m": 0.5768475744141043,
+                  "along_row_offset_m": 0.12572931379207974,
+                  "maximum_proposal_offset_m": 0.2,
+                  "ordinary_arrival_tolerance_m": 0.06,
+                  "arrival_tolerance_changed": false,
+                  "rail_move_requested": false,
+                  "requires_existing_ik_full_audit": true,
+                  "uses_current_visible_depth": true,
+                  "reachability": "proposal only; existing robot planner and actual physics must decide"
+                },
+                "active_window_priority": {
+                  "source_plant": "/World/Greenhouse/Plants/Plant_17",
+                  "active_pending_target_keys": [
+                    "/World/Greenhouse/Plants/Plant_17/Truss_01",
+                    "/World/Greenhouse/Plants/Plant_17/Truss_02"
+                  ],
+                  "other_pending_targets_retained": [],
+                  "avoids_freezing_unresolved_active_groups": true
+                },
+                "index": 3,
+                "training_eligible": false,
+                "harvest_success": null,
+                "physics_execution_required": true,
+                "finite_blocked_target_keys": [],
+                "operational_quarantined_source_plants": [],
+                "quarantined_target_keys": [],
+                "rail_measurement": {
+                  "actual_station_y_m": 0.45111826062202454,
+                  "nominal_physical_bounds_m": [
+                    0.0,
+                    0.85
+                  ],
+                  "existing_measurement_envelope_m": 0.002,
+                  "outside_nominal_bounds": false,
+                  "actual_measurement_clamped": false,
+                  "physical_limits_changed": false,
+                  "collision_tolerances_changed": false
+                }
+              },
+              "actual_station_m": 0.45111826062202454,
+              "solver_step": 973
+            },
+            "maximum_planned_steps": 1806,
+            "executed_steps": 973,
+            "proposed_commands_sha256": "4ddd428b18bfacd6ad79e518c90a23e9dde33b6c50ca7d699df5e244fd752570",
+            "unexecuted_suffix_discarded": true,
+            "completion_kind": "online_observation_endpoint"
+          },
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 2,
+          "action": "brake_for_observation",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 0.7667055130004883,
+          "orchestration_wall_s": 1.8013468090211973,
+          "setup_wall_s": 0.7253191889030859,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 58,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          },
+          "active_violations": []
+        },
+        {
+          "step": 3,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_02",
+          "simulated_s": 6.702927112579346,
+          "orchestration_wall_s": 8.055161435040645,
+          "setup_wall_s": 0.7435353060718626,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        },
+        {
+          "step": 4,
+          "action": "harvest",
+          "target": "/World/Greenhouse/Plants/Plant_17/Truss_01",
+          "simulated_s": 5.968013763427734,
+          "orchestration_wall_s": 7.326698357006535,
+          "setup_wall_s": 0.7555497910361737,
+          "status": "completed",
+          "online_camera_boundary": null,
+          "solver_capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 54,
+            "peak_contacts": 0,
+            "peak_constraint_rows": 2
+          },
+          "active_violations": []
+        }
+      ],
+      "moving_observations": [
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.15002372860908508,
+          "physics_clock_s": 2.0333316326141357,
+          "campaign_wall_s": 10.855945075047202,
+          "visible_red_fruits": 0,
+          "queued": [],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/step_001/rolling_camera/frame_001",
+          "sensor_wall_s": 0.03860670910216868,
+          "distance_since_observation_m": 0.15002372796815422,
+          "actual_rail_velocity_m_s": 0.12007298320531845
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.30057287216186523,
+          "physics_clock_s": 3.2878758907318115,
+          "campaign_wall_s": 12.384116083034314,
+          "visible_red_fruits": 7,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_02",
+            "/World/Greenhouse/Plants/Plant_17/Truss_01"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/step_001/rolling_camera/frame_002",
+          "sensor_wall_s": 0.07830555504187942,
+          "distance_since_observation_m": 0.15054914355278015,
+          "actual_rail_velocity_m_s": 0.12000054121017456
+        },
+        {
+          "index": 1,
+          "in_motion": true,
+          "station_m": 0.45111826062202454,
+          "physics_clock_s": 4.5424485206604,
+          "campaign_wall_s": 13.976117222104222,
+          "visible_red_fruits": 14,
+          "queued": [
+            "/World/Greenhouse/Plants/Plant_17/Truss_01",
+            "/World/Greenhouse/Plants/Plant_17/Truss_02"
+          ],
+          "camera": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/cadence_gui/step_001/rolling_camera/frame_003",
+          "sensor_wall_s": 0.08297152002342045,
+          "distance_since_observation_m": 0.1505453884601593,
+          "actual_rail_velocity_m_s": 0.1200004443526268
+        }
+      ],
+      "display": {
+        "measured_frames": 525,
+        "during_segment_frame_interval_s": {
+          "median": 0.02823167445603758,
+          "p95": 0.04498637515935115,
+          "max": 0.20698348805308342
+        },
+        "transition_gaps_s": [
+          1.7226102199638262,
+          1.9121915969299152,
+          3.2428886520210654,
+          2.7115916600450873
+        ],
+        "scope": "Server applied actual latest frame; excludes browser network/display refresh timing"
+      }
+    }
+  },
+  "gui_camera_test_events": {
+    "final_gui": [
+      {
+        "wall_since_click_s": 21.588471554918215,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 41.84701932198368,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 60.11245354695711,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 76.29941492492799,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 94.79624016396701,
+        "action": "orbit and zoom viewer only"
+      }
+    ],
+    "cadence_gui": [
+      {
+        "wall_since_click_s": 14.255220502032898,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 24.14362158603035,
+        "action": "orbit and zoom viewer only"
+      }
+    ]
+  },
+  "tests": {
+    "main_suite": {
+      "count": 87,
+      "passed": 87,
+      "log": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/tests_pass.log"
+    },
+    "display_cadence_suite": {
+      "count": 22,
+      "passed": 22,
+      "log": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/display_cadence_tests.log"
+    },
+    "unique_test_count": 88,
+    "plan_adapter": {
+      "run": 8,
+      "passed": 6,
+      "skipped": 2,
+      "log": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/plan_adapter_tests.log"
+    }
+  },
+  "source_sha256": {
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_camera_patrol.py": "4cbde187faca9900a11066c777055f03235b98edd76d634362b96e2099f8fb55",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_patrol_motion.py": "fc2f590405f2c7e4740c61259359db09367492f4d0b051c0dea52aa761aad093",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/run_newton_harvest.py": "9f2ea37402d21fd029feccd596c16f344d213ad09cc3a47a8439f2d554f11996",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_gpu_session.py": "d24d477b5337b1ffeaeb0dc628664e41eead5863475636bf96b0ddfed22012ac",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_continuation.py": "04c3db94ed59a412de33161ab2bc98b1ca75adc56b2f5a8bc281ffdc67d1df0a",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_frozen_constraints.py": "32680242ae4c94fb7f6b9416126ff6c5d80be94f8273291f7e526c6f1ce1464f",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_gpu_deterministic.py": "7dbcec5c017460c6c8e892c31543856de922028cef6667eee14f70c981c0698c",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_kernels.py": "e1893848f1e464831e7d3f61a8e3e78a0109d74468f3892d31b2dcfe625d1a04",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_patrol_viewer.py": "32a80bf14800f580cd4c3137ebdcde3d76d5e549a54d3aaf2873e839bd023113",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/newton_live.py": "df4267f08d3667a777ce9f9fbb4836519f7fb623cfa714137fbe68965d3964ad",
+    "/root/farmily_tomato/nvidia-sim/harvest_s300/render_newton_patrol.py": "1cd92e50eb35447bb587d5e66e0de1e953f3b006c905cc8e6e60bb1c79db9abf"
+  },
+  "limitations": [
+    "5 motions/33 geometric fruit credits; not6trusses or whole-farm completion",
+    "Full run is verified only for elbow-up; down selection remains available but full down run was not repeated",
+    "Normal segment orchestration and collision-rejected alternate-path searches still pause the live robot",
+    "Video is1x actual simulation-time replay, so it does not show wall-clock planning waits",
+    "Initial camera/model/GPU compilation and first solver setup remain separate startup costs"
+  ],
+  "video": "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/fluid_harvest_actual.mp4",
+  "video_render": {
+    "renderer_source_sha256": "1cd92e50eb35447bb587d5e66e0de1e953f3b006c905cc8e6e60bb1c79db9abf",
+    "actual_recorded_states": true,
+    "physics_steps_executed": 0,
+    "geometric_assumed_harvest": true,
+    "fps": 24,
+    "frames": 1027,
+    "render_wall_s": 83.58793886005878,
+    "sources": [
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_000/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_001/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_002/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_003/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_004/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_005/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_006/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_008/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_009/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_011/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_012/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_013/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_016/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_018/physics/states.npz",
+      "/root/farmily_runtime/newton/runs/20261110_fluid_patrol/verified_headless/step_019/physics/states.npz"
+    ],
+    "eye_offset": [
+      -0.8,
+      -0.8,
+      1.5
+    ],
+    "look_at_offset": [
+      -0.15,
+      -0.1,
+      1.0
+    ]
+  },
+  "deployment": {
+    "url": "http://127.0.0.1:5905",
+    "start_button_visible": true,
+    "start_not_clicked": true,
+    "script_errors": [],
+    "text": "Farmily camera patrol\n\n시작 자세: 엘보우 위\n\n자세를 선택한 뒤 순회 시작을 누르세요.\n\n시작 자세\n\n순회 시작\n순회 중지 / 화면 닫기"
+  },
+  "video_verification": {
+    "full_ffmpeg_decode_exit": 0,
+    "sha256": "f15ab99f2cf1cab61be14a38749aa33db4a8201c7a3d26fd6847ec3b6375392e",
+    "codec": "h264",
+    "fps": 24,
+    "frames": 1027,
+    "duration_s": 42.792,
+    "bytes": 8880029
+  }
+}

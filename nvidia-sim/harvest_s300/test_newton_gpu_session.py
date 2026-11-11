@@ -7,7 +7,7 @@ import mujoco_warp as mw
 import numpy as np
 import warp as wp
 
-from newton_gpu_session import NewtonGPUSessionCache
+from newton_gpu_session import NewtonGPUSessionCache, NewtonGPUContinuationCache
 
 
 XML = """<mujoco><option gravity="0 0 0"/>
@@ -113,6 +113,27 @@ class NewtonGPUSessionTests(unittest.TestCase):
         engine = SimpleNamespace(solver=SimpleNamespace(use_mujoco_cpu=True))
         with self.assertRaisesRegex(ValueError, "native Warp backend"):
             self.cache.acquire(self.signature, lambda: engine, self.initial)
+
+    def test_continuation_reuses_only_identical_model_and_fixed_adapter(self):
+        cache = NewtonGPUContinuationCache()
+        signature = dict(self.signature, physical_model_sha256='a' * 64)
+        initial = dict(self.initial, actuator_kp=np.array([10.]))
+        engine, _ = cache.acquire(signature, self.factory, initial)
+        changed = dict(initial, qpos=np.array([.2]), qvel=np.array([.1]),
+                       eq_active=np.array([False]))
+        again, evidence = cache.acquire(signature, self.factory, changed)
+        self.assertIs(again, engine)
+        self.assertTrue(evidence['reused'])
+        # The executor must restore the verified measured state after this
+        # scratch reset. A cached state is never claimed to be that state.
+        self.assertTrue(evidence['measured_state_restored_by_executor'])
+        with self.assertRaisesRegex(ValueError, 'fixed adapter field'):
+            cache.acquire(signature, self.factory, dict(changed, actuator_kp=np.array([11.])))
+        other, evidence = cache.acquire(dict(signature, physical_model_sha256='b' * 64),
+                                         self.factory, initial)
+        self.assertIsNot(other, engine)
+        self.assertFalse(evidence['reused'])
+        self.assertEqual(self.loads, 2)
 
 
 if __name__ == "__main__":

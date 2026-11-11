@@ -19,6 +19,19 @@ from test_newton_active_window import fixture
 
 
 class PreparedAssetIntegrationControls(unittest.TestCase):
+    def test_explicit_patrol_verification_reuses_immutable_files_but_rejects_mutation(self):
+        from newton_continuation import VerificationContext
+        context=VerificationContext(scope='patrol')
+        first=runner.verify_prepared_inputs(self.inputs,self.proof,verification_context=context)
+        second=runner.verify_prepared_inputs(self.inputs,self.proof,verification_context=context)
+        self.assertEqual(first,second)
+        evidence=context.evidence()
+        self.assertEqual(evidence['unique_file_sha_reads'],2)
+        self.assertEqual(evidence['stable_sha_reuses'],2)
+        (self.inputs/'meshes/a.obj').write_bytes(b'mutated geometry')
+        with self.assertRaisesRegex(ValueError,'changed within scope'):
+            runner.verify_prepared_inputs(self.inputs,self.proof,verification_context=context)
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)

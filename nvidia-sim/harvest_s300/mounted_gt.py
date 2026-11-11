@@ -19,7 +19,6 @@ from pathlib import Path
 import numpy as np
 from recording_storage import save_array, save_arrays, save_shared_labels, array_path
 from PIL import Image, ImageDraw, ImageFont
-from pxr import Usd, UsdGeom
 
 CLASSES = {'unknown':0, 'fruit':1, 'main_stem':2, 'rachis':3,
            'pedicel':4, 'peduncle':5, 'calyx':6, 'leaf':7,
@@ -69,6 +68,7 @@ def stable_id(key):
 
 
 def build_catalog(stage, assembly):
+    from pxr import Usd, UsdGeom
     manifest=json.loads((Path(assembly)/'motion_manifest.json').read_text()) if assembly else {}
     sources={};skin_truss={}
     plants=[(manifest['plant'],'skin.npz')] if 'plant' in manifest else []

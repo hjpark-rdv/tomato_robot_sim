@@ -79,7 +79,30 @@ def _metadata_identity(metadata):
                                     allow_nan=False).encode()).hexdigest()
 
 
-def configure_frozen_connects(solver, metadata):
+def restore_frozen_connect_launch_list(solver):
+    """Restore the verified upload list before a *new* segment configuration.
+
+    Continuation metadata contains new state/provenance hashes, so it must be
+    checked afresh rather than passed through the identical-trial shortcut.
+    Only the exact list saved by this helper may be restored.
+    """
+    previous=getattr(solver,'_s300_frozen_connect_configuration',None)
+    if previous is None:return False
+    if solver.use_mujoco_cpu or int(solver._step)!=0:
+        raise ValueError('Restore static CONNECT list only before stepping')
+    if (previous['source_model'] is not solver.mj_model or previous['gpu_model'] is not solver.mjw_model or
+            previous['source_model_sha256']!=_source_identity(solver.mj_model)):
+        raise ValueError('Frozen CONNECT source changed before restoration')
+    if (solver.mjw_model.eq_connect_adr is not previous['filtered_array'] or
+            not np.array_equal(previous['filtered_array'].numpy(),previous['filtered_values']) or
+            not np.array_equal(previous['original_array'].numpy(),previous['original_values'])):
+        raise ValueError('Frozen CONNECT launch list was modified before restoration')
+    solver.mjw_model.eq_connect_adr=previous['original_array']
+    del solver._s300_frozen_connect_configuration
+    return True
+
+
+def configure_frozen_connects(solver, metadata, *, verified_metadata_digest=None):
     ids = frozen_connect_ids(solver.mj_model, metadata)
     previous = getattr(solver, '_s300_frozen_connect_configuration', None)
     if not ids and previous is None:
@@ -87,7 +110,7 @@ def configure_frozen_connects(solver, metadata):
     if solver.use_mujoco_cpu or int(solver._step) != 0:
         raise ValueError('Configure static CONNECT GPU compatibility before stepping')
     model = solver.mjw_model
-    signature = _metadata_identity(metadata)
+    signature = verified_metadata_digest or _metadata_identity(metadata)
     source_signature = _source_identity(solver.mj_model)
     if previous is not None:
         # A naturally missing ID without this first-call provenance remains an

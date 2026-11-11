@@ -1,0 +1,1546 @@
+{
+  "schema": "s300-patrol-candidate-buffer-fix-v1",
+  "date": "2026-11-10",
+  "original_run": "/root/farmily_runtime/newton/runs/20261110_roller_projection/gui_preview",
+  "original_status": "stopped",
+  "original_stop": "solver_capacity_overflow",
+  "original_capacity": 256,
+  "first_invalid_tick": 393,
+  "original_peak_candidates": 260,
+  "original_peak_contacts": 1,
+  "original_physical_model_sha256": "099b909c4d0ff258bde88dc53502ea4c8c45fb4de39e2605d13b2c28b6a2263a",
+  "fixed_capacity": 1024,
+  "failed_segment_retest": {
+    "path": "/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix/failed_segment_ncon1024",
+    "same_physical_model": true,
+    "status": "completed",
+    "peak_candidates": 310,
+    "max_active_penetration_m": 0.0,
+    "valid_prefix_samples_including_initial": 394,
+    "exact_before_overflow": {
+      "qpos": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "qvel": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "poses": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "command": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "time": {
+        "exact": true,
+        "max_abs": 0.0
+      }
+    },
+    "realtime_factor": 6.651774828039549
+  },
+  "campaigns": {
+    "headless_six": {
+      "completed_motions": 6,
+      "assumed_harvest_count": 18,
+      "assumed_harvest_keys": [
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_02",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_03",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_04",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_05",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_07",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_08",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_09",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_05",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_09",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_10",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_11"
+      ],
+      "capture_events": [
+        {
+          "step": 4,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 25.99502182006836,
+          "state_index": 1430,
+          "states_sha256": "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844",
+          "translation_error_m": 1.9816621105218914e-05,
+          "rotation_error_rad": 3.933060546817875e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_01",
+              "center_tool_m": [
+                0.017226590163485857,
+                0.13272661958680532,
+                0.06037514786315753
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_02",
+              "center_tool_m": [
+                -0.012063070819741254,
+                0.14596040913929093,
+                0.03901401121357375
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 5,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 50.34614181518555,
+          "state_index": 1430,
+          "states_sha256": "b9fbe1524b911279856f6eafcf9c123b92d34bdf54641a7d1088d0788ab9fd39",
+          "translation_error_m": 2.0049233948968173e-05,
+          "rotation_error_rad": 3.944556156847087e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_03",
+              "center_tool_m": [
+                0.01412264149327856,
+                0.13882368372586315,
+                0.05932987349225438
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_04",
+              "center_tool_m": [
+                -0.01708221824033331,
+                0.14051940824400075,
+                0.039436164641416034
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_05",
+              "center_tool_m": [
+                0.015196487659044177,
+                0.13957456785114528,
+                0.026007279168791766
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 6,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 74.70040130615234,
+          "state_index": 1430,
+          "states_sha256": "1e1d7475e3021fa087cb8a71045c2036fe4276f72c2fd67d3f0185b82393375d",
+          "translation_error_m": 1.999590282453364e-05,
+          "rotation_error_rad": 3.940434874149921e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_07",
+              "center_tool_m": [
+                0.022081135072238668,
+                0.13934057271148803,
+                0.055006161924478325
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_08",
+              "center_tool_m": [
+                -0.011738658985707784,
+                0.13760114005439744,
+                0.04077733224683027
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_09",
+              "center_tool_m": [
+                0.02021167391281824,
+                0.13313020738371406,
+                0.025070191792130193
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 7,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 99.05686950683594,
+          "state_index": 1430,
+          "states_sha256": "eca1ec9ae821423f593f3352c0e5caca9d0d88bfa03c098192f9672415f9eb99",
+          "translation_error_m": 1.966475380793516e-05,
+          "rotation_error_rad": 3.7828003815390655e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_01",
+              "center_tool_m": [
+                0.021316790357192385,
+                0.13892768025641922,
+                0.05850104657438037
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_02",
+              "center_tool_m": [
+                -0.009253971269105654,
+                0.13780228371875086,
+                0.03496084832643643
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_10",
+              "center_tool_m": [
+                -0.034261937475523786,
+                0.12796735011334134,
+                0.05571491070068427
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_11",
+              "center_tool_m": [
+                -0.0028792662086154926,
+                0.11339157673962211,
+                0.03269204912242814
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 8,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 123.41333770751953,
+          "state_index": 1430,
+          "states_sha256": "2b101ce04161a534f92cc1ac1ff7864ed4e27041e2ee2f283a3f26532e2683af",
+          "translation_error_m": 1.87765532852511e-05,
+          "rotation_error_rad": 3.6461717912524156e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_03",
+              "center_tool_m": [
+                0.015104986903976719,
+                0.13986511228194431,
+                0.05519888218740385
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_04",
+              "center_tool_m": [
+                -0.016394144127791013,
+                0.13831753414375797,
+                0.0364188733425955
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_05",
+              "center_tool_m": [
+                0.015441559997080434,
+                0.13238463380351942,
+                0.022838964173880275
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 9,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 147.76272583007812,
+          "state_index": 1430,
+          "states_sha256": "c200bc1f47ccfbc8c6f78e4713210a565d52b68dcb257ab3352a6587e31f105f",
+          "translation_error_m": 1.7788141853592786e-05,
+          "rotation_error_rad": 3.536315471381052e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_07",
+              "center_tool_m": [
+                0.022065724829103118,
+                0.14063286842374123,
+                0.0522352047766695
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_08",
+              "center_tool_m": [
+                -0.011905117503603636,
+                0.13708209084124523,
+                0.039462990869673455
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_09",
+              "center_tool_m": [
+                0.019936692822975388,
+                0.13152130075680638,
+                0.02400524713521567
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        }
+      ],
+      "rows": [
+        {
+          "index": 0,
+          "action": "initial_scan_pose",
+          "simulated_s": 3.549996852874756,
+          "loop_wall_s": 1.0626920850481838,
+          "realtime_factor": 3.340569580617319,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 1
+          }
+        },
+        {
+          "index": 1,
+          "action": "move",
+          "simulated_s": 3.363766670227051,
+          "loop_wall_s": 0.9646627160254866,
+          "realtime_factor": 3.4869873317859,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 1
+          }
+        },
+        {
+          "index": 2,
+          "action": "move",
+          "simulated_s": 3.3635878562927246,
+          "loop_wall_s": 0.9686055599013343,
+          "realtime_factor": 3.472608454400522,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          }
+        },
+        {
+          "index": 3,
+          "action": "move",
+          "simulated_s": 3.3634777069091797,
+          "loop_wall_s": 0.9607546880142763,
+          "realtime_factor": 3.500870460347106,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          }
+        },
+        {
+          "index": 4,
+          "action": "harvest",
+          "simulated_s": 24.349313735961914,
+          "loop_wall_s": 3.3545879499288276,
+          "realtime_factor": 7.258511059898883,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 5,
+          "action": "harvest",
+          "simulated_s": 24.352794647216797,
+          "loop_wall_s": 3.322889929986559,
+          "realtime_factor": 7.328799677488957,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 6,
+          "action": "harvest",
+          "simulated_s": 24.356090545654297,
+          "loop_wall_s": 3.3369130920618773,
+          "realtime_factor": 7.2989885782745025,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 7,
+          "action": "harvest",
+          "simulated_s": 24.356468200683594,
+          "loop_wall_s": 3.5373044380685315,
+          "realtime_factor": 6.885601346199909,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 75,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 8,
+          "action": "harvest",
+          "simulated_s": 24.353073120117188,
+          "loop_wall_s": 3.6824849019758403,
+          "realtime_factor": 6.613217370436611,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 310,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 9,
+          "action": "harvest",
+          "simulated_s": 24.34912109375,
+          "loop_wall_s": 3.8704295170027763,
+          "realtime_factor": 6.291064334535596,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 639,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        }
+      ],
+      "simulated_s": 159.7576904296875,
+      "physics_wall_s": 25.061324878013693,
+      "physics_rtf": 6.374670581356334,
+      "wall_s": 82.30226278002374,
+      "campaign_rtf": 1.9411093332474403,
+      "cold_preparation_wall_s": 16.188499158946797,
+      "selection_wait_s": 0.0,
+      "summary_sha256": "823fdf45e902dc879534383b985336eaafd329d0b113bcb81e08cfb20e0421db"
+    },
+    "gui_six": {
+      "completed_motions": 6,
+      "assumed_harvest_count": 18,
+      "assumed_harvest_keys": [
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_02",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_03",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_04",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_05",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_07",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_08",
+        "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_09",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_01",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_02",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_03",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_04",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_05",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_07",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_08",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_09",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_10",
+        "/World/Greenhouse/Plants/Plant_17/Truss_02/Fruit_11"
+      ],
+      "capture_events": [
+        {
+          "step": 4,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 25.99502182006836,
+          "state_index": 1430,
+          "states_sha256": "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844",
+          "translation_error_m": 1.9816621105218914e-05,
+          "rotation_error_rad": 3.933060546817875e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_01",
+              "center_tool_m": [
+                0.017226590163485857,
+                0.13272661958680532,
+                0.06037514786315753
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_02",
+              "center_tool_m": [
+                -0.012063070819741254,
+                0.14596040913929093,
+                0.03901401121357375
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 5,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 50.34614181518555,
+          "state_index": 1430,
+          "states_sha256": "b9fbe1524b911279856f6eafcf9c123b92d34bdf54641a7d1088d0788ab9fd39",
+          "translation_error_m": 2.0049233948968173e-05,
+          "rotation_error_rad": 3.944556156847087e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_03",
+              "center_tool_m": [
+                0.01412264149327856,
+                0.13882368372586315,
+                0.05932987349225438
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_04",
+              "center_tool_m": [
+                -0.01708221824033331,
+                0.14051940824400075,
+                0.039436164641416034
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_05",
+              "center_tool_m": [
+                0.015196487659044177,
+                0.13957456785114528,
+                0.026007279168791766
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 6,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 74.70040130615234,
+          "state_index": 1430,
+          "states_sha256": "1e1d7475e3021fa087cb8a71045c2036fe4276f72c2fd67d3f0185b82393375d",
+          "translation_error_m": 1.999590282453364e-05,
+          "rotation_error_rad": 3.940434874149921e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_02_Fruit_07",
+              "center_tool_m": [
+                0.022081135072238668,
+                0.13934057271148803,
+                0.055006161924478325
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_08",
+              "center_tool_m": [
+                -0.011738658985707784,
+                0.13760114005439744,
+                0.04077733224683027
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_09",
+              "center_tool_m": [
+                0.02021167391281824,
+                0.13313020738371406,
+                0.025070191792130193
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 7,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 99.05686950683594,
+          "state_index": 1430,
+          "states_sha256": "eca1ec9ae821423f593f3352c0e5caca9d0d88bfa03c098192f9672415f9eb99",
+          "translation_error_m": 1.966475380793516e-05,
+          "rotation_error_rad": 3.7828003815390655e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_01",
+              "center_tool_m": [
+                0.021316790357192385,
+                0.13892768025641922,
+                0.05850104657438037
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_02",
+              "center_tool_m": [
+                -0.009253971269105654,
+                0.13780228371875086,
+                0.03496084832643643
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_10",
+              "center_tool_m": [
+                -0.034261937475523786,
+                0.12796735011334134,
+                0.05571491070068427
+              ]
+            },
+            {
+              "name": "Truss_02_Fruit_11",
+              "center_tool_m": [
+                -0.0028792662086154926,
+                0.11339157673962211,
+                0.03269204912242814
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 8,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 123.41333770751953,
+          "state_index": 1430,
+          "states_sha256": "2b101ce04161a534f92cc1ac1ff7864ed4e27041e2ee2f283a3f26532e2683af",
+          "translation_error_m": 1.87765532852511e-05,
+          "rotation_error_rad": 3.6461717912524156e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_03",
+              "center_tool_m": [
+                0.015104986903976719,
+                0.13986511228194431,
+                0.05519888218740385
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_04",
+              "center_tool_m": [
+                -0.016394144127791013,
+                0.13831753414375797,
+                0.0364188733425955
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_05",
+              "center_tool_m": [
+                0.015441559997080434,
+                0.13238463380351942,
+                0.022838964173880275
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        },
+        {
+          "step": 9,
+          "mode": "main_stem_only_geometric_harvest",
+          "reached": true,
+          "timestamp_s": 147.76272583007812,
+          "state_index": 1430,
+          "states_sha256": "c200bc1f47ccfbc8c6f78e4713210a565d52b68dcb257ab3352a6587e31f105f",
+          "translation_error_m": 1.7788141853592786e-05,
+          "rotation_error_rad": 3.536315471381052e-05,
+          "reach_limits": {
+            "translation_m": 0.005,
+            "rotation_deg": 3.0
+          },
+          "tool_box_min_m": [
+            -0.048,
+            0.0,
+            0.013
+          ],
+          "tool_box_max_m": [
+            0.048,
+            0.158,
+            0.061
+          ],
+          "harvested": [
+            {
+              "name": "Truss_01_Fruit_07",
+              "center_tool_m": [
+                0.022065724829103118,
+                0.14063286842374123,
+                0.0522352047766695
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_08",
+              "center_tool_m": [
+                -0.011905117503603636,
+                0.13708209084124523,
+                0.039462990869673455
+              ]
+            },
+            {
+              "name": "Truss_01_Fruit_09",
+              "center_tool_m": [
+                0.019936692822975388,
+                0.13152130075680638,
+                0.02400524713521567
+              ]
+            }
+          ],
+          "physical_detachment_verified": false,
+          "all_colors_inside_counted": true,
+          "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+          "training_eligible": false,
+          "harvest_success": null
+        }
+      ],
+      "rows": [
+        {
+          "index": 0,
+          "action": "initial_scan_pose",
+          "simulated_s": 3.549996852874756,
+          "loop_wall_s": 1.9091700710123405,
+          "realtime_factor": 1.8594450577115764,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 1
+          }
+        },
+        {
+          "index": 1,
+          "action": "move",
+          "simulated_s": 3.363766670227051,
+          "loop_wall_s": 1.7402179869823158,
+          "realtime_factor": 1.9329570751421234,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 1
+          }
+        },
+        {
+          "index": 2,
+          "action": "move",
+          "simulated_s": 3.3635878562927246,
+          "loop_wall_s": 1.683313391986303,
+          "realtime_factor": 1.9981946750412913,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          }
+        },
+        {
+          "index": 3,
+          "action": "move",
+          "simulated_s": 3.3634777069091797,
+          "loop_wall_s": 1.8298056960338727,
+          "realtime_factor": 1.838161130550397,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 0
+          }
+        },
+        {
+          "index": 4,
+          "action": "harvest",
+          "simulated_s": 24.349313735961914,
+          "loop_wall_s": 6.998217828921042,
+          "realtime_factor": 3.4793592213342115,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 5,
+          "action": "harvest",
+          "simulated_s": 24.352794647216797,
+          "loop_wall_s": 7.068400927004404,
+          "realtime_factor": 3.4453046592445538,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 6,
+          "action": "harvest",
+          "simulated_s": 24.356090545654297,
+          "loop_wall_s": 7.276238381979056,
+          "realtime_factor": 3.347346426414044,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 57,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 7,
+          "action": "harvest",
+          "simulated_s": 24.356468200683594,
+          "loop_wall_s": 7.367351617896929,
+          "realtime_factor": 3.30600050926256,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 75,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 8,
+          "action": "harvest",
+          "simulated_s": 24.353073120117188,
+          "loop_wall_s": 7.875523883965798,
+          "realtime_factor": 3.09224801789998,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 310,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        },
+        {
+          "index": 9,
+          "action": "harvest",
+          "simulated_s": 24.34912109375,
+          "loop_wall_s": 8.217032626038417,
+          "realtime_factor": 2.9632498983381983,
+          "max_active_penetration_m": 0.0,
+          "capacity": {
+            "contact_and_broadphase_limit_all_worlds": 1024,
+            "constraint_limit_per_world": 1024,
+            "peak_broadphase_candidates": 639,
+            "peak_contacts": 1,
+            "peak_constraint_rows": 2
+          }
+        }
+      ],
+      "simulated_s": 159.7576904296875,
+      "physics_wall_s": 51.96527241182048,
+      "physics_rtf": 3.0743164235457296,
+      "wall_s": 110.59107531793416,
+      "campaign_rtf": 1.4445803150969105,
+      "cold_preparation_wall_s": 40.926039480022155,
+      "selection_wait_s": 22.453846688964404,
+      "summary_sha256": "e84c05fcc369a1ae0064df5b8a2d766c2b58ab730acda3612a9e5f81a7f989ba"
+    }
+  },
+  "gui_headless_exact_comparison": [
+    {
+      "step": "step_000",
+      "states_sha256": [
+        "d143119747cbc9b460ebd32e666b8e0f417076c9cb5d896373240c4c755f31d6",
+        "d143119747cbc9b460ebd32e666b8e0f417076c9cb5d896373240c4c755f31d6"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_001",
+      "states_sha256": [
+        "76e3e3f40b92f8f1544cc374e2024b563c0461a84a2bcbef73478bf763da3b6f",
+        "76e3e3f40b92f8f1544cc374e2024b563c0461a84a2bcbef73478bf763da3b6f"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_002",
+      "states_sha256": [
+        "311c1f258bdc9ceabe955ac8ce658c295b3706b8536be6c7e1cba623812e3296",
+        "311c1f258bdc9ceabe955ac8ce658c295b3706b8536be6c7e1cba623812e3296"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_003",
+      "states_sha256": [
+        "32dbc019a09099f543cefb4158069ddd7bde9557fb8b71766f02f0c93d6fa55b",
+        "32dbc019a09099f543cefb4158069ddd7bde9557fb8b71766f02f0c93d6fa55b"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_004",
+      "states_sha256": [
+        "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844",
+        "8f862c2bb863a9a348f07b1de2a0c1412527197f7002ec8f3727759948606844"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_005",
+      "states_sha256": [
+        "b9fbe1524b911279856f6eafcf9c123b92d34bdf54641a7d1088d0788ab9fd39",
+        "b9fbe1524b911279856f6eafcf9c123b92d34bdf54641a7d1088d0788ab9fd39"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_006",
+      "states_sha256": [
+        "1e1d7475e3021fa087cb8a71045c2036fe4276f72c2fd67d3f0185b82393375d",
+        "1e1d7475e3021fa087cb8a71045c2036fe4276f72c2fd67d3f0185b82393375d"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_007",
+      "states_sha256": [
+        "eca1ec9ae821423f593f3352c0e5caca9d0d88bfa03c098192f9672415f9eb99",
+        "eca1ec9ae821423f593f3352c0e5caca9d0d88bfa03c098192f9672415f9eb99"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_008",
+      "states_sha256": [
+        "2b101ce04161a534f92cc1ac1ff7864ed4e27041e2ee2f283a3f26532e2683af",
+        "2b101ce04161a534f92cc1ac1ff7864ed4e27041e2ee2f283a3f26532e2683af"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    },
+    {
+      "step": "step_009",
+      "states_sha256": [
+        "c200bc1f47ccfbc8c6f78e4713210a565d52b68dcb257ab3352a6587e31f105f",
+        "c200bc1f47ccfbc8c6f78e4713210a565d52b68dcb257ab3352a6587e31f105f"
+      ],
+      "exact_state_fields": {
+        "qpos": true,
+        "qvel": true,
+        "poses": true,
+        "command": true,
+        "time": true,
+        "phase": true,
+        "eq_active": true,
+        "belt_surface_velocity_local_y_m_s": true
+      },
+      "exact_physics_metric_fields": {
+        "active_penetration_m": true,
+        "released_penetration_m": true,
+        "max_contact_force_n": true,
+        "released_gutter_penetration_m": true,
+        "released_gutter_force_n": true,
+        "released_gutter_contact_pair_steps": true,
+        "attachment_force_n": true,
+        "attachment_torque_nm": true,
+        "break_step": true,
+        "first_event": true,
+        "nonfinite_step": true,
+        "qacc_nonfinite_step": true,
+        "capacity_overflow_step": true,
+        "nacon": true,
+        "ncollision": true,
+        "nefc": true,
+        "overflow": true,
+        "qacc_abs_max": true,
+        "time": true
+      }
+    }
+  ],
+  "gui_browser": {
+    "events": [
+      {
+        "wall_since_click_s": 21.15475599502679,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 40.855846480000764,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 58.95358963403851,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 75.8692430750234,
+        "action": "orbit and zoom viewer only"
+      },
+      {
+        "wall_since_click_s": 96.93754063895904,
+        "action": "orbit and zoom viewer only"
+      }
+    ],
+    "final_status": "harvest_attempt_budget_exhausted",
+    "text": "Farmily camera patrol\n\n순회 종료: harvest_attempt_budget_exhausted\n\n수확 시도 6회 · 영역 기준 수확 18개\n\n마지막 위치: 입구에서 0.45m\n\n시작 자세\n\n완료\n순회 중지 / 화면 닫기\n\n장착 카메라 · 현재 관측"
+  },
+  "regression": {
+    "tests": 18,
+    "passed": 18,
+    "log_sha256": "da5fbadd36e909b305399ec46118e7e97317085ff98d8886729eeb2bc4f63fbb"
+  },
+  "changed_code_sha256": {
+    "run_newton_camera_patrol.py": "2ed60f3a201ac06b433cf49731313df2616e2fb5bf2baebaf32b8958314475dd",
+    "run_newton_harvest.py": "6ecc844cd4cb8647bd88a91d5bf99300a6c214328280b1fede2a4c6c5403a017"
+  },
+  "limitations": [
+    "Six motions on two trusses using geometric volume credit; not six trusses or physical fruit detachment",
+    "Fixed capacity1024 was validated to peak639 in this route; overflow guard remains active for larger future workloads",
+    "Original invalid run preserved; independent reproduction resumes previous valid segment, not invalid overflow state"
+  ],
+  "training_eligible": false,
+  "harvest_success": null,
+  "videos": [
+    {
+      "path": "/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix/fifth_sixth_harvest_fixed_actual.mp4",
+      "sha256": "5ce31df2733f54fbfbb91aabee643e46cd623f0346965b7e890f32714989bac9",
+      "render": {
+        "renderer_source_sha256": "f51f5c3e9d9465cc7abb0c46f495e2d8ae921c7d41b7be8c91f715c7228c3313",
+        "actual_recorded_states": true,
+        "physics_steps_executed": 0,
+        "geometric_assumed_harvest": true,
+        "fps": 12,
+        "frames": 585,
+        "render_wall_s": 47.72133497300092,
+        "sources": [
+          "/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix/last_two_harvests/step_008/physics/states.npz",
+          "/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix/last_two_harvests/step_009/physics/states.npz"
+        ],
+        "eye_offset": [
+          -0.8,
+          -0.8,
+          1.5
+        ],
+        "look_at_offset": [
+          -0.15,
+          -0.1,
+          1.0
+        ]
+      },
+      "full_decode_passed": true
+    }
+  ],
+  "ready_gui": {
+    "url": "http://192.168.222.27:5905",
+    "pid": 201958,
+    "http_status": 200,
+    "command": [
+      "/root/farmily_tomato/nvidia-sim/run_s300_newton.sh",
+      "camera-patrol",
+      "--port",
+      "5905",
+      "--output",
+      "/root/farmily_runtime/newton/runs/20261110_patrol_capacity_fix/ready_gui"
+    ],
+    "started_by_agent": false
+  }
+}

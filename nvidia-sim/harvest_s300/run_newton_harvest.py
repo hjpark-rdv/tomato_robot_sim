@@ -50,7 +50,8 @@ def write(path, value):
     Path(path).write_text(json.dumps(safe(value), indent=2, allow_nan=False) + '\n')
 
 
-def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report_progress=False):
+def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report_progress=False,
+                           verification_context=None):
     """Verify all source bytes; cache staging owns the model's one SHA read."""
     inputs = Path(inputs)
     files = provenance['input_files']
@@ -62,7 +63,7 @@ def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report
     started = time.perf_counter()
     if report_progress:
         print(f'Verifying {len(pending)} prepared input SHA256 values with 8 readers...', flush=True)
-    verified = verify_manifest_files(inputs, pending)
+    verified = verify_manifest_files(inputs,pending,verification_context=verification_context)
     if report_progress:
         print(f'Prepared input SHA256 check finished in {time.perf_counter() - started:.2f}s.', flush=True)
     if local_model_cache is not None:
@@ -80,8 +81,12 @@ def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report
     return staged_model, cache_evidence, {name: verified[name] for name in files}
 
 
-def run(args, *, session_cache=None):
+def run(args, *, session_cache=None, verification_context=None, progress_callback=None):
     started = time.perf_counter()
+    setup_marks={};setup_last=started
+    def setup_mark(name):
+        nonlocal setup_last
+        now=time.perf_counter();setup_marks[name]=now-setup_last;setup_last=now
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     write(out/'invocation.json', dict(python=sys.executable, argv=sys.argv,
@@ -104,13 +109,15 @@ def run(args, *, session_cache=None):
         provenance = json.loads((p/'inputs.json').read_text())
         verification_started = time.perf_counter()
         staged_model, model_cache_evidence, verified_input_hashes = verify_prepared_inputs(
-            p, provenance, getattr(args, 'local_model_cache', None), report_progress=True)
+            p, provenance, getattr(args, 'local_model_cache', None), report_progress=True,
+            verification_context=verification_context)
         report['input_verification_wall_s'] = time.perf_counter() - verification_started
         initial = dict(np.load(p/'initial_state.npz', allow_pickle=False))
         prepared_runtime_dof_damping = initial['runtime_dof_damping'].copy()
         timeline = dict(np.load(p/'commands.npz', allow_pickle=False))
         sampling_description = dict(provenance.get('timeline', {}))
-        metadata = json.loads((p/'source_export.json').read_text())
+        metadata = (verification_context.readonly_json(p/'source_export.json') if verification_context is not None
+                    else json.loads((p/'source_export.json').read_text()))
         metadata = dict(metadata, released_gutter_diagnostic=bool(getattr(args, 'released_gutter_diagnostic', False)))
         continuation_identity = model_identity(initial, metadata)
         resume_state = None
@@ -118,26 +125,28 @@ def run(args, *, session_cache=None):
         continuation = None
         clock_offset = 0.
         if getattr(args, 'resume_state', None) is not None:
-            if session_cache is not None:
+            if session_cache is not None and not getattr(session_cache,'allow_verified_continuation',False):
                 raise ValueError('Measured continuation cannot use the reset-to-initial repeat cache')
             from newton_contact_policy import validate_config
             policy = validate_config(json.loads(args.contact_policy.read_text())) if args.contact_policy is not None else None
             initial, resume_state, inherited_breaks, continuation = load_resume(
-                args.resume_state, p, initial, metadata, worlds=args.worlds, policy=policy)
+                args.resume_state, p, initial, metadata, worlds=args.worlds, policy=policy,
+                verification_context=verification_context)
             clock_offset = continuation['initial_clock_s']
         elif getattr(args, 'window_transition', None) is not None:
-            if session_cache is not None:
+            if session_cache is not None and not getattr(session_cache,'allow_verified_continuation',False):
                 raise ValueError('Window transition cannot use the reset-to-initial repeat cache')
             from newton_window_continuation import load_transition
             from newton_contact_policy import validate_config
             policy = validate_config(json.loads(args.contact_policy.read_text())) if args.contact_policy is not None else None
             initial, resume_state, inherited_breaks, continuation = load_transition(
-                args.window_transition, p, initial, metadata, policy=policy)
+                args.window_transition, p, initial, metadata, policy=policy,verification_context=verification_context)
             clock_offset = continuation['initial_clock_s']
         elif metadata.get('active_window', {}).get('initial_clock_s', 0) > 0:
             raise ValueError('Measured active-window input requires its explicit --window-transition certificate')
         hz = 1. / float(timeline['time_edges'][1] - timeline['time_edges'][0])
-        if (args.hz is not None and abs(hz-args.hz)>1e-8) or args.free_hz is not None:
+        if ((args.hz is not None and abs(float(sampling_description.get('hz',hz))-args.hz)>1e-8)
+                or (args.free_hz is not None and args.free_hz!=sampling_description.get('free_hz'))):
             initial_command = initial['qpos'][initial['robot_qpos_addresses']]
             sampling_meta = dict(metadata, prepared_source_plan=str(p/'sampled_plan.json'))
             hz = args.hz or hz
@@ -172,6 +181,9 @@ def run(args, *, session_cache=None):
             raise ValueError('At least one physics step required')
         if args.batch < 1 or args.batch % 2:
             raise ValueError('CUDA graph batch must be a positive even number')
+        if progress_callback is not None and (args.worlds!=1 or adaptive is not None):
+            raise ValueError('Online camera boundaries require a single non-adaptive world')
+        setup_mark('verified_inputs_and_schedule')
         # The original state and runtime damping were prepared by the existing
         # adapter without advancing physical time. Nothing is restored from an
         # already completed harvest trial.
@@ -210,6 +222,7 @@ def run(args, *, session_cache=None):
                 result.evidence['fruit_sleep_configuration'] = sleep_configuration
             return result
         session_evidence={}
+        metadata_digest=None
         if session_cache is not None:
             signature=dict(inputs_sha256=sha256(p/'inputs.json'),hz=hz,
                 graph_timesteps_s=np.unique(np.round(timesteps[:steps], 12)).tolist(),
@@ -224,13 +237,25 @@ def run(args, *, session_cache=None):
                     'dense_hessian_capacity', 'dense_hessian_block_curvature', 'linesearch_block_dim',
                     'dense_hessian_overflow_capacity', 'cache_dense_jacobian',
                     'convex_ccd_block_dim', 'belt_hold_hz')})
+            if getattr(session_cache,'allow_verified_continuation',False):
+                # Commands and measured initial state change between patrol
+                # segments. The physical model/config remain bound separately;
+                # strict load_resume/load_transition above still run first.
+                signature.pop('inputs_sha256')
+                signature.pop('graph_timesteps_s')
+                signature['physical_model_sha256']=verified_input_hashes['input_model.mjb']
+                if metadata.get('active_window',{}).get('all_plants_static') is True:
+                    metadata_digest=session_cache.metadata_digest(verified_input_hashes['source_export.json'],metadata,
+                        released_gutter_diagnostic=metadata['released_gutter_diagnostic'])
+                    signature['frozen_connect_metadata_sha256']=metadata_digest
             engine,session_evidence=session_cache.acquire(signature,engine_factory,initial)
         else:
             engine=engine_factory()
         source=engine.solver.mj_model
+        setup_mark('engine_acquisition')
         solver, d = engine.solver, engine.solver.mjw_data
         from newton_frozen_constraints import configure_frozen_connects
-        frozen_constraint_configuration = configure_frozen_connects(solver, metadata)
+        frozen_constraint_configuration = configure_frozen_connects(solver, metadata,verified_metadata_digest=metadata_digest)
         # Native put_model applies a float32 tolerance floor. An explicit CLI
         # request is an intentional experiment, so honor it after upload. The
         # default None retains the existing uploaded value exactly.
@@ -238,7 +263,10 @@ def run(args, *, session_cache=None):
             solver.mjw_model.opt, args.solver_tolerance)
         if args.deterministic_scope is not None:
             from newton_gpu_deterministic import BoundedDeterministicExecution
-            deterministic_adapter=BoundedDeterministicExecution(solver,scope=args.deterministic_scope,
+            deterministic_factory=(session_cache.bounded_deterministic
+                if session_cache is not None and hasattr(session_cache,'bounded_deterministic')
+                else BoundedDeterministicExecution)
+            deterministic_adapter=deterministic_factory(solver,scope=args.deterministic_scope,
                 native_integer_atomics=args.native_integer_atomics, allow_cg=args.solver=='CG')
         if args.fused_sparse_factor:
             from newton_gpu_sparse_factor import FusedSparseInertiaFactor
@@ -273,9 +301,11 @@ def run(args, *, session_cache=None):
             from newton_gpu_tuning import configure_blocked_cholesky
             tuning = configure_blocked_cholesky(solver, mathdx_gemm=args.mathdx_gemm)
         compatibility = {}
-        if args.refresh_connect_velocity:
+        if args.refresh_connect_velocity and solver.mjw_model.eq_connect_adr.size:
             from newton_gpu_compat import install_connect_velocity_cache_refresh
             compatibility = install_connect_velocity_cache_refresh(solver.mjw_model,d)
+        elif args.refresh_connect_velocity:
+            compatibility = dict(enabled=False,reason='No dynamic CONNECT constraints after verified static-plant reduction')
         if args.canonical_contacts:
             from newton_gpu_deterministic import CanonicalContactOrder
             contact_order=CanonicalContactOrder(solver, allow_cg=args.solver=='CG')
@@ -289,6 +319,7 @@ def run(args, *, session_cache=None):
         if continuation is not None and continuation['parent_effective_gpu_options'] != effective_gpu_options:
             raise ValueError('Continuation runtime GPU solver options differ from the completed parent')
         d.qpos.assign(np.tile(initial['qpos'], (args.worlds, 1)).astype(np.float32))
+        setup_mark('solver_adapters')
         d.qvel.assign(np.tile(initial['qvel'], (args.worlds, 1)).astype(np.float32))
         d.eq_active.assign(np.tile(initial['eq_active'], (args.worlds, 1)))
         d.ctrl.assign(np.tile(initial['ctrl'], (args.worlds, 1)).astype(np.float32))
@@ -323,10 +354,14 @@ def run(args, *, session_cache=None):
         if args.native_control_callback and not np.array_equal(
                 np.sort(initial['actuator_ids']), np.arange(source.nu)):
             raise ValueError('Native callback must own every source actuator')
+        setup_mark('controller_and_contact_policy')
         solver.mjw_model.callback.control = ctrl.control
         if not solver.mjw_model.flg_surfacevel:
             raise RuntimeError('Native belt surface velocity feature disabled')
-        mw.kinematics(solver.mjw_model, d)
+        if session_cache is not None and hasattr(session_cache,'kinematics'):
+            session_cache.kinematics(engine)
+        else:
+            mw.kinematics(solver.mjw_model, d)
         if resume_state is not None:
             for field in ('time', 'qpos', 'qvel', 'eq_active', 'ctrl'):
                 if not np.array_equal(getattr(d, field).numpy(), resume_state[field]):
@@ -336,6 +371,7 @@ def run(args, *, session_cache=None):
             if 'qacc_warmstart' in resume_state and not np.array_equal(d.qacc_warmstart.numpy(), resume_state['qacc_warmstart']):
                 raise ValueError('Measured continuation warmstart differs')
         if args.linear_algebra != 'warp':
+            setup_mark('state_restore_and_kinematics')
             if args.cache_hessian:
                 from newton_gpu_factor_cache import CachedCuSolverCholesky
                 linear_backend=CachedCuSolverCholesky(solver)
@@ -368,7 +404,10 @@ def run(args, *, session_cache=None):
         if args.profile_gpu_events:
             from newton_gpu_profile import GraphEventProfile
             event_profile = GraphEventProfile(solver.mjw_model, args.device)
-        stride = args.record_stride
+        summary_only = getattr(args, 'recording', 'full') == 'summary'
+        setup_mark('state_restore_and_math_adapters')
+        # Keep per-step validity/contact checks; omit the large state history.
+        stride = steps + 1 if summary_only else args.record_stride
         rows = steps // stride + 1
         qlog = wp.zeros((rows, source.nq), float, device=args.device)
         vlog = wp.zeros((rows, source.nv), float, device=args.device)
@@ -401,6 +440,7 @@ def run(args, *, session_cache=None):
         tail_graphs = {}
         durations = np.round(timesteps[:steps], 12)
         graph_capture_started = time.perf_counter()
+        setup_mark('trace_allocation')
         if not args.no_graph:
             print('Capturing fixed Newton physics graph...', flush=True)
             graph_durations = adaptive.graph_timesteps if adaptive is not None else np.unique(durations)
@@ -422,6 +462,7 @@ def run(args, *, session_cache=None):
                     engine.state_0, engine.state_1 = states
         wp.synchronize()
         graph_capture_wall_s = time.perf_counter() - graph_capture_started
+        setup_mark('graph_capture')
         if int(ctrl.tick.numpy()[0]) != 0:
             raise RuntimeError('Graph capture advanced unrecorded physical time')
         if resume_state is not None:
@@ -438,19 +479,36 @@ def run(args, *, session_cache=None):
             quat = d.xquat.numpy()[0][:, [1, 2, 3, 0]]
             q = d.qpos.numpy()[0]
             return np.c_[pos, quat], float(.044 + q[qadr[9]] - q[qadr[8]])
-        if args.gui:
+        if args.gui or getattr(args, 'publish_live', False):
             from newton_live import NewtonLivePublisher, NewtonViewerProcess
             publisher = NewtonLivePublisher(out, metadata['source_assembly'], native_names,
                 provenance['source_body_to_native_name'], fps=args.viewer_fps,
+                verify_skin_mapping=getattr(args, 'viewer_backend', 'isaac') != 'viser',
                 physical_model_sha256=verified_input_hashes['input_model.mjb'])
             pose, gap = live_frame()
             publisher.publish(pose, gap, clock_offset, force=True)
-            viewer = NewtonViewerProcess(out, fps=args.viewer_fps,
-                seconds=0. if args.interactive_viewer else args.viewer_seconds, camera=args.camera,
-                capture=out/'live_final.png',camera_test_motion=args.camera_test_motion,
-                interactive=args.interactive_viewer)
+        if args.gui:
+            display_options = {}
+            if getattr(args, 'viewer_backend', 'isaac') == 'viser':
+                print(f'Browser viewer: http://localhost:{args.viewer_port} '
+                      '(open this port on the server or forward it in VS Code)', flush=True)
+                display_options = dict(isaac_python=sys.executable,
+                    viewer_script=Path(__file__).with_name('newton_viser.py'),
+                    extra_env={'S300_VISER_INPUTS': str(p.resolve()),
+                               'S300_VISER_PORT': str(args.viewer_port)})
+            cached_viewer = getattr(session_cache, 'live_viewer', None)
+            if cached_viewer is not None and cached_viewer.is_alive():
+                viewer=cached_viewer
+                viewer.switch_trial(out)
+            else:
+                viewer = NewtonViewerProcess(out, fps=args.viewer_fps,
+                    seconds=0. if args.interactive_viewer else args.viewer_seconds, camera=args.camera,
+                    capture=None if display_options else out/'live_final.png',camera_test_motion=args.camera_test_motion,
+                    interactive=args.interactive_viewer, **display_options)
             viewer.wait_ready(timeout=args.viewer_timeout)
         report.update(status='running', physics_hz=hz, requested_steps=steps,
+            harvest_mode=metadata.get('geometric_harvest',{}).get('mode','physical_detachment'),
+            physical_detachment_enabled=metadata.get('geometric_harvest',{}).get('physical_detachment_enabled',True),
             source_model_counts=provenance['model_counts'], input_sha256=sha256(p/'inputs.json'),
             commands_sha256=sha256(p/'commands.npz'), engine=engine.evidence,
             executed_commands_sha256=sha256(out/'executed_commands.npz'),
@@ -480,7 +538,8 @@ def run(args, *, session_cache=None):
             source_model_mjb_sha256=verified_input_hashes['input_model.mjb'],
             gpu_linear_algebra=linear_backend.evidence if linear_backend else dict(implementation='MuJoCo Warp blocked Cholesky'),
             gpu_linear_algebra_capture_calls=linear_backend.calls if linear_backend else 0,
-            record_stride=stride, unrecorded_warmup_steps=0, setup_wall_s=time.perf_counter()-started)
+            record_stride=stride, unrecorded_warmup_steps=0, setup_wall_s=time.perf_counter()-started,
+            setup_sections_wall_s=setup_marks)
         write(out/'summary.json', report)
         if args.interactive_viewer:
             report.update(status='waiting_for_start', actual_steps=0,
@@ -511,7 +570,8 @@ def run(args, *, session_cache=None):
         previous_interrupt_handler=signal.signal(signal.SIGINT,request_interrupt)
         loop = time.perf_counter()
         from newton_live import WallClockPacer
-        pacer = WallClockPacer() if args.interactive_viewer else None
+        display_rate=getattr(args,'presentation_rate',0.)
+        pacer = WallClockPacer(rate=display_rate or 1.) if (args.interactive_viewer or display_rate) else None
         gpu_started = loop
         last_progress = loop
         while actual < steps:
@@ -629,10 +689,32 @@ def run(args, *, session_cache=None):
                 last_progress = time.perf_counter()
             if stop:
                 break
+            if progress_callback is not None:
+                boundary=progress_callback(d,actual,float(edges[actual]))
+                if boundary is not None:
+                    import shutil
+                    shutil.copy2(out/'executed_commands.npz',out/'proposed_commands.npz')
+                    report['online_camera_boundary']=dict(evidence=boundary,
+                        maximum_planned_steps=steps,executed_steps=actual,
+                        proposed_commands_sha256=sha256(out/'proposed_commands.npz'),
+                        unexecuted_suffix_discarded=True,completion_kind='online_observation_endpoint')
+                    # Preserve the full proposed route in signed inputs and
+                    # save exactly the executed command prefix as evidence.
+                    for key in ('time','dt','source_sample_time_s','source_command_record_time_s',
+                                'command','phase','authored_belt_speed','belt_surface_velocity_local_y_m_s'):
+                        if key in timeline:timeline[key]=timeline[key][:actual]
+                    for key in ('time_edges','time_edges_master_ticks'):
+                        if key in timeline:timeline[key]=timeline[key][:actual+1]
+                    steps=actual
+                    report['requested_steps']=actual
+                    np.savez_compressed(out/'executed_commands.npz',**timeline)
+                    report['executed_commands_sha256']=sha256(out/'executed_commands.npz')
+                    break
         wp.synchronize()
         loop_s = time.perf_counter()-loop
         if pacer is not None:
             report['presentation_wait_s'] = pacer.wait_s
+            report['presentation_rate']=pacer.rate
         for perf in phase_performance.values():
             perf['realtime_factor'] = perf['simulated_s']/perf['wall_s']
         write(out/'phase_performance.json', phase_performance)
@@ -666,13 +748,14 @@ def run(args, *, session_cache=None):
             pose, gap = live_frame()
             publisher.publish(pose, gap, final_physics_clock_s, force=True)
             publisher.close(stop)
-            try:
-                viewer.wait_displayed(final_physics_clock_s, timeout=20.)
-            except (RuntimeError, TimeoutError, ValueError) as exc:
-                display_errors.append(repr(exc))
-            if not args.interactive_viewer:
-                viewer.close()
-                viewer = None
+            if viewer is not None:
+                try:
+                    viewer.wait_displayed(final_physics_clock_s, timeout=20.)
+                except (RuntimeError, TimeoutError, ValueError) as exc:
+                    display_errors.append(repr(exc))
+                if not args.interactive_viewer:
+                    viewer.close()
+                    viewer = None
             publisher = None
         count = actual//stride + 1
         q = qlog.numpy()[:count]
@@ -680,7 +763,10 @@ def run(args, *, session_cache=None):
         eq = elog.numpy()[:count]
         pose = plog.numpy()[:count]
         actual_times = np.concatenate(([clock_offset], ctrl.time_log.numpy()[0, stride-1:actual:stride]))
-        np.savez_compressed(out/'states.npz', time=actual_times,
+        def save_history(path, **arrays):
+            if not summary_only:
+                np.savez_compressed(path, **arrays)
+        save_history(out/'states.npz', time=actual_times,
             scheduled_time=clock_offset+edges[np.arange(count)*stride], solver_step=np.arange(count)*stride,
             qpos=q, qvel=vel, eq_active=eq, poses=pose[:, 1:],
             body_paths=np.array([next((path for path,name in provenance['source_body_to_native_name'].items()
@@ -694,7 +780,7 @@ def run(args, *, session_cache=None):
         break_step = ctrl.break_step.numpy()
         f = ctrl.force_log.numpy()[:, :actual]
         torque = ctrl.torque_log.numpy()[:, :actual]
-        np.savez_compressed(out/'physics_metrics.npz', active_penetration_m=active,
+        save_history(out/'physics_metrics.npz', active_penetration_m=active,
             released_penetration_m=released, max_contact_force_n=force,
             released_gutter_penetration_m=ctrl.gutter_max.numpy()[:, :actual],
             released_gutter_force_n=ctrl.gutter_force.numpy()[:, :actual],
@@ -706,7 +792,8 @@ def run(args, *, session_cache=None):
             nacon=ctrl.nacon_log.numpy()[:actual], ncollision=ctrl.ncollision_log.numpy()[:actual],
             nefc=ctrl.nefc_log.numpy()[:,:actual], overflow=ctrl.overflow_log.numpy()[:,:actual],
             qacc_abs_max=ctrl.qacc_abs_max.numpy()[:,:actual], time=ctrl.time_log.numpy()[:,:actual])
-        np.save(out/'solver_iterations.npy',ctrl.solver_niter_log.numpy()[:,:actual])
+        if not summary_only:
+            np.save(out/'solver_iterations.npy',ctrl.solver_niter_log.numpy()[:,:actual])
         backend_times=ctrl.time_log.numpy()[:, :actual]
         violations=[]
         for w,event in enumerate(ctrl.first_event.numpy()):
@@ -753,7 +840,8 @@ def run(args, *, session_cache=None):
             report['gpu_dense_hessian_statistics']=hessian_backend.statistics()
         if fixed_reductions is not None:
             report['gpu_fixed_solver_reductions_statistics']=fixed_reductions.statistics()
-        report.update(write_display_evidence(out, metadata, provenance, breaks))
+        if not summary_only:
+            report.update(write_display_evidence(out, metadata, provenance, breaks))
         if sleep_audit is not None:
             report['fruit_sleep'] = sleep_audit.save(out, actual)
         if ctrl.contact_policy is not None:
@@ -778,7 +866,9 @@ def run(args, *, session_cache=None):
             phase_performance=phase_performance, profile_instrumented=bool(args.profile_gpu or args.profile_gpu_events
                 or (ctrl.contact_policy is not None and ctrl.contact_policy.config.get('record_contacts'))),
             deterministic_mode=args.deterministic,
-            resource_scope='CPU/RSS: owned process tree; GPU: whole device including live Isaac display',
+            resource_scope='CPU/RSS: owned process tree; GPU: whole device including any display',
+            recording='summary' if summary_only else 'full',
+            viewer_backend=getattr(args, 'viewer_backend', 'isaac') if args.gui else None,
             display_errors=display_errors, display_health_passed=not display_errors,
             max_active_penetration_m=float(active.max(initial=0)),
             max_released_penetration_m=float(released.max(initial=0)),
@@ -786,12 +876,19 @@ def run(args, *, session_cache=None):
             first_active_violations=violations,
             active_contact_criterion_passed=not np.any(active>.001),
             finite_recorded_state=bool(np.isfinite(q).all() and np.isfinite(vel).all()),
+            finite_all_steps=bool(np.all(nonfinite.numpy()==np.iinfo(np.int32).max)),
             solver_capacity_valid=bool(np.all(ctrl.first_capacity_overflow.numpy()==np.iinfo(np.int32).max)),
             qacc_finite=bool(np.all(ctrl.first_qacc_nonfinite.numpy()==np.iinfo(np.int32).max)),
             max_constraints=int(ctrl.nefc_log.numpy().max(initial=0)),
             max_total_contacts=int(ctrl.nacon_log.numpy().max(initial=0)),
-            gpu_timestamp_drift_s=float(actual_times[-1]-(clock_offset+edges[actual])),
-            states_sha256=sha256(out/'states.npz'), final_time_per_world_s=d.time.numpy().tolist(),
+            solver_capacity=dict(
+                contact_and_broadphase_limit_all_worlds=int(d.naconmax),
+                constraint_limit_per_world=int(d.njmax),
+                peak_broadphase_candidates=int(ctrl.ncollision_log.numpy()[:actual].max(initial=0)),
+                peak_contacts=int(ctrl.nacon_log.numpy()[:actual].max(initial=0)),
+                peak_constraint_rows=int(ctrl.nefc_log.numpy()[:,:actual].max(initial=0))),
+            gpu_timestamp_drift_s=float(final_physics_clock_s-(clock_offset+edges[actual])),
+            states_sha256=None if summary_only else sha256(out/'states.npz'), final_time_per_world_s=d.time.numpy().tolist(),
             all_world_temporal_state_recorded=world_trace is not None,
             all_world_states_sha256=sha256(out/'all_world_states.npz') if world_trace is not None else None,
             body_paths_mapped=bool(len(provenance['source_body_to_native_name'])==source.nbody-1),
@@ -800,7 +897,7 @@ def run(args, *, session_cache=None):
             final_states_sha256=sha256(out/'final_states.npz'),
             source_model_mjb=str(p/'input_model.mjb'), model_dir=str(p),
             limitations=['Uses the existing documented MuJoCo physical adaptation through Newton SolverMuJoCo.',
-                'Full source visual geometry is retained in the isolated Isaac display; display is a live state consumer.',
+                'Independent display consumes measured physics states; no second simulation or recorded replay.',
                 'Fixed recorded/plan commands benchmark the executor; adaptive route planning is not benchmarked.',
                 'Native GPU data is authoritative; Newton metadata-only collision queries are not used.',
                 'Dropped-fruit exceptions follow the existing diagnostic scope; collection remains unverified.'])
@@ -808,6 +905,12 @@ def run(args, *, session_cache=None):
         if args.interactive_viewer and viewer is not None:
             print('Physics finished and results saved. The final scene stays open until you close the window.',flush=True)
             while viewer.is_alive() and not interruption_requested[0]:
+                if getattr(args,'session',False) and (out/'interactive_restart.json').is_file():
+                    report['repeat_requested']=True
+                    session_cache.live_viewer=viewer
+                    viewer=None
+                    write(out/'summary.json',report)
+                    break
                 time.sleep(.1)
         return report
     except BaseException as exc:
@@ -826,7 +929,7 @@ def run(args, *, session_cache=None):
             constraint_order.close()
         if linear_backend is not None:
             linear_backend.close()
-        if deterministic_adapter is not None:
+        if deterministic_adapter is not None and deterministic_adapter is not getattr(session_cache,'deterministic_adapter',None):
             deterministic_adapter.close()
         if inertia_backend is not None:
             inertia_backend.close()
@@ -906,6 +1009,8 @@ def arguments(argv=None):
     p.add_argument('--start-gate-timeout',type=float,default=300.)
     p.add_argument('--seconds',type=float); p.add_argument('--batch',type=int,default=10)
     p.add_argument('--record-stride',type=int,default=1)
+    p.add_argument('--recording',choices=('full','summary'),default='full',
+        help='summary omits state/contact archives; fixed-step guards and final restart state remain')
     p.add_argument('--all-world-trace',action='store_true',help='Record every world q/v/equality at each physics step for batch qualification')
     p.add_argument('--nconmax',type=int,default=512); p.add_argument('--njmax',type=int,default=2048)
     p.add_argument('--no-graph',action='store_true');p.add_argument('--diagnostic-continue',action='store_true')
@@ -915,12 +1020,29 @@ def arguments(argv=None):
         help='Keep physical impacts but diagnose rather than stop only already-released fruit versus exact world gutter colliders')
     p.add_argument('--adaptive-hz',action='store_true',help='Opt-in actual tool/plant contact-driven --hz/--free-hz scheduling')
     p.add_argument('--gui',action='store_true');p.add_argument('--viewer-fps',type=float,default=15.)
+    p.add_argument('--presentation-rate',type=float,default=0.,
+                   help='Pace completed GPU steps for live display; 0 runs at maximum throughput')
+    p.add_argument('--publish-live',action='store_true',help='Publish measured frames for an existing external patrol viewer; never launch or wait for another GUI')
+    p.add_argument('--viewer-backend',choices=('isaac','viser'),default='isaac')
+    p.add_argument('--viewer-port',type=int,default=8091)
+    p.add_argument('--session',action=argparse.BooleanOptionalAction,default=False,
+                   help='Keep the GPU model and Viser scene loaded; repeat only on a browser request')
     p.add_argument('--interactive-viewer',action=argparse.BooleanOptionalAction,default=False,
                    help='Wait for viewer START, pace fixed physics steps to1x, keep final scene open')
     p.add_argument('--viewer-timeout',type=float,default=300.);p.add_argument('--viewer-seconds',type=float,default=600.)
     p.add_argument('--camera',default='entry')
     p.add_argument('--camera-test-motion',action='store_true',help='Move display camera automatically and require recorded movement ACK')
     args=p.parse_args(argv)
+    if not np.isfinite(args.presentation_rate) or args.presentation_rate<0:
+        p.error('Nonnegative finite presentation rate required')
+    if args.session and (not args.gui or not args.interactive_viewer or args.viewer_backend!='viser' or args.repeats!=1):
+        p.error('--session requires interactive Viser and excludes --repeats')
+    if args.recording == 'summary' and (args.backend != 'gpu' or args.all_world_trace):
+        p.error('summary recording requires GPU and excludes --all-world-trace')
+    if args.viewer_backend == 'viser' and (args.backend != 'gpu' or args.camera_test_motion):
+        p.error('Viser requires GPU; use browser camera controls instead of the Isaac camera test')
+    if not 1 <= args.viewer_port <= 65535:
+        p.error('Viewer port must be between 1 and 65535')
     if args.dense_hessian and not 1 <= args.dense_hessian_capacity <= args.njmax:
         p.error('--dense-hessian-capacity must be positive and no larger than --njmax')
     if args.dense_hessian_block_curvature and not args.dense_hessian:
@@ -996,7 +1118,21 @@ def main():
         from newton_cpu import run_cpu
         result=run_cpu(args)
     else:
-        if args.repeats==1:
+        if args.session:
+            from newton_gpu_session import NewtonGPUSessionCache
+            cache=NewtonGPUSessionCache()
+            parent=args.output.resolve();parent.mkdir(parents=True,exist_ok=False)
+            index=0
+            try:
+                while True:
+                    trial=argparse.Namespace(**vars(args));trial.output=parent/f'run_{index:03d}'
+                    result=run(trial,session_cache=cache)
+                    if not result.get('repeat_requested'):break
+                    index+=1
+            finally:
+                consumer=getattr(cache,'live_viewer',None)
+                if consumer is not None:consumer.close()
+        elif args.repeats==1:
             result=run(args)
         else:
             from newton_gpu_session import NewtonGPUSessionCache

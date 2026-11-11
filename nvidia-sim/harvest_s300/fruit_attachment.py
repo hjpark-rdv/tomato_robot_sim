@@ -70,13 +70,13 @@ def _outside_joint_hash(layer,paths):
     return hashlib.sha256(normalized.ExportToString().encode()).hexdigest()
 
 
-def revise(assembly,output,kind='elastic',force_n=3.,torque_nm=.008):
+def revise(assembly,output,kind='elastic',force_n=3.,torque_nm=.008,*,all_trusses=False):
     assembly=Path(assembly).resolve();output=Path(output).resolve()
     source=assembly/'scene.usda';manifest=json.loads((assembly/'motion_manifest.json').read_text())
     if sha(source)!=manifest['scene_sha256']:raise ValueError('Source scene hash mismatch')
     if 'fruit_attachment' in manifest:raise ValueError('Refusing to revise an already revised attachment')
     prefix=manifest['target']['name'].split('_Fruit_')[0]+'_Fruit_'
-    fruits=[f for f in manifest['plant']['fruits'] if f['name'].startswith(prefix)]
+    fruits=[f for f in manifest['plant']['fruits'] if all_trusses or f['name'].startswith(prefix)]
     if not fruits:raise ValueError('Empty current truss')
     original=Usd.Stage.Open(str(source));cache=UsdGeom.XformCache()
     output.mkdir(parents=True,exist_ok=False);shutil.copy2(source,output/'scene.usda')
@@ -112,7 +112,8 @@ def revise(assembly,output,kind='elastic',force_n=3.,torque_nm=.008):
     stage.GetRootLayer().Save()
     if sha(source)!=manifest['scene_sha256']:raise ValueError('Source modified unexpectedly')
     manifest['fruit_attachment']=dict(kind=kind,source_assembly=str(assembly),source_scene_sha256=sha(source),
-        scope='Only current-truss fruit-neck joints; all other source properties unchanged',
+        scope=('All prepared-plant fruit-neck joints; same attachment coefficients per truss' if all_trusses else
+               'Only current-truss fruit-neck joints; all other source properties unchanged'),
         joints=rows,preservation_audit=dict(passed=True,outside_joint_spec_sha256=before,
             resolved_sublayers_unchanged=True),calibrated=False,training_eligible=False)
     manifest['scene_sha256']=sha(output/'scene.usda')
