@@ -183,7 +183,8 @@ class CameraRegionSelector:
         self._directions={};direction_evidence={};direction_rejected=[]
         for key in sorted({row['truss'] for row in accepted}):
             selected=[row for row in accepted if row['truss']==key]
-            if len(selected)<2:
+            singleton=(len(selected)==1 and self.minimum==1 and self.entry_forward_world is not None)
+            if len(selected)<2 and not singleton:
                 direction_rejected.extend(dict(instance_id=row['instance_id'],key=row['key'],
                     reason='fewer_than_two_visible_fruits_for_direction') for row in selected)
                 continue
@@ -258,6 +259,9 @@ class CameraRegionSelector:
                     entry_reference_world=self.entry_forward_world.tolist(),
                     entry_yaw_deg=yaw_offset,maximum_entry_yaw_deg=self.max_entry_yaw_deg,
                     yaw_reference='Fixed robot ready forward; not observed truss PCA')
+                if singleton:
+                    direction_evidence[key].update(method='fixed_robot_entry_reference_for_single_visible_fruit',
+                        singleton_cleanup=True,heading_inferred_from_single_fruit=False)
             if yaw_offset:
                 direction_evidence[key].update(unrotated_direction_world=unrotated_axis.tolist(),
                     yaw_offset_deg=yaw_offset,rotation_axis_world=[0.,0.,1.],

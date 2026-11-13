@@ -178,9 +178,10 @@ class PostureGuard:
                         minimum_m=self.policy['minimum_camera_above_grip_m'])
         return None
 
-    def rejection(self, data):
-        reason = self.geometry_rejection(data)
-        if reason: return reason
+    def rejection(self, data, *, geometry_checked=False):
+        if not geometry_checked:
+            reason = self.geometry_rejection(data)
+            if reason: return reason
         if self.camera_clearance is not None:
             clearance, other = self.camera_clearance.clearance(data)
             if clearance < self.camera_clearance.minimum:

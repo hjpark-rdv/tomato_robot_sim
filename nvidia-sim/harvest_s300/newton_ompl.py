@@ -132,6 +132,10 @@ class Planner:
     def expired(self):
         return time.monotonic() >= self.deadline
 
+    def kinematic_rejection(self):
+        """Subclass guard on the FK already computed for this exact state."""
+        return None
+
     def valid_full(self, q, *, remember=True, measured=False):
         if self.expired():
             self.stats['deadline_expired'] = True
@@ -147,6 +151,8 @@ class Planner:
         self.data.qpos[:] = q
         # No mj_step, dynamics solver, gravity or actuator mutation occurs.
         mj.mj_kinematics(self.model, self.data)
+        if self.kinematic_rejection():
+            return False
         mj.mj_collision(self.model, self.data)
         self.stats['collision_query_seconds'] = self.stats.get('collision_query_seconds', 0.) + time.monotonic() - started
         for contact in self.data.contact:

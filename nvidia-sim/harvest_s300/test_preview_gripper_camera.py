@@ -9,6 +9,33 @@ from preview_gripper_camera import CameraClearance, optical_world, subtract_boun
 
 
 class GripperCameraTests(unittest.TestCase):
+    def test_immutable_rigid_cache_preserves_moving_obstacles_and_exact_jaws(self):
+        model=mj.MjModel.from_xml_string('''<mujoco><worldbody>
+          <geom type="sphere" size=".01" pos="-3 0 0" contype="0" conaffinity="0"/>
+          <geom type="sphere" size=".01" pos="-4 0 0" contype="0" conaffinity="0"/>
+          <geom name="moving_relative_to_tool" type="box" pos=".17 0 0" size=".02 .02 .02"/>
+          <body name="Tool_fixed"><joint type="slide" axis="1 0 0"/>
+            <geom name="bracket" type="box" size=".02 .02 .02" pos=".04 0 0"/>
+            <body name="Tool_L"><joint type="slide" axis="1 0 0"/>
+              <geom name="cover" type="box" size=".04 .04 .04"/>
+            </body>
+          </body></worldbody></mujoco>''')
+        parts=subtract_bounds([[-.04]*3,[.04]*3],[[-.015,-.05,-.05],[.015,.05,.05]])
+        query=CameraClearance(model,SimpleNamespace(rows=[]),dict(body='Tool_fixed',
+            body_from_camera_optical=np.eye(4).tolist(),housing_optical_bounds_m=[[-.01]*3,[.01]*3],
+            cover_reliefs=[dict(geom='cover',body='Tool_L',retained_bounds_body_m=parts)]))
+        query.enable_rigid_cache();data=mj.MjData(model)
+        values=[]
+        for arm,jaw in ((0.,0.),(.05,0.),(.1,.006),(.15,0.),(0.,.006),(0.,0.)):
+            data.qpos[:]=[arm,jaw];mj.mj_kinematics(model,data)
+            cached=query.clearance(data);bank=query.rigid_cache;query.rigid_cache=None
+            reference=query.clearance(data);query.rigid_cache=bank
+            self.assertAlmostEqual(cached[0],reference[0],places=8)
+            self.assertEqual(cached[1],reference[1]);values.append(cached[0])
+        self.assertLess(values[2],0.) # A changed slider must still collide.
+        self.assertLess(values[3],0.) # A changed arm must still see the world.
+        self.assertAlmostEqual(values[0],values[-1],places=10)
+
     def test_relief_boxes_keep_all_material_outside_pocket(self):
         bounds=np.array([[-.04]*3,[.04]*3]);cut=np.array([[-.015,-.05,-.05],[.015,.05,.05]])
         parts=np.array(subtract_bounds(bounds,cut))

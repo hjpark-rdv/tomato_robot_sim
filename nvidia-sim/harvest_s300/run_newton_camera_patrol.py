@@ -333,12 +333,19 @@ def source_fruit_manifest(source):
     return read(Path(source['assembly'])/'motion_manifest.json')
 
 
-def select_group(observation, source, meta, poses, breaks, attempts, target, output, *, yaw_offset_deg=0.,entry_forward_world=None):
-    manifest=source_fruit_manifest(source);fruits=manifest['plant']['fruits']
+def select_group(observation, source, meta, poses, breaks, attempts, target, output, *, yaw_offset_deg=0.,entry_forward_world=None,
+                 depth_m=None,height_offset_m=-.01,minimum_fruits=None,rejected_groups=(),max_attempts=2,
+                 selection_source=None):
+    manifest=source_fruit_manifest(source) if selection_source is None else selection_source[0]
+    fruits=manifest['plant']['fruits']
     prefix=source['prefix'];by_name={f['name']:f for f in fruits}
     paths=[f['path'] for f in fruits];fruit_poses=np.array([poses[prefix+f['name']] for f in fruits])
     local_breaks=[dict(name=f['name'],joint=f['joint']) for f in fruits if prefix+f['name'] in breaks]
-    policy=read(source['policy'])
+    policy=read(source['policy']) if selection_source is None else dict(selection_source[1])
+    if minimum_fruits is not None:
+        if isinstance(minimum_fruits,bool) or not isinstance(minimum_fruits,int) or not 1<=minimum_fruits<=10:
+            raise ValueError('Explicit group minimum must be within1..10')
+        policy['minimum_fruits']=minimum_fruits
     if source.get('fruit_catalog') and policy.get('static_catalog_sha256')!=source['fruit_catalog_sha256']:
         raise ValueError('Static fruit eligibility and catalog mismatch')
     if meta.get('geometric_harvest',{}).get('mode')==MODE:policy['harvest_mode']=MODE
@@ -348,9 +355,9 @@ def select_group(observation, source, meta, poses, breaks, attempts, target, out
         policy['tool_height_interval_m']=[float(low[2]),float(high[2])]
     selector=CameraRegionSelector(policy,lambda *_:np.array([-1.,0.,0.]),
         lambda *_:observation,plant_source=manifest['plant']['source_plant'],selected_truss=target,
-        depth_m=.015 if ideal else .035,height_offset_m=-.01,output=output,yaw_offset_deg=yaw_offset_deg,
+        depth_m=(.015 if ideal else .035)if depth_m is None else depth_m,height_offset_m=height_offset_m,output=output,yaw_offset_deg=yaw_offset_deg,
         entry_forward_world=entry_forward_world,max_entry_yaw_deg=MAX_ENTRY_YAW_DEG)
-    group=selector(fruits,local_breaks,paths,fruit_poses,attempts,max_attempts=2)
+    group=selector(fruits,local_breaks,paths,fruit_poses,attempts,max_attempts=max_attempts,rejected_groups=rejected_groups)
     return group,selector.last_decision
 
 

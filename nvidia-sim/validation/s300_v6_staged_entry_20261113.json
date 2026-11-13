@@ -1,0 +1,194 @@
+{
+  "schema": "s300-v6-staged-straight-entry-validation-v1",
+  "status": "passed",
+  "motion": {
+    "status": "passed",
+    "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_patrol_v1",
+    "physical_model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+    "harvest_motions": 6,
+    "geometric_fruits": 24,
+    "all_transfers_remain_outside_crop": true,
+    "alignment_precedes_straight_insertion_and_two_jaw_cycles": true,
+    "nominal_roller_standoff_m": 0.1,
+    "straight_ik_sample_spacing_m": 0.005,
+    "measured_position_tolerance_m": 0.005,
+    "rows": [
+      {
+        "step": "step_005",
+        "minimum_roller_clearance_before_entry_m": 0.10229730264548564,
+        "pregrasp_position_error_m": 0.003361879116579894,
+        "maximum_line_error_m": 0.004203899582092513,
+        "maximum_rotation_error_deg": 0.5326448227411589,
+        "entry_state_checks": 1115,
+        "stroke_m": 0.18297699377776258,
+        "geometric_fruits": 6
+      },
+      {
+        "step": "step_011",
+        "minimum_roller_clearance_before_entry_m": 0.10327692255773535,
+        "pregrasp_position_error_m": 0.0033415823967239805,
+        "maximum_line_error_m": 0.0031132301781171892,
+        "maximum_rotation_error_deg": 0.3873871090155835,
+        "entry_state_checks": 1130,
+        "stroke_m": 0.13384901963631426,
+        "geometric_fruits": 2
+      },
+      {
+        "step": "step_014",
+        "minimum_roller_clearance_before_entry_m": 0.10416323362903834,
+        "pregrasp_position_error_m": 0.0008750029076542124,
+        "maximum_line_error_m": 0.0036721470378706855,
+        "maximum_rotation_error_deg": 0.45630793991299196,
+        "entry_state_checks": 1130,
+        "stroke_m": 0.15030788357185346,
+        "geometric_fruits": 6
+      },
+      {
+        "step": "step_019",
+        "minimum_roller_clearance_before_entry_m": 0.10118842664966554,
+        "pregrasp_position_error_m": 0.0045645376744669446,
+        "maximum_line_error_m": 0.003652631336795134,
+        "maximum_rotation_error_deg": 0.49917127995800503,
+        "entry_state_checks": 1129,
+        "stroke_m": 0.14171058149068086,
+        "geometric_fruits": 1
+      },
+      {
+        "step": "step_033",
+        "minimum_roller_clearance_before_entry_m": 0.10104502555701156,
+        "pregrasp_position_error_m": 0.004652484660624596,
+        "maximum_line_error_m": 0.0048419216552740675,
+        "maximum_rotation_error_deg": 0.6043868535466252,
+        "entry_state_checks": 1129,
+        "stroke_m": 0.16791881624659646,
+        "geometric_fruits": 5
+      },
+      {
+        "step": "step_034",
+        "minimum_roller_clearance_before_entry_m": 0.10392590860675888,
+        "pregrasp_position_error_m": 0.002526524221055658,
+        "maximum_line_error_m": 0.003958805613675127,
+        "maximum_rotation_error_deg": 0.5397781866783053,
+        "entry_state_checks": 1130,
+        "stroke_m": 0.14893314363310375,
+        "geometric_fruits": 4
+      }
+    ],
+    "maximum_line_error_m": 0.0048419216552740675,
+    "minimum_roller_clearance_m": 0.10104502555701156,
+    "maximum_pregrasp_position_error_m": 0.004652484660624596,
+    "scope": "Fresh visible depth estimates and known fruit radii; independent native FK checks of actual Newton GPU trace; geometric capture, not force/detachment qualification"
+  },
+  "physical_and_camera": {
+    "status": "passed",
+    "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_patrol_v1",
+    "status_at_end": "harvest_budget_reached",
+    "camera_selected_plans": 6,
+    "actual_gpu_camera": true,
+    "actual_gpu_physics": true,
+    "recorded_replay": false,
+    "harvested_motions": 6,
+    "geometric_fruits": 24,
+    "observation_count": 35,
+    "observation_instance_pixel_checks": 23893,
+    "subsequent_camera_hidden_checks": 384,
+    "state_checks": 13424,
+    "maximum_entry_angle_deg": 12.252239987047757,
+    "maximum_capture_translation_error_m": 1.0092042350303366e-05,
+    "maximum_active_penetration_m": 0.0,
+    "source_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+    "last_station_m": 0.44523969292640686,
+    "simulated_s": 61.141380310058594,
+    "wall_s": 157.30537089100108,
+    "lift_working_max_m": 0.74,
+    "reach_tolerance_m": 0.005,
+    "physical_model_unchanged": true,
+    "state_preserved_between_segments": true,
+    "solver_contact_caches_rebuilt": true,
+    "scope": "Visible SIM-GT labels plus optical-Z depth; geometric harvest credit, no physical detachment; not full-route coverage or realtime qualification"
+  },
+  "live_controls": {
+    "status": "passed",
+    "staged_entry": [
+      {
+        "status": "passed",
+        "minimum_roller_clearance_before_entry_m": 0.10229730264548564,
+        "pregrasp_position_error_m": 0.003361879116579894,
+        "maximum_line_error_m": 0.00420389958209251,
+        "requested_standoff_m": 0.1,
+        "stroke_m": 0.18297699377776258
+      },
+      {
+        "status": "passed",
+        "minimum_roller_clearance_before_entry_m": 0.10327692255773535,
+        "pregrasp_position_error_m": 0.0033415823967239805,
+        "maximum_line_error_m": 0.0031132301781171897,
+        "requested_standoff_m": 0.1,
+        "stroke_m": 0.13384901963631426
+      }
+    ],
+    "start_to_physics_s": 0.7863234970718622,
+    "pause_clock_stable": true,
+    "pause_qpos_stable": true,
+    "completed_harvest_motions": 2,
+    "geometric_fruits": 8,
+    "display_native_max_position_error_m": 2.498001805406602e-16
+  },
+  "regression_tests": 137,
+  "original_model_unchanged": true,
+  "limits_unchanged": true,
+  "grip_cycles": 2,
+  "scope": "V6/5906 live observed farm simulation; trace-verified staged arrival and straight insertion; geometric capture, not force or detachment qualification; no full-route coverage guarantee",
+  "deployment": {
+    "status": "passed",
+    "pid": 915744,
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332",
+    "ready": {
+      "port": 5906,
+      "actual_gpu_camera": true,
+      "actual_gpu_physics_ready": true,
+      "recorded_replay": false,
+      "waits_for_start": true
+    },
+    "running": {
+      "mode": "v6_live_camera_patrol",
+      "recorded_replay": false,
+      "physics_clock_s": 19.599584579467773,
+      "running": true,
+      "phase": "motion_complete",
+      "station_m": 0.17476174235343933,
+      "lift_height_m": 0.728917121887207,
+      "qpos": [
+        0.17476174235343933,
+        0.728917121887207,
+        -0.9586994051933289,
+        0.1644321233034134,
+        2.2631402015686035,
+        -2.4206557273864746,
+        0.9641737341880798,
+        1.5705121755599976,
+        -0.02586643025279045,
+        0.026007775217294693
+      ],
+      "camera_position_world_m": [
+        0.0018816437013353046,
+        0.4266235412191544,
+        0.9791402244371996
+      ],
+      "camera_forward_world": [
+        -0.9644909051881863,
+        -0.0020635382411720036,
+        -0.2641079999151869
+      ],
+      "observation_count": 12,
+      "harvest_motions": 1,
+      "geometric_harvest_count": 6,
+      "visual_native_max_position_error_m": 2.498001805406602e-16
+    },
+    "initial_probe": {
+      "status": "timed_out",
+      "condition": "physics clock > .3s within6wallseconds",
+      "explanation": "First short scan completes below.3s, then synchronous candidate planning holds the clock; start command succeeded. Read current actual physics state separately without restarting."
+    }
+  }
+}

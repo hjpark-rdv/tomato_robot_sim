@@ -10,6 +10,24 @@ from camera_region_policy import CameraRegionSelector
 
 
 class CameraRegionPolicyTests(unittest.TestCase):
+    def test_single_visible_cleanup_needs_explicit_robot_heading_and_ripe_depth(self):
+        self.policy['minimum_fruits']=1
+        self.policy['harvest_mode']='main_stem_only_geometric_harvest'
+        self.observation['objects']=self.observation['objects'][:1]
+        self.assertIsNone(self.select(self.selector()))
+        selector=self.selector(entry_forward_world=[0.,1.,0.])
+        group=self.select(selector)
+        self.assertEqual(group['fruits'],[self.fruits[0]['name']])
+        row=group['camera_region']['direction_estimates']['Truss_02']
+        self.assertTrue(row['singleton_cleanup']);self.assertFalse(row['heading_inferred_from_single_fruit'])
+        for edit in ('unripe','no_depth','hidden'):
+            old=copy.deepcopy(self.observation)
+            if edit=='unripe':self.observation['objects'][0]['red_proxy']=False
+            elif edit=='no_depth':self.observation['objects'][0]['valid_depth_pixels']=0
+            else:self.observation['objects']=[]
+            self.assertIsNone(self.select(self.selector(entry_forward_world=[0.,1.,0.])))
+            self.observation=old
+
     def test_robot_forward_cone_is_absolute_not_an_offset_from_sideways_rachis(self):
         self.observation['objects'].append(dict(instance_id=5000,class_name='rachis',
             truss='Truss_02',key=self.source+'/Truss_02/Rachis',visible_pixels=100,valid_depth_pixels=100,

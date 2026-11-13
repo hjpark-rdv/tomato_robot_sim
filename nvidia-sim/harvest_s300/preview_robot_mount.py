@@ -219,6 +219,8 @@ def prepare(assets, output, elbow):
     motor_local = np.concatenate([geom_mesh(visual, i).vertices for i in motor_ids])
     reference = mj.MjData(model)
     reference.qpos[:] = initial['qpos']
+    rail_address = model.joint('root_joint').qposadr[0]
+    reference.qpos[rail_address] = 0.
     reference.qpos[model.joint('farmily_lift_height_joint').qposadr[0]] = 0.
     mj.mj_kinematics(model, reference)
     chassis_zero = np.eye(4)
@@ -313,7 +315,12 @@ def body_poses(model, initial, meta, lift, hanging, arm_positions=None, plate_ri
     target = seat.copy()
     if layout == 'side':
         side=meta['layouts']['side']
-        carriage=np.asarray(meta['carriage_zero_lift_bounds_m'])
+        # These CAD bounds are measured at zero rail and zero lift. Keep the
+        # destination on the moving carriage instead of leaving the arm at
+        # the entrance while the native platform/chassis advance along rail.
+        rail=model.joint('root_joint')
+        rail_axis=data.xmat[rail.bodyid[0]].reshape(3,3)@rail.axis
+        carriage=np.asarray(meta['carriage_zero_lift_bounds_m'])+rail_axis*data.qpos[rail.qposadr[0]]
         # The native base mates on its lower Z face. Turn that axis toward
         # the open side of the mast and seat it on a short vertical adapter.
         source_seat=np.array([platform[0,3],platform[1,3],bounds[1,2]+lift])

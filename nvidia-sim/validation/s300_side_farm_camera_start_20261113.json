@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-13",
+  "base_commit": "19e67f7",
+  "status": "passed",
+  "reason": "Farm run previously reused the front-facing assembly parking pose, leaving the camera pointed along +Y instead of the left crop",
+  "variant_assets": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3",
+  "plan": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_v1/motion/plan.json",
+  "physics": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_v1/physics",
+  "validation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_v1/camera_validation/validation.json",
+  "initial_command": [
+    0.0,
+    0.75,
+    -1.986811153803358,
+    0.01130862568532029,
+    2.2617019828378586,
+    -2.314050399729963,
+    2.0594764206421052,
+    1.0894913673421716,
+    -0.026,
+    0.026
+  ],
+  "measured_start_view": {
+    "side": "left",
+    "camera_position_world_m": [
+      -0.3028145817336498,
+      0.24438722918546973,
+      1.095053327729336
+    ],
+    "camera_forward_world": [
+      -0.8423379996228575,
+      0.42091843245291233,
+      -0.3365922869180844
+    ],
+    "horizontal_side_alignment": 0.8945336031889762,
+    "target_centre_pixel": [
+      239.43164779740965,
+      321.18964890220303
+    ],
+    "target_depth_m": 0.35619133307078066,
+    "projected_fruit_count": 20,
+    "fruit_count": 20,
+    "suitable": true,
+    "scope": "Optical direction and calibrated frustum projection; no occlusion or detector claim"
+  },
+  "minimum_ready_camera_side_alignment": 0.8935817577267943,
+  "posture_audit": {
+    "state_checks": 11332,
+    "certified_mast_clearance_lower_bound_m": 0.1,
+    "maximum_forearm_upward_deg": -31.36073023776185,
+    "minimum_abs_elbow_deg": 95.02452188437132,
+    "maximum_abs_elbow_deg": 129.70820199912856,
+    "maximum_abs_wrist1_deg": 138.36046707364727,
+    "minimum_camera_above_grip_m": 0.013572989102842548,
+    "minimum_camera_housing_clearance_m": 0.002499999999999827,
+    "minimum_grip_yaw_deg": 153.3683165882801,
+    "maximum_grip_yaw_deg": 180.0675988616349,
+    "minimum_grip_forward_horizontal": 0.9693664090902677,
+    "maximum_abs_wrist3_deg": 90.00366348587329
+  },
+  "targets": 4,
+  "grip_cycles_per_target": 2,
+  "geometric_capture_count": 26,
+  "recorded_state_samples": 11332,
+  "native_physics_status": "completed",
+  "actual_steps": 11331,
+  "simulated_s": 51.8016242980957,
+  "loop_wall_s": 21.73677933285944,
+  "realtime_factor": 2.383132455128129,
+  "maximum_active_penetration_m": 0.00010489998385310173,
+  "source_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "states_sha256": "62d02bc85441a8adda1fa41f1f11c06b691695261d656ad88cf50dd2abd66025",
+  "scope": "Fresh native GPU execution from crop-facing physical qpos and actuator holds, fixed left-facing home during ready/rail/return, unchanged geometry and main-stem-only geometric harvest; camera frustum is a projection check without occlusion or detector claims",
+  "viewer_port": 5906,
+  "entry_angle": {
+    "status": "passed",
+    "measured_entry_samples": 6421,
+    "maximum_entry_angle_deg": 14.2184761031619,
+    "allowed_angle_deg": 15.0
+  },
+  "optical_start_screenshot": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_optical.png",
+  "browser_validation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_browser_validation.json",
+  "browser_status": "passed",
+  "browser_http_status": 200,
+  "browser_js_errors": [],
+  "browser_grip_phases_seen": [
+    "approach",
+    "geometric_capture_hold",
+    "grip_close_1",
+    "grip_close_2",
+    "grip_hold_1",
+    "grip_open_1",
+    "grip_open_2",
+    "grip_open_hold_1",
+    "inserted_hold",
+    "observe_ready",
+    "prepare_open",
+    "rail_transfer",
+    "transfer"
+  ],
+  "assembly_start_screenshot": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_assembly.png",
+  "viewer_paused_at_start": true
+}

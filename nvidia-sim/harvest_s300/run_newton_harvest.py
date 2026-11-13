@@ -81,7 +81,8 @@ def verify_prepared_inputs(inputs, provenance, local_model_cache=None, *, report
     return staged_model, cache_evidence, {name: verified[name] for name in files}
 
 
-def run(args, *, session_cache=None, verification_context=None, progress_callback=None, online_session=None):
+def run(args, *, session_cache=None, verification_context=None, progress_callback=None, online_session=None,
+        ready_callback=None):
     started = time.perf_counter()
     setup_marks={};setup_last=started
     def setup_mark(name):
@@ -573,6 +574,14 @@ def run(args, *, session_cache=None, verification_context=None, progress_callbac
             record_stride=stride, unrecorded_warmup_steps=0, setup_wall_s=time.perf_counter()-started,
             setup_sections_wall_s=setup_marks)
         write(out/'summary.json', report)
+        if ready_callback is not None:
+            # The native model, controller and CUDA graphs are ready, while
+            # the measured initial state and clock are still untouched.
+            if ready_callback() is False:
+                report.update(status='cancelled_before_start',actual_steps=0,simulated_s=0.,
+                    operator_cancelled_before_physics=True)
+                write(out/'summary.json',report)
+                return report
         if online_session is not None:
             if steps!=args.batch or len(graphs)!=1 or args.no_graph:
                 raise ValueError('Online control requires exactly one fixed-size CUDA graph buffer')

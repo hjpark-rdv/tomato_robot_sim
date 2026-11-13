@@ -84,7 +84,7 @@ def geom_color(model, index):
     return model.mat_rgba[material] if material >= 0 else model.geom_rgba[index]
 
 
-def populate_scene(server,model,*,include_static=True,include_dynamic=True,static_root='/farm'):
+def populate_scene(server,model,*,include_static=True,include_dynamic=True,static_root='/farm',shadows=True):
     """Shared full-triangle browser geometry for single and patrol viewers."""
     import trimesh
     handles = {}
@@ -95,7 +95,7 @@ def populate_scene(server,model,*,include_static=True,include_dynamic=True,stati
         if model.geom(i).name in getattr(model, 'vertex_color_lookup', {}):
             server.scene.add_mesh_trimesh(f'{static_root}/colored_g{i}',
                 geom_mesh(model,i,local_transform=False),
-                wxyz=model.geom_quat[i],position=model.geom_pos[i])
+                wxyz=model.geom_quat[i],position=model.geom_pos[i],cast_shadow=shadows,receive_shadow=shadows)
             continue
         key = (int(model.geom_type[i]), int(model.geom_dataid[i]), tuple(model.geom_size[i]))
         static.setdefault(key, []).append(i)
@@ -104,13 +104,15 @@ def populate_scene(server,model,*,include_static=True,include_dynamic=True,stati
         server.scene.add_batched_meshes_simple(f'{static_root}/g{index}',mesh.vertices.astype(np.float32),mesh.faces,
             model.geom_quat[ids],model.geom_pos[ids],
             batched_colors=np.clip(np.array([geom_color(model,i)[:3] for i in ids])*255,0,255).astype(np.uint8),
-            batched_opacities=np.array([geom_color(model,i)[3] for i in ids]),lod='off',side='double')
+            batched_opacities=np.array([geom_color(model,i)[3] for i in ids]),lod='off',side='double',
+            cast_shadow=shadows,receive_shadow=shadows)
     for bid in sorted({int(x) for x in model.geom_bodyid} - {0}) if include_dynamic else ():
         meshes = [geom_mesh(model,i) for i in range(model.ngeom)
                   if model.geom_bodyid[i] == bid and geom_color(model,i)[3] > 0]
         if not meshes:
             continue
-        handles[bid] = server.scene.add_mesh_trimesh(f'/bodies/b{bid}', trimesh.util.concatenate(meshes))
+        handles[bid] = server.scene.add_mesh_trimesh(f'/bodies/b{bid}', trimesh.util.concatenate(meshes),
+            cast_shadow=shadows,receive_shadow=shadows)
     return handles
 
 

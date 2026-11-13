@@ -208,6 +208,33 @@ class CameraClearance:
                     self.cover_parts.append((body, original, (low+high)/2., (high-low)/2.))
         self.radii = model.geom_rbound[self.candidates].copy()
         self.planes = model.geom_type[self.candidates] == mj.mjtGeom.mjGEOM_PLANE
+        self.rigid_cache = None
+
+    def enable_rigid_cache(self):
+        """Opt in only when query geometry remains immutable for the run.
+
+        A common rigid transform cannot change a distance. Tool-weld parts
+        and the two validated jaw welds therefore depend only on exact jaw
+        coordinates. All other bodies still receive native distance queries
+        at every checked pose, including every measured physics state.
+        """
+        bodies = self.model.body_weldid[self.model.geom_bodyid[self.candidates]]
+        self.fixed_candidates = bodies == self.model.body_weldid[self.body]
+        welds = [int(self.model.body_weldid[body]) for body, *_ in self.cover_parts]
+        self.rigid_candidates = np.isin(bodies, welds) & ~self.fixed_candidates
+        self.fixed_clearance = None
+        self.rigid_cache = OrderedDict()
+
+    def candidate_clearance(self, data, position, candidates, radii, planes):
+        limit = .05
+        close = (np.linalg.norm(data.geom_xpos[candidates]-position,axis=1)
+                 < radii+self.radius+limit) | planes
+        best, other = limit, None
+        for gid in candidates[close]:
+            distance = float(mj.mj_geomDistance(self.model,data,self.gid,int(gid),limit,None))
+            if distance < best:
+                best, other = distance, int(gid)
+        return best, other
 
     def clearance(self, data):
         rotation = data.xmat[self.body].reshape(3,3)
@@ -215,13 +242,24 @@ class CameraClearance:
         data.geom_xpos[self.gid] = position
         data.geom_xmat[self.gid] = (rotation @ self.rotation).ravel()
         limit = .05
-        close = (np.linalg.norm(data.geom_xpos[self.candidates]-position,axis=1)
-                 < self.radii+self.radius+limit) | self.planes
-        best, other = limit, None
-        for gid in self.candidates[close]:
-            distance = float(mj.mj_geomDistance(self.model,data,self.gid,int(gid),limit,None))
-            if distance < best:
-                best, other = distance, int(gid)
+        if self.rigid_cache is None:
+            best, other = self.candidate_clearance(data, position, self.candidates, self.radii, self.planes)
+        else:
+            mask = self.rigid_candidates
+            moving = ~(mask | self.fixed_candidates)
+            best, other = self.candidate_clearance(data, position, self.candidates[moving], self.radii[moving], self.planes[moving])
+            if self.fixed_clearance is None:
+                fixed = self.fixed_candidates
+                self.fixed_clearance = self.candidate_clearance(data, position, self.candidates[fixed], self.radii[fixed], self.planes[fixed])
+            if self.fixed_clearance[0]-1e-10 < best:best, other = self.fixed_clearance[0]-1e-10, self.fixed_clearance[1]
+            key = tuple(data.qpos[self.jaw_addresses])
+            cached = self.rigid_cache.get(key)
+            if cached is None:
+                cached = self.candidate_clearance(data, position, self.candidates[mask], self.radii[mask], self.planes[mask])
+                self.rigid_cache[key] = cached
+                if len(self.rigid_cache)>2048:self.rigid_cache.popitem(last=False)
+            # Conservative floating point allowance for common transforms.
+            if cached[0]-1e-10 < best:best, other = cached[0]-1e-10, cached[1]
         if self.cover_parts:
             # Rigid tool-relative distance depends only on the two sliders,
             # not on the arm/lift pose. Cache exact jaw values, without rounding.

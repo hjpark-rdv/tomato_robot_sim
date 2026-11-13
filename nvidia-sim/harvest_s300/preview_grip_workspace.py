@@ -34,6 +34,14 @@ REGIONS = {
 }
 
 
+def angular_error(target, actual):
+    """Shortest SO(3) error using the same native math as the arm planner."""
+    quaternion = np.empty(4); vector = np.empty(3)
+    mj.mju_mat2Quat(quaternion, (target @ actual.T).ravel())
+    mj.mju_quat2Vel(vector, quaternion, 1.)
+    return vector
+
+
 def layout_boxes(scene, meta, displayed, bin_parts, lift, *, layout_key=None):
     from preview_side_collision import CHASSIS_ASSEMBLIES, SLICED_LIFT_FEET, cad_boxes
     boxes = [dict(p, name='bin/'+p['name']) for p in bin_parts]
@@ -163,12 +171,6 @@ class GripPlanner(Planner):
             if reason:
                 self.stats['last_posture_rejection'] = reason
                 return False
-            self.data.qpos[:] = q
-            mj.mj_kinematics(self.model,self.data)
-            reason = self.posture_guard.geometry_rejection(self.data)
-            if reason:
-                self.stats['last_posture_rejection'] = reason
-                return False
         self.obstacles.update(float(q[1]))
         result = super().valid_full(q, **kwargs)
         if not result and 'last_collision' in self.stats:
@@ -176,11 +178,19 @@ class GripPlanner(Planner):
             for key in ('geom1','geom2'):
                 c[key] = self.obstacles.aliases.get(c[key], c[key])
         if result and self.posture_guard:
-            reason = self.posture_guard.rejection(self.data)
+            reason = self.posture_guard.rejection(self.data, geometry_checked=True)
             if reason:
                 self.stats['last_posture_rejection'] = reason
                 return False
         return result
+
+    def kinematic_rejection(self):
+        if self.posture_guard:
+            reason = self.posture_guard.geometry_rejection(self.data)
+            if reason:
+                self.stats['last_posture_rejection'] = reason
+                return reason
+        return None
 
     def ik_with_lift(self,goal,seed):
         """Same damped Jacobian IK with the real lift as a seventh variable."""
@@ -191,7 +201,7 @@ class GripPlanner(Planner):
         for _ in range(200 if self.posture_guard else 140):
             self.fixed[1]=state[0]
             pos,orient=self._pose(state[1:])
-            angular=Rotation.from_matrix(rotation@orient.T).as_rotvec();delta=target-pos
+            angular=angular_error(rotation,orient);delta=target-pos
             if np.linalg.norm(delta)<.001 and np.linalg.norm(angular)<.01:
                 if self.valid_arm(state[1:]):return state.copy()
                 if not self.posture_guard or self.posture_guard.forearm_pitch(self.data)<=10.:break
@@ -232,7 +242,7 @@ class GripPlanner(Planner):
         self.fixed=self.initial.copy();self.fixed[1]=lift;self.fixed[8:10]=OPEN_JAWS
         for _ in range(100):
             pos,orient=self._pose(arm)
-            delta=target-pos;angular=Rotation.from_matrix(rotation@orient.T).as_rotvec()
+            delta=target-pos;angular=angular_error(rotation,orient)
             if np.linalg.norm(delta)<.001 and np.linalg.norm(angular)<.01:
                 if self.valid_arm(arm):return np.r_[lift,arm]
                 break
@@ -270,11 +280,18 @@ def segment_duration(points):
 
 
 def checked_edge(planner,a,b,accept=None):
+    cache=getattr(planner,'checked_nine_axis_edges',None) if accept is None else None
+    key=(getattr(planner,'state_constraint_key',None),float(planner.initial[0]),
+         tuple(sorted((np.asarray(a,float).tobytes(),np.asarray(b,float).tobytes()))))
+    if cache is not None and key in cache:
+        full=planner.initial.copy();full[1:10]=b
+        return planner.valid_full(full)
     steps = state_steps(a,b)
     for u in np.linspace(0.,1.,steps+1):
         full=planner.initial.copy();full[1:10]=a+u*(b-a)
         if not planner.valid_full(full):return False
         if accept is not None and not accept():return False
+    if cache is not None:cache[key]=True
     return True
 
 
@@ -328,12 +345,13 @@ def joint_connection(planner,a,b):
     return np.asarray(compact),'OMPL RRTConnect (lift + six arm axes)'
 
 
-def approach_path(planner,state,rotation,centre,distance=.07):
+def approach_path(planner,state,rotation,centre,distance=.07,*,max_cartesian_step=None):
     """A 70mm straight insertion, preserving the declared side-facing pose."""
     direction=rotation@np.array([0.,1.,0.])
     points=[];seed=state[1:7].copy()
     planner.fixed=planner.initial.copy();planner.fixed[1]=state[0];planner.fixed[8:10]=OPEN_JAWS
-    for offset in np.linspace(distance,0.,6):
+    count=6 if max_cartesian_step is None else max(6,int(math.ceil(distance/max_cartesian_step))+1)
+    for offset in np.linspace(distance,0.,count):
         target=centre-offset*direction
         seed=planner.ik(dict(position=target-rotation@CAPTURE_CENTER,
             quaternion_xyzw=Rotation.from_matrix(rotation).as_quat()),seed)

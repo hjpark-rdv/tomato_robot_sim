@@ -1,0 +1,5302 @@
+{
+  "schema": "s300-v6-staged-alignment-settle-validation-v1",
+  "status": "passed",
+  "source_failed_run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332",
+  "failed_step": 88,
+  "previously_completed_harvest_motions": 15,
+  "previous_station_m": 1.7683767080307007,
+  "old_alignment_hold_s": 0.12,
+  "new_alignment_hold_s": 0.3,
+  "old_ready_position_error_m": 0.005748733275565094,
+  "line_tolerance_m": 0.005,
+  "old_first_insertion_error_m": 0.005536569197581227,
+  "reproduction": {
+    "status": "passed",
+    "source_failed_trial": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_088",
+    "same_measured_parent": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/physics",
+    "only_plan_change": "Pregrasp alignment hold .12s -> 0.3s",
+    "all_pose_and_line_limits_unchanged": true,
+    "all_physical_and_control_parameters_unchanged": true,
+    "audit": {
+      "status": "passed",
+      "state_checks": 1917,
+      "entry_samples": 1130,
+      "maximum_entry_angle_deg": 12.308298164878925,
+      "maximum_level_entry_error_deg": 0.3690111978421388,
+      "level_entry_limit_deg": 1.5,
+      "minimum_camera_left_alignment": 0.9767590616374376,
+      "measured_strokes": [
+        {
+          "cycle": 1,
+          "minimum_gap_m": 0.03606324642896652
+        },
+        {
+          "cycle": 2,
+          "minimum_gap_m": 0.036071307957172394
+        }
+      ],
+      "staged_entry": {
+        "status": "passed",
+        "minimum_roller_clearance_before_entry_m": 0.10431875564394011,
+        "pregrasp_position_error_m": 0.0016439112643452792,
+        "maximum_line_error_m": 0.004022060106802687,
+        "requested_standoff_m": 0.1,
+        "stroke_m": 0.13366647902172527
+      }
+    }
+  },
+  "arrival": {
+    "mode": "main_stem_only_geometric_harvest",
+    "reached": true,
+    "timestamp_s": 163.78338623046875,
+    "state_index": 1189,
+    "states_sha256": "49e16476486eda70fc99618477e7d4f0a81b1517a1368e35f4669a798986b193",
+    "translation_error_m": 2.443136473194714e-06,
+    "rotation_error_rad": 3.1065348673789433e-06,
+    "reach_limits": {
+      "translation_m": 0.005,
+      "rotation_deg": 3.0
+    },
+    "tool_box_min_m": [
+      -0.048,
+      0.0,
+      -0.005
+    ],
+    "tool_box_max_m": [
+      0.048,
+      0.158,
+      0.079
+    ],
+    "harvested": [],
+    "physical_detachment_verified": false,
+    "all_colors_inside_counted": true,
+    "scope": "All prepared plants, fruit centers in actual tool volume at reached pose",
+    "training_eligible": false,
+    "harvest_success": null
+  },
+  "state_continuation": {
+    "schema": "s300-newton-measured-continuation-v1",
+    "parent_run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/physics",
+    "parent_summary_sha256": "d6c369b54a8d2464d1d978aa802b80db2207df9e294125c286a9f8a1ff98400e",
+    "parent_final_states_sha256": "715cd2a7a01607d80b90a0c2d04dfa60f742258025520e50e0628a98020fd2a9",
+    "physical_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+    "exact_model_identity": {
+      "body_names": [
+        "world",
+        "Stem_MainStem_0",
+        "Stem_MainStem_1",
+        "Stem_MainStem_2",
+        "Stem_MainStem_3",
+        "Stem_MainStem_4",
+        "Stem_MainStem_5",
+        "Stem_MainStem_6",
+        "Stem_MainStem_7",
+        "Stem_MainStem_8",
+        "Stem_MainStem_9",
+        "Stem_MainStem_10",
+        "Stem_MainStem_11",
+        "Stem_MainStem_12",
+        "Stem_MainStem_13",
+        "Stem_MainStem_14",
+        "Stem_MainStem_15",
+        "Leaf_Apical_Young_Leaf_1",
+        "Leaf_Apical_Young_Leaf_2",
+        "Leaf_Apical_Young_Leaf_3",
+        "Leaf_CompoundLeaf_09",
+        "Leaf_CompoundLeaf_10",
+        "Leaf_CompoundLeaf_07",
+        "Leaf_CompoundLeaf_08",
+        "Leaf_CompoundLeaf_17",
+        "Leaf_CompoundLeaf_06",
+        "Leaf_CompoundLeaf_15",
+        "Leaf_CompoundLeaf_16",
+        "Leaf_CompoundLeaf_05",
+        "Leaf_CompoundLeaf_14",
+        "Truss_02_Truss_01_Peduncle_0",
+        "Truss_02_Truss_01_Peduncle_1",
+        "Truss_02_Truss_01_Peduncle_2",
+        "Truss_02_Truss_01_Peduncle_3",
+        "Truss_02_Truss_01_Peduncle_4",
+        "Truss_02_Rachis_0",
+        "Truss_02_Rachis_1",
+        "Truss_02_Rachis_2",
+        "Truss_02_Rachis_3",
+        "Truss_02_Rachis_4",
+        "Truss_02_Rachis_5",
+        "Truss_02_Rachis_6",
+        "Truss_02_Rachis_7",
+        "Truss_02_Rachis_8",
+        "Truss_02_Rachis_9",
+        "Truss_02_Rachis_10",
+        "Truss_02_Rachis_11",
+        "Truss_02_Rachis_12",
+        "Truss_02_Rachis_13",
+        "Truss_02_Pedicel_proximal_11_0",
+        "Truss_02_Pedicel_proximal_11_1",
+        "Truss_02_Pedicel_proximal_11_2",
+        "Truss_02_Pedicel_distal_11_0",
+        "Truss_02_Pedicel_proximal_10_0",
+        "Truss_02_Pedicel_proximal_10_1",
+        "Truss_02_Pedicel_proximal_10_2",
+        "Truss_02_Pedicel_distal_10_0",
+        "Truss_02_Pedicel_proximal_09_0",
+        "Truss_02_Pedicel_proximal_09_1",
+        "Truss_02_Pedicel_proximal_09_2",
+        "Truss_02_Pedicel_distal_09_0",
+        "Truss_02_Pedicel_proximal_07_0",
+        "Truss_02_Pedicel_proximal_07_1",
+        "Truss_02_Pedicel_proximal_07_2",
+        "Truss_02_Pedicel_distal_07_0",
+        "Truss_02_Pedicel_proximal_08_0",
+        "Truss_02_Pedicel_proximal_08_1",
+        "Truss_02_Pedicel_proximal_08_2",
+        "Truss_02_Pedicel_distal_08_0",
+        "Truss_02_Pedicel_proximal_06_0",
+        "Truss_02_Pedicel_proximal_06_1",
+        "Truss_02_Pedicel_proximal_06_2",
+        "Truss_02_Pedicel_distal_06_0",
+        "Truss_02_Pedicel_proximal_05_0",
+        "Truss_02_Pedicel_proximal_05_1",
+        "Truss_02_Pedicel_proximal_05_2",
+        "Truss_02_Pedicel_distal_05_0",
+        "Truss_02_Pedicel_proximal_04_0",
+        "Truss_02_Pedicel_proximal_04_1",
+        "Truss_02_Pedicel_proximal_04_2",
+        "Truss_02_Pedicel_distal_04_0",
+        "Truss_02_Pedicel_proximal_03_0",
+        "Truss_02_Pedicel_proximal_03_1",
+        "Truss_02_Pedicel_proximal_03_2",
+        "Truss_02_Pedicel_distal_03_0",
+        "Truss_02_Pedicel_proximal_02_0",
+        "Truss_02_Pedicel_proximal_02_1",
+        "Truss_02_Pedicel_proximal_02_2",
+        "Truss_02_Pedicel_distal_02_0",
+        "Truss_02_Pedicel_proximal_01_0",
+        "Truss_02_Pedicel_proximal_01_1",
+        "Truss_02_Pedicel_proximal_01_2",
+        "Truss_02_Pedicel_distal_01_0",
+        "Leaf_CompoundLeaf_04",
+        "Leaf_CompoundLeaf_13",
+        "Truss_01_Truss_01_Peduncle_0",
+        "Truss_01_Truss_01_Peduncle_1",
+        "Truss_01_Truss_01_Peduncle_2",
+        "Truss_01_Truss_01_Peduncle_3",
+        "Truss_01_Truss_01_Peduncle_4",
+        "Truss_01_Rachis_0",
+        "Truss_01_Rachis_1",
+        "Truss_01_Rachis_2",
+        "Truss_01_Rachis_3",
+        "Truss_01_Rachis_4",
+        "Truss_01_Rachis_5",
+        "Truss_01_Rachis_6",
+        "Truss_01_Rachis_7",
+        "Truss_01_Rachis_8",
+        "Truss_01_Rachis_9",
+        "Truss_01_Rachis_10",
+        "Truss_01_Rachis_11",
+        "Truss_01_Rachis_12",
+        "Truss_01_Rachis_13",
+        "Truss_01_Pedicel_proximal_11_0",
+        "Truss_01_Pedicel_proximal_11_1",
+        "Truss_01_Pedicel_proximal_11_2",
+        "Truss_01_Pedicel_distal_11_0",
+        "Truss_01_Pedicel_proximal_10_0",
+        "Truss_01_Pedicel_proximal_10_1",
+        "Truss_01_Pedicel_proximal_10_2",
+        "Truss_01_Pedicel_distal_10_0",
+        "Truss_01_Pedicel_proximal_08_0",
+        "Truss_01_Pedicel_proximal_08_1",
+        "Truss_01_Pedicel_proximal_08_2",
+        "Truss_01_Pedicel_distal_08_0",
+        "Truss_01_Pedicel_proximal_09_0",
+        "Truss_01_Pedicel_proximal_09_1",
+        "Truss_01_Pedicel_proximal_09_2",
+        "Truss_01_Pedicel_distal_09_0",
+        "Truss_01_Pedicel_proximal_07_0",
+        "Truss_01_Pedicel_proximal_07_1",
+        "Truss_01_Pedicel_proximal_07_2",
+        "Truss_01_Pedicel_distal_07_0",
+        "Truss_01_Pedicel_proximal_06_0",
+        "Truss_01_Pedicel_proximal_06_1",
+        "Truss_01_Pedicel_proximal_06_2",
+        "Truss_01_Pedicel_distal_06_0",
+        "Truss_01_Pedicel_proximal_05_0",
+        "Truss_01_Pedicel_proximal_05_1",
+        "Truss_01_Pedicel_proximal_05_2",
+        "Truss_01_Pedicel_distal_05_0",
+        "Truss_01_Pedicel_proximal_03_0",
+        "Truss_01_Pedicel_proximal_03_1",
+        "Truss_01_Pedicel_proximal_03_2",
+        "Truss_01_Pedicel_distal_03_0",
+        "Truss_01_Pedicel_proximal_04_0",
+        "Truss_01_Pedicel_proximal_04_1",
+        "Truss_01_Pedicel_proximal_04_2",
+        "Truss_01_Pedicel_distal_04_0",
+        "Truss_01_Pedicel_proximal_02_0",
+        "Truss_01_Pedicel_proximal_02_1",
+        "Truss_01_Pedicel_proximal_02_2",
+        "Truss_01_Pedicel_distal_02_0",
+        "Truss_01_Pedicel_proximal_01_0",
+        "Truss_01_Pedicel_proximal_01_1",
+        "Truss_01_Pedicel_proximal_01_2",
+        "Truss_01_Pedicel_distal_01_0",
+        "Leaf_CompoundLeaf_03",
+        "Leaf_CompoundLeaf_12",
+        "Leaf_CompoundLeaf_02",
+        "Leaf_CompoundLeaf_11",
+        "Leaf_CompoundLeaf_01",
+        "Truss_00_Truss_01_Peduncle_0",
+        "Truss_00_Truss_01_Peduncle_1",
+        "Truss_00_Truss_01_Peduncle_2",
+        "Truss_00_Truss_01_Peduncle_3",
+        "Truss_00_Truss_01_Peduncle_4",
+        "Truss_00_Rachis_0",
+        "Truss_00_Rachis_1",
+        "Truss_00_Rachis_2",
+        "Truss_00_Rachis_3",
+        "Truss_00_Rachis_4",
+        "Truss_00_Rachis_5",
+        "Truss_00_Rachis_6",
+        "Truss_00_Rachis_7",
+        "Truss_00_Rachis_8",
+        "Truss_00_Rachis_9",
+        "Truss_00_Rachis_10",
+        "Truss_00_Rachis_11",
+        "Truss_00_Rachis_12",
+        "Truss_00_Rachis_13",
+        "Truss_00_Pedicel_proximal_11_0",
+        "Truss_00_Pedicel_proximal_11_1",
+        "Truss_00_Pedicel_proximal_11_2",
+        "Truss_00_Pedicel_distal_11_0",
+        "Truss_00_Pedicel_proximal_10_0",
+        "Truss_00_Pedicel_proximal_10_1",
+        "Truss_00_Pedicel_proximal_10_2",
+        "Truss_00_Pedicel_distal_10_0",
+        "Truss_00_Pedicel_proximal_09_0",
+        "Truss_00_Pedicel_proximal_09_1",
+        "Truss_00_Pedicel_proximal_09_2",
+        "Truss_00_Pedicel_distal_09_0",
+        "Truss_00_Pedicel_proximal_07_0",
+        "Truss_00_Pedicel_proximal_07_1",
+        "Truss_00_Pedicel_proximal_07_2",
+        "Truss_00_Pedicel_distal_07_0",
+        "Truss_00_Pedicel_proximal_08_0",
+        "Truss_00_Pedicel_proximal_08_1",
+        "Truss_00_Pedicel_proximal_08_2",
+        "Truss_00_Pedicel_distal_08_0",
+        "Truss_00_Pedicel_proximal_06_0",
+        "Truss_00_Pedicel_proximal_06_1",
+        "Truss_00_Pedicel_proximal_06_2",
+        "Truss_00_Pedicel_distal_06_0",
+        "Truss_00_Pedicel_proximal_05_0",
+        "Truss_00_Pedicel_proximal_05_1",
+        "Truss_00_Pedicel_proximal_05_2",
+        "Truss_00_Pedicel_distal_05_0",
+        "Truss_00_Pedicel_proximal_04_0",
+        "Truss_00_Pedicel_proximal_04_1",
+        "Truss_00_Pedicel_proximal_04_2",
+        "Truss_00_Pedicel_distal_04_0",
+        "Truss_00_Pedicel_proximal_03_0",
+        "Truss_00_Pedicel_proximal_03_1",
+        "Truss_00_Pedicel_proximal_03_2",
+        "Truss_00_Pedicel_distal_03_0",
+        "Truss_00_Pedicel_proximal_02_0",
+        "Truss_00_Pedicel_proximal_02_1",
+        "Truss_00_Pedicel_proximal_02_2",
+        "Truss_00_Pedicel_distal_02_0",
+        "Truss_00_Pedicel_proximal_01_0",
+        "Truss_00_Pedicel_proximal_01_1",
+        "Truss_00_Pedicel_proximal_01_2",
+        "Truss_00_Pedicel_distal_01_0",
+        "Truss_00_Fruit_01",
+        "Truss_00_Fruit_02",
+        "Truss_00_Fruit_03",
+        "Truss_00_Fruit_04",
+        "Truss_00_Fruit_05",
+        "Truss_00_Fruit_07",
+        "Truss_00_Fruit_08",
+        "Truss_00_Fruit_09",
+        "Truss_00_Fruit_10",
+        "Truss_00_Fruit_11",
+        "Truss_01_Fruit_01",
+        "Truss_01_Fruit_02",
+        "Truss_01_Fruit_03",
+        "Truss_01_Fruit_04",
+        "Truss_01_Fruit_05",
+        "Truss_01_Fruit_07",
+        "Truss_01_Fruit_08",
+        "Truss_01_Fruit_09",
+        "Truss_01_Fruit_10",
+        "Truss_01_Fruit_11",
+        "Truss_02_Fruit_01",
+        "Truss_02_Fruit_02",
+        "Truss_02_Fruit_03",
+        "Truss_02_Fruit_04",
+        "Truss_02_Fruit_05",
+        "Truss_02_Fruit_07",
+        "Truss_02_Fruit_08",
+        "Truss_02_Fruit_09",
+        "Truss_02_Fruit_10",
+        "Truss_02_Fruit_11",
+        "p18_Stem_MainStem_0",
+        "p18_Stem_MainStem_1",
+        "p18_Stem_MainStem_2",
+        "p18_Stem_MainStem_3",
+        "p18_Stem_MainStem_4",
+        "p18_Stem_MainStem_5",
+        "p18_Stem_MainStem_6",
+        "p18_Stem_MainStem_7",
+        "p18_Stem_MainStem_8",
+        "p18_Stem_MainStem_9",
+        "p18_Stem_MainStem_10",
+        "p18_Stem_MainStem_11",
+        "p18_Stem_MainStem_12",
+        "p18_Stem_MainStem_13",
+        "p18_Stem_MainStem_14",
+        "p18_Stem_MainStem_15",
+        "p18_Leaf_Apical_Young_Leaf_1",
+        "p18_Leaf_Apical_Young_Leaf_2",
+        "p18_Leaf_Apical_Young_Leaf_3",
+        "p18_Leaf_CompoundLeaf_09",
+        "p18_Leaf_CompoundLeaf_10",
+        "p18_Leaf_CompoundLeaf_07",
+        "p18_Leaf_CompoundLeaf_08",
+        "p18_Leaf_CompoundLeaf_17",
+        "p18_Leaf_CompoundLeaf_06",
+        "p18_Leaf_CompoundLeaf_15",
+        "p18_Leaf_CompoundLeaf_16",
+        "p18_Leaf_CompoundLeaf_05",
+        "p18_Leaf_CompoundLeaf_14",
+        "p18_Leaf_CompoundLeaf_04",
+        "p18_Leaf_CompoundLeaf_13",
+        "p18_Leaf_CompoundLeaf_03",
+        "p18_Leaf_CompoundLeaf_12",
+        "p18_Leaf_CompoundLeaf_02",
+        "p18_Leaf_CompoundLeaf_11",
+        "p18_Truss_01_Truss_01_Peduncle_0",
+        "p18_Truss_01_Truss_01_Peduncle_1",
+        "p18_Truss_01_Truss_01_Peduncle_2",
+        "p18_Truss_01_Truss_01_Peduncle_3",
+        "p18_Truss_01_Truss_01_Peduncle_4",
+        "p18_Truss_01_Rachis_0",
+        "p18_Truss_01_Rachis_1",
+        "p18_Truss_01_Rachis_2",
+        "p18_Truss_01_Rachis_3",
+        "p18_Truss_01_Rachis_4",
+        "p18_Truss_01_Rachis_5",
+        "p18_Truss_01_Rachis_6",
+        "p18_Truss_01_Rachis_7",
+        "p18_Truss_01_Rachis_8",
+        "p18_Truss_01_Rachis_9",
+        "p18_Truss_01_Rachis_10",
+        "p18_Truss_01_Rachis_11",
+        "p18_Truss_01_Rachis_12",
+        "p18_Truss_01_Rachis_13",
+        "p18_Truss_01_Pedicel_proximal_11_0",
+        "p18_Truss_01_Pedicel_proximal_11_1",
+        "p18_Truss_01_Pedicel_proximal_11_2",
+        "p18_Truss_01_Pedicel_distal_11_0",
+        "p18_Truss_01_Pedicel_proximal_10_0",
+        "p18_Truss_01_Pedicel_proximal_10_1",
+        "p18_Truss_01_Pedicel_proximal_10_2",
+        "p18_Truss_01_Pedicel_distal_10_0",
+        "p18_Truss_01_Pedicel_proximal_09_0",
+        "p18_Truss_01_Pedicel_proximal_09_1",
+        "p18_Truss_01_Pedicel_proximal_09_2",
+        "p18_Truss_01_Pedicel_distal_09_0",
+        "p18_Truss_01_Pedicel_proximal_07_0",
+        "p18_Truss_01_Pedicel_proximal_07_1",
+        "p18_Truss_01_Pedicel_proximal_07_2",
+        "p18_Truss_01_Pedicel_distal_07_0",
+        "p18_Truss_01_Pedicel_proximal_08_0",
+        "p18_Truss_01_Pedicel_proximal_08_1",
+        "p18_Truss_01_Pedicel_proximal_08_2",
+        "p18_Truss_01_Pedicel_distal_08_0",
+        "p18_Truss_01_Pedicel_proximal_06_0",
+        "p18_Truss_01_Pedicel_proximal_06_1",
+        "p18_Truss_01_Pedicel_proximal_06_2",
+        "p18_Truss_01_Pedicel_distal_06_0",
+        "p18_Truss_01_Pedicel_proximal_05_0",
+        "p18_Truss_01_Pedicel_proximal_05_1",
+        "p18_Truss_01_Pedicel_proximal_05_2",
+        "p18_Truss_01_Pedicel_distal_05_0",
+        "p18_Truss_01_Pedicel_proximal_04_0",
+        "p18_Truss_01_Pedicel_proximal_04_1",
+        "p18_Truss_01_Pedicel_proximal_04_2",
+        "p18_Truss_01_Pedicel_distal_04_0",
+        "p18_Truss_01_Pedicel_proximal_03_0",
+        "p18_Truss_01_Pedicel_proximal_03_1",
+        "p18_Truss_01_Pedicel_proximal_03_2",
+        "p18_Truss_01_Pedicel_distal_03_0",
+        "p18_Truss_01_Pedicel_proximal_02_0",
+        "p18_Truss_01_Pedicel_proximal_02_1",
+        "p18_Truss_01_Pedicel_proximal_02_2",
+        "p18_Truss_01_Pedicel_distal_02_0",
+        "p18_Truss_01_Pedicel_proximal_01_0",
+        "p18_Truss_01_Pedicel_proximal_01_1",
+        "p18_Truss_01_Pedicel_proximal_01_2",
+        "p18_Truss_01_Pedicel_distal_01_0",
+        "p18_Leaf_CompoundLeaf_01",
+        "p18_Leaf_V9_Additional_CompoundLeaf_07",
+        "p18_Truss_02_Truss_01_Peduncle_0",
+        "p18_Truss_02_Truss_01_Peduncle_1",
+        "p18_Truss_02_Truss_01_Peduncle_2",
+        "p18_Truss_02_Truss_01_Peduncle_3",
+        "p18_Truss_02_Truss_01_Peduncle_4",
+        "p18_Truss_02_Rachis_0",
+        "p18_Truss_02_Rachis_1",
+        "p18_Truss_02_Rachis_2",
+        "p18_Truss_02_Rachis_3",
+        "p18_Truss_02_Rachis_4",
+        "p18_Truss_02_Rachis_5",
+        "p18_Truss_02_Rachis_6",
+        "p18_Truss_02_Rachis_7",
+        "p18_Truss_02_Rachis_8",
+        "p18_Truss_02_Rachis_9",
+        "p18_Truss_02_Rachis_10",
+        "p18_Truss_02_Rachis_11",
+        "p18_Truss_02_Rachis_12",
+        "p18_Truss_02_Rachis_13",
+        "p18_Truss_02_Pedicel_proximal_11_0",
+        "p18_Truss_02_Pedicel_proximal_11_1",
+        "p18_Truss_02_Pedicel_proximal_11_2",
+        "p18_Truss_02_Pedicel_distal_11_0",
+        "p18_Truss_02_Pedicel_proximal_10_0",
+        "p18_Truss_02_Pedicel_proximal_10_1",
+        "p18_Truss_02_Pedicel_proximal_10_2",
+        "p18_Truss_02_Pedicel_distal_10_0",
+        "p18_Truss_02_Pedicel_proximal_09_0",
+        "p18_Truss_02_Pedicel_proximal_09_1",
+        "p18_Truss_02_Pedicel_proximal_09_2",
+        "p18_Truss_02_Pedicel_distal_09_0",
+        "p18_Truss_02_Pedicel_proximal_07_0",
+        "p18_Truss_02_Pedicel_proximal_07_1",
+        "p18_Truss_02_Pedicel_proximal_07_2",
+        "p18_Truss_02_Pedicel_distal_07_0",
+        "p18_Truss_02_Pedicel_proximal_08_0",
+        "p18_Truss_02_Pedicel_proximal_08_1",
+        "p18_Truss_02_Pedicel_proximal_08_2",
+        "p18_Truss_02_Pedicel_distal_08_0",
+        "p18_Truss_02_Pedicel_proximal_06_0",
+        "p18_Truss_02_Pedicel_proximal_06_1",
+        "p18_Truss_02_Pedicel_proximal_06_2",
+        "p18_Truss_02_Pedicel_distal_06_0",
+        "p18_Truss_02_Pedicel_proximal_05_0",
+        "p18_Truss_02_Pedicel_proximal_05_1",
+        "p18_Truss_02_Pedicel_proximal_05_2",
+        "p18_Truss_02_Pedicel_distal_05_0",
+        "p18_Truss_02_Pedicel_proximal_03_0",
+        "p18_Truss_02_Pedicel_proximal_03_1",
+        "p18_Truss_02_Pedicel_proximal_03_2",
+        "p18_Truss_02_Pedicel_distal_03_0",
+        "p18_Truss_02_Pedicel_proximal_04_0",
+        "p18_Truss_02_Pedicel_proximal_04_1",
+        "p18_Truss_02_Pedicel_proximal_04_2",
+        "p18_Truss_02_Pedicel_distal_04_0",
+        "p18_Truss_02_Pedicel_proximal_02_0",
+        "p18_Truss_02_Pedicel_proximal_02_1",
+        "p18_Truss_02_Pedicel_proximal_02_2",
+        "p18_Truss_02_Pedicel_distal_02_0",
+        "p18_Truss_02_Pedicel_proximal_01_0",
+        "p18_Truss_02_Pedicel_proximal_01_1",
+        "p18_Truss_02_Pedicel_proximal_01_2",
+        "p18_Truss_02_Pedicel_distal_01_0",
+        "p18_Leaf_V9_Additional_CompoundLeaf_06",
+        "p18_Leaf_V9_Additional_CompoundLeaf_05",
+        "p18_Truss_00_Truss_01_Peduncle_0",
+        "p18_Truss_00_Truss_01_Peduncle_1",
+        "p18_Truss_00_Truss_01_Peduncle_2",
+        "p18_Truss_00_Truss_01_Peduncle_3",
+        "p18_Truss_00_Truss_01_Peduncle_4",
+        "p18_Truss_00_Rachis_0",
+        "p18_Truss_00_Rachis_1",
+        "p18_Truss_00_Rachis_2",
+        "p18_Truss_00_Rachis_3",
+        "p18_Truss_00_Rachis_4",
+        "p18_Truss_00_Rachis_5",
+        "p18_Truss_00_Rachis_6",
+        "p18_Truss_00_Rachis_7",
+        "p18_Truss_00_Rachis_8",
+        "p18_Truss_00_Rachis_9",
+        "p18_Truss_00_Rachis_10",
+        "p18_Truss_00_Rachis_11",
+        "p18_Truss_00_Rachis_12",
+        "p18_Truss_00_Rachis_13",
+        "p18_Truss_00_Pedicel_proximal_11_0",
+        "p18_Truss_00_Pedicel_proximal_11_1",
+        "p18_Truss_00_Pedicel_proximal_11_2",
+        "p18_Truss_00_Pedicel_distal_11_0",
+        "p18_Truss_00_Pedicel_proximal_10_0",
+        "p18_Truss_00_Pedicel_proximal_10_1",
+        "p18_Truss_00_Pedicel_proximal_10_2",
+        "p18_Truss_00_Pedicel_distal_10_0",
+        "p18_Truss_00_Pedicel_proximal_09_0",
+        "p18_Truss_00_Pedicel_proximal_09_1",
+        "p18_Truss_00_Pedicel_proximal_09_2",
+        "p18_Truss_00_Pedicel_distal_09_0",
+        "p18_Truss_00_Pedicel_proximal_07_0",
+        "p18_Truss_00_Pedicel_proximal_07_1",
+        "p18_Truss_00_Pedicel_proximal_07_2",
+        "p18_Truss_00_Pedicel_distal_07_0",
+        "p18_Truss_00_Pedicel_proximal_08_0",
+        "p18_Truss_00_Pedicel_proximal_08_1",
+        "p18_Truss_00_Pedicel_proximal_08_2",
+        "p18_Truss_00_Pedicel_distal_08_0",
+        "p18_Truss_00_Pedicel_proximal_06_0",
+        "p18_Truss_00_Pedicel_proximal_06_1",
+        "p18_Truss_00_Pedicel_proximal_06_2",
+        "p18_Truss_00_Pedicel_distal_06_0",
+        "p18_Truss_00_Pedicel_proximal_05_0",
+        "p18_Truss_00_Pedicel_proximal_05_1",
+        "p18_Truss_00_Pedicel_proximal_05_2",
+        "p18_Truss_00_Pedicel_distal_05_0",
+        "p18_Truss_00_Pedicel_proximal_03_0",
+        "p18_Truss_00_Pedicel_proximal_03_1",
+        "p18_Truss_00_Pedicel_proximal_03_2",
+        "p18_Truss_00_Pedicel_distal_03_0",
+        "p18_Truss_00_Pedicel_proximal_04_0",
+        "p18_Truss_00_Pedicel_proximal_04_1",
+        "p18_Truss_00_Pedicel_proximal_04_2",
+        "p18_Truss_00_Pedicel_distal_04_0",
+        "p18_Truss_00_Pedicel_proximal_02_0",
+        "p18_Truss_00_Pedicel_proximal_02_1",
+        "p18_Truss_00_Pedicel_proximal_02_2",
+        "p18_Truss_00_Pedicel_distal_02_0",
+        "p18_Truss_00_Pedicel_proximal_01_0",
+        "p18_Truss_00_Pedicel_proximal_01_1",
+        "p18_Truss_00_Pedicel_proximal_01_2",
+        "p18_Truss_00_Pedicel_distal_01_0",
+        "p18_Leaf_V9_Additional_CompoundLeaf_04",
+        "p18_Leaf_V9_Additional_CompoundLeaf_03",
+        "p18_Leaf_V9_Additional_CompoundLeaf_02",
+        "p18_Leaf_V9_Additional_CompoundLeaf_01",
+        "p18_Truss_00_Fruit_01",
+        "p18_Truss_00_Fruit_02",
+        "p18_Truss_00_Fruit_03",
+        "p18_Truss_00_Fruit_04",
+        "p18_Truss_00_Fruit_05",
+        "p18_Truss_00_Fruit_07",
+        "p18_Truss_00_Fruit_08",
+        "p18_Truss_00_Fruit_09",
+        "p18_Truss_00_Fruit_10",
+        "p18_Truss_00_Fruit_11",
+        "p18_Truss_01_Fruit_01",
+        "p18_Truss_01_Fruit_02",
+        "p18_Truss_01_Fruit_03",
+        "p18_Truss_01_Fruit_04",
+        "p18_Truss_01_Fruit_05",
+        "p18_Truss_01_Fruit_07",
+        "p18_Truss_01_Fruit_08",
+        "p18_Truss_01_Fruit_09",
+        "p18_Truss_01_Fruit_10",
+        "p18_Truss_01_Fruit_11",
+        "p18_Truss_02_Fruit_01",
+        "p18_Truss_02_Fruit_02",
+        "p18_Truss_02_Fruit_03",
+        "p18_Truss_02_Fruit_04",
+        "p18_Truss_02_Fruit_05",
+        "p18_Truss_02_Fruit_07",
+        "p18_Truss_02_Fruit_08",
+        "p18_Truss_02_Fruit_09",
+        "p18_Truss_02_Fruit_10",
+        "p18_Truss_02_Fruit_11",
+        "p19_Stem_MainStem_0",
+        "p19_Stem_MainStem_1",
+        "p19_Stem_MainStem_2",
+        "p19_Stem_MainStem_3",
+        "p19_Stem_MainStem_4",
+        "p19_Stem_MainStem_5",
+        "p19_Stem_MainStem_6",
+        "p19_Stem_MainStem_7",
+        "p19_Stem_MainStem_8",
+        "p19_Stem_MainStem_9",
+        "p19_Stem_MainStem_10",
+        "p19_Stem_MainStem_11",
+        "p19_Stem_MainStem_12",
+        "p19_Stem_MainStem_13",
+        "p19_Stem_MainStem_14",
+        "p19_Stem_MainStem_15",
+        "p19_Leaf_Apical_Young_Leaf_1",
+        "p19_Leaf_Apical_Young_Leaf_2",
+        "p19_Leaf_Apical_Young_Leaf_3",
+        "p19_Leaf_CompoundLeaf_09",
+        "p19_Leaf_CompoundLeaf_10",
+        "p19_Leaf_CompoundLeaf_07",
+        "p19_Leaf_CompoundLeaf_08",
+        "p19_Leaf_CompoundLeaf_17",
+        "p19_Leaf_CompoundLeaf_06",
+        "p19_Leaf_CompoundLeaf_15",
+        "p19_Leaf_CompoundLeaf_16",
+        "p19_Leaf_CompoundLeaf_05",
+        "p19_Leaf_CompoundLeaf_14",
+        "p19_Leaf_CompoundLeaf_04",
+        "p19_Leaf_CompoundLeaf_13",
+        "p19_Truss_02_Truss_01_Peduncle_0",
+        "p19_Truss_02_Truss_01_Peduncle_1",
+        "p19_Truss_02_Truss_01_Peduncle_2",
+        "p19_Truss_02_Truss_01_Peduncle_3",
+        "p19_Truss_02_Truss_01_Peduncle_4",
+        "p19_Truss_02_Rachis_0",
+        "p19_Truss_02_Rachis_1",
+        "p19_Truss_02_Rachis_2",
+        "p19_Truss_02_Rachis_3",
+        "p19_Truss_02_Rachis_4",
+        "p19_Truss_02_Rachis_5",
+        "p19_Truss_02_Rachis_6",
+        "p19_Truss_02_Rachis_7",
+        "p19_Truss_02_Rachis_8",
+        "p19_Truss_02_Rachis_9",
+        "p19_Truss_02_Rachis_10",
+        "p19_Truss_02_Rachis_11",
+        "p19_Truss_02_Rachis_12",
+        "p19_Truss_02_Rachis_13",
+        "p19_Truss_02_Pedicel_proximal_11_0",
+        "p19_Truss_02_Pedicel_proximal_11_1",
+        "p19_Truss_02_Pedicel_proximal_11_2",
+        "p19_Truss_02_Pedicel_distal_11_0",
+        "p19_Truss_02_Pedicel_proximal_10_0",
+        "p19_Truss_02_Pedicel_proximal_10_1",
+        "p19_Truss_02_Pedicel_proximal_10_2",
+        "p19_Truss_02_Pedicel_distal_10_0",
+        "p19_Truss_02_Pedicel_proximal_09_0",
+        "p19_Truss_02_Pedicel_proximal_09_1",
+        "p19_Truss_02_Pedicel_proximal_09_2",
+        "p19_Truss_02_Pedicel_distal_09_0",
+        "p19_Truss_02_Pedicel_proximal_08_0",
+        "p19_Truss_02_Pedicel_proximal_08_1",
+        "p19_Truss_02_Pedicel_proximal_08_2",
+        "p19_Truss_02_Pedicel_distal_08_0",
+        "p19_Truss_02_Pedicel_proximal_07_0",
+        "p19_Truss_02_Pedicel_proximal_07_1",
+        "p19_Truss_02_Pedicel_proximal_07_2",
+        "p19_Truss_02_Pedicel_distal_07_0",
+        "p19_Truss_02_Pedicel_proximal_06_0",
+        "p19_Truss_02_Pedicel_proximal_06_1",
+        "p19_Truss_02_Pedicel_proximal_06_2",
+        "p19_Truss_02_Pedicel_distal_06_0",
+        "p19_Truss_02_Pedicel_proximal_05_0",
+        "p19_Truss_02_Pedicel_proximal_05_1",
+        "p19_Truss_02_Pedicel_proximal_05_2",
+        "p19_Truss_02_Pedicel_distal_05_0",
+        "p19_Truss_02_Pedicel_proximal_04_0",
+        "p19_Truss_02_Pedicel_proximal_04_1",
+        "p19_Truss_02_Pedicel_proximal_04_2",
+        "p19_Truss_02_Pedicel_distal_04_0",
+        "p19_Truss_02_Pedicel_proximal_03_0",
+        "p19_Truss_02_Pedicel_proximal_03_1",
+        "p19_Truss_02_Pedicel_proximal_03_2",
+        "p19_Truss_02_Pedicel_distal_03_0",
+        "p19_Truss_02_Pedicel_proximal_02_0",
+        "p19_Truss_02_Pedicel_proximal_02_1",
+        "p19_Truss_02_Pedicel_proximal_02_2",
+        "p19_Truss_02_Pedicel_distal_02_0",
+        "p19_Truss_02_Pedicel_proximal_01_0",
+        "p19_Truss_02_Pedicel_proximal_01_1",
+        "p19_Truss_02_Pedicel_proximal_01_2",
+        "p19_Truss_02_Pedicel_distal_01_0",
+        "p19_Leaf_CompoundLeaf_03",
+        "p19_Leaf_CompoundLeaf_12",
+        "p19_Truss_01_Truss_01_Peduncle_0",
+        "p19_Truss_01_Truss_01_Peduncle_1",
+        "p19_Truss_01_Truss_01_Peduncle_2",
+        "p19_Truss_01_Truss_01_Peduncle_3",
+        "p19_Truss_01_Truss_01_Peduncle_4",
+        "p19_Truss_01_Rachis_0",
+        "p19_Truss_01_Rachis_1",
+        "p19_Truss_01_Rachis_2",
+        "p19_Truss_01_Rachis_3",
+        "p19_Truss_01_Rachis_4",
+        "p19_Truss_01_Rachis_5",
+        "p19_Truss_01_Rachis_6",
+        "p19_Truss_01_Rachis_7",
+        "p19_Truss_01_Rachis_8",
+        "p19_Truss_01_Rachis_9",
+        "p19_Truss_01_Rachis_10",
+        "p19_Truss_01_Rachis_11",
+        "p19_Truss_01_Rachis_12",
+        "p19_Truss_01_Rachis_13",
+        "p19_Truss_01_Pedicel_proximal_11_0",
+        "p19_Truss_01_Pedicel_proximal_11_1",
+        "p19_Truss_01_Pedicel_proximal_11_2",
+        "p19_Truss_01_Pedicel_distal_11_0",
+        "p19_Truss_01_Pedicel_proximal_10_0",
+        "p19_Truss_01_Pedicel_proximal_10_1",
+        "p19_Truss_01_Pedicel_proximal_10_2",
+        "p19_Truss_01_Pedicel_distal_10_0",
+        "p19_Truss_01_Pedicel_proximal_09_0",
+        "p19_Truss_01_Pedicel_proximal_09_1",
+        "p19_Truss_01_Pedicel_proximal_09_2",
+        "p19_Truss_01_Pedicel_distal_09_0",
+        "p19_Truss_01_Pedicel_proximal_08_0",
+        "p19_Truss_01_Pedicel_proximal_08_1",
+        "p19_Truss_01_Pedicel_proximal_08_2",
+        "p19_Truss_01_Pedicel_distal_08_0",
+        "p19_Truss_01_Pedicel_proximal_07_0",
+        "p19_Truss_01_Pedicel_proximal_07_1",
+        "p19_Truss_01_Pedicel_proximal_07_2",
+        "p19_Truss_01_Pedicel_distal_07_0",
+        "p19_Truss_01_Pedicel_proximal_06_0",
+        "p19_Truss_01_Pedicel_proximal_06_1",
+        "p19_Truss_01_Pedicel_proximal_06_2",
+        "p19_Truss_01_Pedicel_distal_06_0",
+        "p19_Truss_01_Pedicel_proximal_05_0",
+        "p19_Truss_01_Pedicel_proximal_05_1",
+        "p19_Truss_01_Pedicel_proximal_05_2",
+        "p19_Truss_01_Pedicel_distal_05_0",
+        "p19_Truss_01_Pedicel_proximal_04_0",
+        "p19_Truss_01_Pedicel_proximal_04_1",
+        "p19_Truss_01_Pedicel_proximal_04_2",
+        "p19_Truss_01_Pedicel_distal_04_0",
+        "p19_Truss_01_Pedicel_proximal_03_0",
+        "p19_Truss_01_Pedicel_proximal_03_1",
+        "p19_Truss_01_Pedicel_proximal_03_2",
+        "p19_Truss_01_Pedicel_distal_03_0",
+        "p19_Truss_01_Pedicel_proximal_02_0",
+        "p19_Truss_01_Pedicel_proximal_02_1",
+        "p19_Truss_01_Pedicel_proximal_02_2",
+        "p19_Truss_01_Pedicel_distal_02_0",
+        "p19_Truss_01_Pedicel_proximal_01_0",
+        "p19_Truss_01_Pedicel_proximal_01_1",
+        "p19_Truss_01_Pedicel_proximal_01_2",
+        "p19_Truss_01_Pedicel_distal_01_0",
+        "p19_Leaf_CompoundLeaf_02",
+        "p19_Leaf_CompoundLeaf_11",
+        "p19_Leaf_CompoundLeaf_01",
+        "p19_Truss_00_Truss_01_Peduncle_0",
+        "p19_Truss_00_Truss_01_Peduncle_1",
+        "p19_Truss_00_Truss_01_Peduncle_2",
+        "p19_Truss_00_Truss_01_Peduncle_3",
+        "p19_Truss_00_Truss_01_Peduncle_4",
+        "p19_Truss_00_Rachis_0",
+        "p19_Truss_00_Rachis_1",
+        "p19_Truss_00_Rachis_2",
+        "p19_Truss_00_Rachis_3",
+        "p19_Truss_00_Rachis_4",
+        "p19_Truss_00_Rachis_5",
+        "p19_Truss_00_Rachis_6",
+        "p19_Truss_00_Rachis_7",
+        "p19_Truss_00_Rachis_8",
+        "p19_Truss_00_Rachis_9",
+        "p19_Truss_00_Rachis_10",
+        "p19_Truss_00_Rachis_11",
+        "p19_Truss_00_Rachis_12",
+        "p19_Truss_00_Rachis_13",
+        "p19_Truss_00_Pedicel_proximal_11_0",
+        "p19_Truss_00_Pedicel_proximal_11_1",
+        "p19_Truss_00_Pedicel_proximal_11_2",
+        "p19_Truss_00_Pedicel_distal_11_0",
+        "p19_Truss_00_Pedicel_proximal_10_0",
+        "p19_Truss_00_Pedicel_proximal_10_1",
+        "p19_Truss_00_Pedicel_proximal_10_2",
+        "p19_Truss_00_Pedicel_distal_10_0",
+        "p19_Truss_00_Pedicel_proximal_09_0",
+        "p19_Truss_00_Pedicel_proximal_09_1",
+        "p19_Truss_00_Pedicel_proximal_09_2",
+        "p19_Truss_00_Pedicel_distal_09_0",
+        "p19_Truss_00_Pedicel_proximal_08_0",
+        "p19_Truss_00_Pedicel_proximal_08_1",
+        "p19_Truss_00_Pedicel_proximal_08_2",
+        "p19_Truss_00_Pedicel_distal_08_0",
+        "p19_Truss_00_Pedicel_proximal_07_0",
+        "p19_Truss_00_Pedicel_proximal_07_1",
+        "p19_Truss_00_Pedicel_proximal_07_2",
+        "p19_Truss_00_Pedicel_distal_07_0",
+        "p19_Truss_00_Pedicel_proximal_06_0",
+        "p19_Truss_00_Pedicel_proximal_06_1",
+        "p19_Truss_00_Pedicel_proximal_06_2",
+        "p19_Truss_00_Pedicel_distal_06_0",
+        "p19_Truss_00_Pedicel_proximal_05_0",
+        "p19_Truss_00_Pedicel_proximal_05_1",
+        "p19_Truss_00_Pedicel_proximal_05_2",
+        "p19_Truss_00_Pedicel_distal_05_0",
+        "p19_Truss_00_Pedicel_proximal_04_0",
+        "p19_Truss_00_Pedicel_proximal_04_1",
+        "p19_Truss_00_Pedicel_proximal_04_2",
+        "p19_Truss_00_Pedicel_distal_04_0",
+        "p19_Truss_00_Pedicel_proximal_03_0",
+        "p19_Truss_00_Pedicel_proximal_03_1",
+        "p19_Truss_00_Pedicel_proximal_03_2",
+        "p19_Truss_00_Pedicel_distal_03_0",
+        "p19_Truss_00_Pedicel_proximal_02_0",
+        "p19_Truss_00_Pedicel_proximal_02_1",
+        "p19_Truss_00_Pedicel_proximal_02_2",
+        "p19_Truss_00_Pedicel_distal_02_0",
+        "p19_Truss_00_Pedicel_proximal_01_0",
+        "p19_Truss_00_Pedicel_proximal_01_1",
+        "p19_Truss_00_Pedicel_proximal_01_2",
+        "p19_Truss_00_Pedicel_distal_01_0",
+        "p19_Truss_00_Fruit_01",
+        "p19_Truss_00_Fruit_02",
+        "p19_Truss_00_Fruit_03",
+        "p19_Truss_00_Fruit_04",
+        "p19_Truss_00_Fruit_05",
+        "p19_Truss_00_Fruit_07",
+        "p19_Truss_00_Fruit_08",
+        "p19_Truss_00_Fruit_09",
+        "p19_Truss_00_Fruit_10",
+        "p19_Truss_00_Fruit_11",
+        "p19_Truss_01_Fruit_01",
+        "p19_Truss_01_Fruit_02",
+        "p19_Truss_01_Fruit_03",
+        "p19_Truss_01_Fruit_04",
+        "p19_Truss_01_Fruit_05",
+        "p19_Truss_01_Fruit_07",
+        "p19_Truss_01_Fruit_08",
+        "p19_Truss_01_Fruit_09",
+        "p19_Truss_01_Fruit_10",
+        "p19_Truss_01_Fruit_11",
+        "p19_Truss_02_Fruit_01",
+        "p19_Truss_02_Fruit_02",
+        "p19_Truss_02_Fruit_03",
+        "p19_Truss_02_Fruit_04",
+        "p19_Truss_02_Fruit_05",
+        "p19_Truss_02_Fruit_07",
+        "p19_Truss_02_Fruit_08",
+        "p19_Truss_02_Fruit_09",
+        "p19_Truss_02_Fruit_10",
+        "p19_Truss_02_Fruit_11",
+        "Robot_rail_anchor",
+        "Robot_world",
+        "Robot_farmily_lift_platform",
+        "Robot_link1",
+        "Robot_link2",
+        "Robot_link3",
+        "Robot_link4",
+        "Robot_link5",
+        "Robot_link6",
+        "Tool_fixed",
+        "Tool_L",
+        "Tool_L_belt",
+        "Tool_R",
+        "Tool_R_belt",
+        "p20_Stem_MainStem_0",
+        "p20_Stem_MainStem_1",
+        "p20_Stem_MainStem_2",
+        "p20_Stem_MainStem_3",
+        "p20_Stem_MainStem_4",
+        "p20_Stem_MainStem_5",
+        "p20_Stem_MainStem_6",
+        "p20_Stem_MainStem_7",
+        "p20_Stem_MainStem_8",
+        "p20_Stem_MainStem_9",
+        "p20_Stem_MainStem_10",
+        "p20_Stem_MainStem_11",
+        "p20_Stem_MainStem_12",
+        "p20_Stem_MainStem_13",
+        "p20_Stem_MainStem_14",
+        "p20_Stem_MainStem_15",
+        "p20_Truss_00_Fruit_01",
+        "p20_Truss_00_Fruit_02",
+        "p20_Truss_00_Fruit_03",
+        "p20_Truss_00_Fruit_04",
+        "p20_Truss_00_Fruit_05",
+        "p20_Truss_00_Fruit_07",
+        "p20_Truss_00_Fruit_08",
+        "p20_Truss_00_Fruit_09",
+        "p20_Truss_00_Fruit_10",
+        "p20_Truss_00_Fruit_11",
+        "p20_Truss_01_Fruit_01",
+        "p20_Truss_01_Fruit_02",
+        "p20_Truss_01_Fruit_03",
+        "p20_Truss_01_Fruit_04",
+        "p20_Truss_01_Fruit_05",
+        "p20_Truss_01_Fruit_07",
+        "p20_Truss_01_Fruit_08",
+        "p20_Truss_01_Fruit_09",
+        "p20_Truss_01_Fruit_10",
+        "p20_Truss_01_Fruit_11",
+        "p20_Truss_02_Fruit_01",
+        "p20_Truss_02_Fruit_02",
+        "p20_Truss_02_Fruit_03",
+        "p20_Truss_02_Fruit_04",
+        "p20_Truss_02_Fruit_05",
+        "p20_Truss_02_Fruit_07",
+        "p20_Truss_02_Fruit_08",
+        "p20_Truss_02_Fruit_09",
+        "p20_Truss_02_Fruit_10",
+        "p20_Truss_02_Fruit_11",
+        "p21_Stem_MainStem_0",
+        "p21_Stem_MainStem_1",
+        "p21_Stem_MainStem_2",
+        "p21_Stem_MainStem_3",
+        "p21_Stem_MainStem_4",
+        "p21_Stem_MainStem_5",
+        "p21_Stem_MainStem_6",
+        "p21_Stem_MainStem_7",
+        "p21_Stem_MainStem_8",
+        "p21_Stem_MainStem_9",
+        "p21_Stem_MainStem_10",
+        "p21_Stem_MainStem_11",
+        "p21_Stem_MainStem_12",
+        "p21_Stem_MainStem_13",
+        "p21_Stem_MainStem_14",
+        "p21_Stem_MainStem_15",
+        "p21_Truss_00_Fruit_01",
+        "p21_Truss_00_Fruit_02",
+        "p21_Truss_00_Fruit_03",
+        "p21_Truss_00_Fruit_04",
+        "p21_Truss_00_Fruit_05",
+        "p21_Truss_00_Fruit_07",
+        "p21_Truss_00_Fruit_08",
+        "p21_Truss_00_Fruit_09",
+        "p21_Truss_00_Fruit_10",
+        "p21_Truss_00_Fruit_11",
+        "p21_Truss_01_Fruit_01",
+        "p21_Truss_01_Fruit_02",
+        "p21_Truss_01_Fruit_03",
+        "p21_Truss_01_Fruit_04",
+        "p21_Truss_01_Fruit_05",
+        "p21_Truss_01_Fruit_07",
+        "p21_Truss_01_Fruit_08",
+        "p21_Truss_01_Fruit_09",
+        "p21_Truss_01_Fruit_10",
+        "p21_Truss_01_Fruit_11",
+        "p21_Truss_02_Fruit_01",
+        "p21_Truss_02_Fruit_02",
+        "p21_Truss_02_Fruit_03",
+        "p21_Truss_02_Fruit_04",
+        "p21_Truss_02_Fruit_05",
+        "p21_Truss_02_Fruit_07",
+        "p21_Truss_02_Fruit_08",
+        "p21_Truss_02_Fruit_09",
+        "p21_Truss_02_Fruit_10",
+        "p21_Truss_02_Fruit_11",
+        "p22_Stem_MainStem_0",
+        "p22_Stem_MainStem_1",
+        "p22_Stem_MainStem_2",
+        "p22_Stem_MainStem_3",
+        "p22_Stem_MainStem_4",
+        "p22_Stem_MainStem_5",
+        "p22_Stem_MainStem_6",
+        "p22_Stem_MainStem_7",
+        "p22_Stem_MainStem_8",
+        "p22_Stem_MainStem_9",
+        "p22_Stem_MainStem_10",
+        "p22_Stem_MainStem_11",
+        "p22_Stem_MainStem_12",
+        "p22_Stem_MainStem_13",
+        "p22_Stem_MainStem_14",
+        "p22_Stem_MainStem_15",
+        "p22_Truss_00_Fruit_01",
+        "p22_Truss_00_Fruit_02",
+        "p22_Truss_00_Fruit_03",
+        "p22_Truss_00_Fruit_04",
+        "p22_Truss_00_Fruit_05",
+        "p22_Truss_00_Fruit_07",
+        "p22_Truss_00_Fruit_08",
+        "p22_Truss_00_Fruit_09",
+        "p22_Truss_00_Fruit_10",
+        "p22_Truss_00_Fruit_11",
+        "p22_Truss_01_Fruit_01",
+        "p22_Truss_01_Fruit_02",
+        "p22_Truss_01_Fruit_03",
+        "p22_Truss_01_Fruit_04",
+        "p22_Truss_01_Fruit_05",
+        "p22_Truss_01_Fruit_07",
+        "p22_Truss_01_Fruit_08",
+        "p22_Truss_01_Fruit_09",
+        "p22_Truss_01_Fruit_10",
+        "p22_Truss_01_Fruit_11",
+        "p22_Truss_02_Fruit_01",
+        "p22_Truss_02_Fruit_02",
+        "p22_Truss_02_Fruit_03",
+        "p22_Truss_02_Fruit_04",
+        "p22_Truss_02_Fruit_05",
+        "p22_Truss_02_Fruit_07",
+        "p22_Truss_02_Fruit_08",
+        "p22_Truss_02_Fruit_09",
+        "p22_Truss_02_Fruit_10",
+        "p22_Truss_02_Fruit_11",
+        "p23_Stem_MainStem_0",
+        "p23_Stem_MainStem_1",
+        "p23_Stem_MainStem_2",
+        "p23_Stem_MainStem_3",
+        "p23_Stem_MainStem_4",
+        "p23_Stem_MainStem_5",
+        "p23_Stem_MainStem_6",
+        "p23_Stem_MainStem_7",
+        "p23_Stem_MainStem_8",
+        "p23_Stem_MainStem_9",
+        "p23_Stem_MainStem_10",
+        "p23_Stem_MainStem_11",
+        "p23_Stem_MainStem_12",
+        "p23_Stem_MainStem_13",
+        "p23_Stem_MainStem_14",
+        "p23_Stem_MainStem_15",
+        "p23_Truss_00_Fruit_01",
+        "p23_Truss_00_Fruit_02",
+        "p23_Truss_00_Fruit_03",
+        "p23_Truss_00_Fruit_04",
+        "p23_Truss_00_Fruit_05",
+        "p23_Truss_00_Fruit_07",
+        "p23_Truss_00_Fruit_08",
+        "p23_Truss_00_Fruit_09",
+        "p23_Truss_00_Fruit_10",
+        "p23_Truss_00_Fruit_11",
+        "p24_Stem_MainStem_0",
+        "p24_Stem_MainStem_1",
+        "p24_Stem_MainStem_2",
+        "p24_Stem_MainStem_3",
+        "p24_Stem_MainStem_4",
+        "p24_Stem_MainStem_5",
+        "p24_Stem_MainStem_6",
+        "p24_Stem_MainStem_7",
+        "p24_Stem_MainStem_8",
+        "p24_Stem_MainStem_9",
+        "p24_Stem_MainStem_10",
+        "p24_Stem_MainStem_11",
+        "p24_Stem_MainStem_12",
+        "p24_Stem_MainStem_13",
+        "p24_Stem_MainStem_14",
+        "p24_Stem_MainStem_15",
+        "p24_Truss_00_Fruit_01",
+        "p24_Truss_00_Fruit_02",
+        "p24_Truss_00_Fruit_03",
+        "p24_Truss_00_Fruit_04",
+        "p24_Truss_00_Fruit_05",
+        "p24_Truss_00_Fruit_07",
+        "p24_Truss_00_Fruit_08",
+        "p24_Truss_00_Fruit_09",
+        "p24_Truss_00_Fruit_10",
+        "p24_Truss_00_Fruit_11",
+        "p25_Stem_MainStem_0",
+        "p25_Stem_MainStem_1",
+        "p25_Stem_MainStem_2",
+        "p25_Stem_MainStem_3",
+        "p25_Stem_MainStem_4",
+        "p25_Stem_MainStem_5",
+        "p25_Stem_MainStem_6",
+        "p25_Stem_MainStem_7",
+        "p25_Stem_MainStem_8",
+        "p25_Stem_MainStem_9",
+        "p25_Stem_MainStem_10",
+        "p25_Stem_MainStem_11",
+        "p25_Stem_MainStem_12",
+        "p25_Stem_MainStem_13",
+        "p25_Stem_MainStem_14",
+        "p25_Stem_MainStem_15",
+        "p25_Truss_00_Fruit_01",
+        "p25_Truss_00_Fruit_02",
+        "p25_Truss_00_Fruit_03",
+        "p25_Truss_00_Fruit_04",
+        "p25_Truss_00_Fruit_05",
+        "p25_Truss_00_Fruit_07",
+        "p25_Truss_00_Fruit_08",
+        "p25_Truss_00_Fruit_09",
+        "p25_Truss_00_Fruit_10",
+        "p25_Truss_00_Fruit_11",
+        "p27_Stem_MainStem_0",
+        "p27_Stem_MainStem_1",
+        "p27_Stem_MainStem_2",
+        "p27_Stem_MainStem_3",
+        "p27_Stem_MainStem_4",
+        "p27_Stem_MainStem_5",
+        "p27_Stem_MainStem_6",
+        "p27_Stem_MainStem_7",
+        "p27_Stem_MainStem_8",
+        "p27_Stem_MainStem_9",
+        "p27_Stem_MainStem_10",
+        "p27_Stem_MainStem_11",
+        "p27_Stem_MainStem_12",
+        "p27_Stem_MainStem_13",
+        "p27_Stem_MainStem_14",
+        "p27_Stem_MainStem_15",
+        "p27_Truss_00_Fruit_01",
+        "p27_Truss_00_Fruit_02",
+        "p27_Truss_00_Fruit_03",
+        "p27_Truss_00_Fruit_04",
+        "p27_Truss_00_Fruit_05",
+        "p27_Truss_00_Fruit_07",
+        "p27_Truss_00_Fruit_08",
+        "p27_Truss_00_Fruit_09",
+        "p27_Truss_00_Fruit_10",
+        "p27_Truss_00_Fruit_11",
+        "p28_Stem_MainStem_0",
+        "p28_Stem_MainStem_1",
+        "p28_Stem_MainStem_2",
+        "p28_Stem_MainStem_3",
+        "p28_Stem_MainStem_4",
+        "p28_Stem_MainStem_5",
+        "p28_Stem_MainStem_6",
+        "p28_Stem_MainStem_7",
+        "p28_Stem_MainStem_8",
+        "p28_Stem_MainStem_9",
+        "p28_Stem_MainStem_10",
+        "p28_Stem_MainStem_11",
+        "p28_Stem_MainStem_12",
+        "p28_Stem_MainStem_13",
+        "p28_Stem_MainStem_14",
+        "p28_Stem_MainStem_15",
+        "p28_Truss_00_Fruit_01",
+        "p28_Truss_00_Fruit_02",
+        "p28_Truss_00_Fruit_03",
+        "p28_Truss_00_Fruit_04",
+        "p28_Truss_00_Fruit_05",
+        "p28_Truss_00_Fruit_07",
+        "p28_Truss_00_Fruit_08",
+        "p28_Truss_00_Fruit_09",
+        "p28_Truss_00_Fruit_10",
+        "p28_Truss_00_Fruit_11",
+        "p29_Stem_MainStem_0",
+        "p29_Stem_MainStem_1",
+        "p29_Stem_MainStem_2",
+        "p29_Stem_MainStem_3",
+        "p29_Stem_MainStem_4",
+        "p29_Stem_MainStem_5",
+        "p29_Stem_MainStem_6",
+        "p29_Stem_MainStem_7",
+        "p29_Stem_MainStem_8",
+        "p29_Stem_MainStem_9",
+        "p29_Stem_MainStem_10",
+        "p29_Stem_MainStem_11",
+        "p29_Stem_MainStem_12",
+        "p29_Stem_MainStem_13",
+        "p29_Stem_MainStem_14",
+        "p29_Stem_MainStem_15",
+        "p29_Truss_00_Fruit_01",
+        "p29_Truss_00_Fruit_02",
+        "p29_Truss_00_Fruit_03",
+        "p29_Truss_00_Fruit_04",
+        "p29_Truss_00_Fruit_05",
+        "p29_Truss_00_Fruit_07",
+        "p29_Truss_00_Fruit_08",
+        "p29_Truss_00_Fruit_09",
+        "p29_Truss_00_Fruit_10",
+        "p29_Truss_00_Fruit_11",
+        "p30_Stem_MainStem_0",
+        "p30_Stem_MainStem_1",
+        "p30_Stem_MainStem_2",
+        "p30_Stem_MainStem_3",
+        "p30_Stem_MainStem_4",
+        "p30_Stem_MainStem_5",
+        "p30_Stem_MainStem_6",
+        "p30_Stem_MainStem_7",
+        "p30_Stem_MainStem_8",
+        "p30_Stem_MainStem_9",
+        "p30_Stem_MainStem_10",
+        "p30_Stem_MainStem_11",
+        "p30_Stem_MainStem_12",
+        "p30_Stem_MainStem_13",
+        "p30_Stem_MainStem_14",
+        "p30_Stem_MainStem_15",
+        "p30_Truss_00_Fruit_01",
+        "p30_Truss_00_Fruit_02",
+        "p30_Truss_00_Fruit_03",
+        "p30_Truss_00_Fruit_04",
+        "p30_Truss_00_Fruit_05",
+        "p30_Truss_00_Fruit_07",
+        "p30_Truss_00_Fruit_08",
+        "p30_Truss_00_Fruit_09",
+        "p30_Truss_00_Fruit_10",
+        "p30_Truss_00_Fruit_11",
+        "p31_Stem_MainStem_0",
+        "p31_Stem_MainStem_1",
+        "p31_Stem_MainStem_2",
+        "p31_Stem_MainStem_3",
+        "p31_Stem_MainStem_4",
+        "p31_Stem_MainStem_5",
+        "p31_Stem_MainStem_6",
+        "p31_Stem_MainStem_7",
+        "p31_Stem_MainStem_8",
+        "p31_Stem_MainStem_9",
+        "p31_Stem_MainStem_10",
+        "p31_Stem_MainStem_11",
+        "p31_Stem_MainStem_12",
+        "p31_Stem_MainStem_13",
+        "p31_Stem_MainStem_14",
+        "p31_Stem_MainStem_15",
+        "p31_Truss_00_Fruit_01",
+        "p31_Truss_00_Fruit_02",
+        "p31_Truss_00_Fruit_03",
+        "p31_Truss_00_Fruit_04",
+        "p31_Truss_00_Fruit_05",
+        "p31_Truss_00_Fruit_07",
+        "p31_Truss_00_Fruit_08",
+        "p31_Truss_00_Fruit_09",
+        "p31_Truss_00_Fruit_10",
+        "p31_Truss_00_Fruit_11"
+      ],
+      "attachments": [
+        {
+          "name": "Truss_00_Fruit_01",
+          "anchor": "Truss_00_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.19877713918685913,
+            0.08752305060625076,
+            0.8933640718460083,
+            0.3933548033237457
+          ],
+          "local_rot1": [
+            -0.19877713918685913,
+            0.08752305060625076,
+            0.8933640718460083,
+            0.3933548033237457
+          ],
+          "initial_gap_m": 3.136451888072138e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_02",
+          "anchor": "Truss_00_Pedicel_distal_02_0",
+          "local_rot0": [
+            0.39406001567840576,
+            0.6024000644683838,
+            0.446994423866272,
+            0.5310620069503784
+          ],
+          "local_rot1": [
+            0.39406001567840576,
+            0.6024000644683838,
+            0.446994423866272,
+            0.5310620069503784
+          ],
+          "initial_gap_m": 4.359984015169705e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_03",
+          "anchor": "Truss_00_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.04043285548686981,
+            0.6224433779716492,
+            0.7059498429298401,
+            0.3355059325695038
+          ],
+          "local_rot1": [
+            -0.04043285548686981,
+            0.6224433779716492,
+            0.7059498429298401,
+            0.3355059325695038
+          ],
+          "initial_gap_m": 1.9105052346854317e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_04",
+          "anchor": "Truss_00_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.366169810295105,
+            0.5669357776641846,
+            0.3100183308124542,
+            0.669620931148529
+          ],
+          "local_rot1": [
+            0.366169810295105,
+            0.5669357776641846,
+            0.3100183308124542,
+            0.669620931148529
+          ],
+          "initial_gap_m": 3.845400137014244e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_05",
+          "anchor": "Truss_00_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.10751181840896606,
+            0.5540391206741333,
+            0.6988856792449951,
+            0.439363956451416
+          ],
+          "local_rot1": [
+            -0.10751181840896606,
+            0.5540391206741333,
+            0.6988856792449951,
+            0.439363956451416
+          ],
+          "initial_gap_m": 2.1190165213885246e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_07",
+          "anchor": "Truss_00_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.2604447901248932,
+            0.10574734956026077,
+            0.8891810178756714,
+            0.36103060841560364
+          ],
+          "local_rot1": [
+            -0.2604447901248932,
+            0.10574734956026077,
+            0.8891810178756714,
+            0.36103060841560364
+          ],
+          "initial_gap_m": 5.3164860902165784e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_08",
+          "anchor": "Truss_00_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.1601986438035965,
+            0.09890574961900711,
+            0.8356776833534241,
+            0.5159426927566528
+          ],
+          "local_rot1": [
+            -0.1601986438035965,
+            0.09890574961900711,
+            0.8356776833534241,
+            0.5159426927566528
+          ],
+          "initial_gap_m": 3.528239951962354e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_09",
+          "anchor": "Truss_00_Pedicel_distal_09_0",
+          "local_rot0": [
+            0.16631685197353363,
+            0.8116979598999023,
+            0.27766263484954834,
+            0.4861980974674225
+          ],
+          "local_rot1": [
+            0.16631685197353363,
+            0.8116979598999023,
+            0.27766263484954834,
+            0.4861980974674225
+          ],
+          "initial_gap_m": 2.095240296965718e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_10",
+          "anchor": "Truss_00_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.20373766124248505,
+            0.6321613192558289,
+            0.1773473471403122,
+            0.7262306213378906
+          ],
+          "local_rot1": [
+            0.20373766124248505,
+            0.6321613192558289,
+            0.1773473471403122,
+            0.7262306213378906
+          ],
+          "initial_gap_m": 3.341906025636039e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_00_Fruit_11",
+          "anchor": "Truss_00_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.3693961203098297,
+            0.6435562372207642,
+            0.6029481887817383,
+            0.2929767370223999
+          ],
+          "local_rot1": [
+            -0.3693961203098297,
+            0.6435562372207642,
+            0.6029481887817383,
+            0.2929767370223999
+          ],
+          "initial_gap_m": 7.666580775734158e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_01",
+          "anchor": "Truss_01_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.3920280635356903,
+            0.659244954586029,
+            0.5884844660758972,
+            0.2557266652584076
+          ],
+          "local_rot1": [
+            -0.3920280635356903,
+            0.659244954586029,
+            0.5884844660758972,
+            0.2557266652584076
+          ],
+          "initial_gap_m": 2.930223924489207e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_02",
+          "anchor": "Truss_01_Pedicel_distal_02_0",
+          "local_rot0": [
+            -0.1924176663160324,
+            0.5501686930656433,
+            0.6804229617118835,
+            0.4442008435726166
+          ],
+          "local_rot1": [
+            -0.1924176663160324,
+            0.5501686930656433,
+            0.6804229617118835,
+            0.4442008435726166
+          ],
+          "initial_gap_m": 2.132470186403252e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_03",
+          "anchor": "Truss_01_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.4768607020378113,
+            0.6894362568855286,
+            0.5221148133277893,
+            0.1570911407470703
+          ],
+          "local_rot1": [
+            -0.4768607020378113,
+            0.6894362568855286,
+            0.5221148133277893,
+            0.1570911407470703
+          ],
+          "initial_gap_m": 3.228781117812069e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_04",
+          "anchor": "Truss_01_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.18318523466587067,
+            0.7906376719474792,
+            0.2835240066051483,
+            0.5108320116996765
+          ],
+          "local_rot1": [
+            0.18318523466587067,
+            0.7906376719474792,
+            0.2835240066051483,
+            0.5108320116996765
+          ],
+          "initial_gap_m": 3.401121858359417e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_05",
+          "anchor": "Truss_01_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.4106197953224182,
+            0.6608326435089111,
+            0.5756660103797913,
+            0.25159528851509094
+          ],
+          "local_rot1": [
+            -0.4106197953224182,
+            0.6608326435089111,
+            0.5756660103797913,
+            0.25159528851509094
+          ],
+          "initial_gap_m": 2.346868252695763e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_07",
+          "anchor": "Truss_01_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.3655906319618225,
+            0.6700714826583862,
+            0.6052631735801697,
+            0.22584116458892822
+          ],
+          "local_rot1": [
+            -0.3655906319618225,
+            0.6700714826583862,
+            0.6052631735801697,
+            0.22584116458892822
+          ],
+          "initial_gap_m": 3.535440933565541e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_08",
+          "anchor": "Truss_01_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.22275005280971527,
+            0.6514543890953064,
+            0.6711053848266602,
+            0.27496758103370667
+          ],
+          "local_rot1": [
+            -0.22275005280971527,
+            0.6514543890953064,
+            0.6711053848266602,
+            0.27496758103370667
+          ],
+          "initial_gap_m": 3.303105258604136e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_09",
+          "anchor": "Truss_01_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.35008561611175537,
+            0.6514350175857544,
+            0.6143615245819092,
+            0.2750135064125061
+          ],
+          "local_rot1": [
+            -0.35008561611175537,
+            0.6514350175857544,
+            0.6143615245819092,
+            0.2750135064125061
+          ],
+          "initial_gap_m": 2.778605981533074e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_10",
+          "anchor": "Truss_01_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.12624458968639374,
+            0.8043616414070129,
+            0.18446598947048187,
+            0.5504879355430603
+          ],
+          "local_rot1": [
+            0.12624458968639374,
+            0.8043616414070129,
+            0.18446598947048187,
+            0.5504879355430603
+          ],
+          "initial_gap_m": 1.582502921838477e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_01_Fruit_11",
+          "anchor": "Truss_01_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.1543089747428894,
+            0.8008225560188293,
+            -0.23336024582386017,
+            0.5295422673225403
+          ],
+          "local_rot1": [
+            -0.1543089747428894,
+            0.8008225560188293,
+            -0.23336024582386017,
+            0.5295422673225403
+          ],
+          "initial_gap_m": 3.284424561985936e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_01",
+          "anchor": "Truss_02_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.21047870814800262,
+            0.7000159621238708,
+            0.6750546097755432,
+            0.09988822042942047
+          ],
+          "local_rot1": [
+            -0.21047870814800262,
+            0.7000159621238708,
+            0.6750546097755432,
+            0.09988822042942047
+          ],
+          "initial_gap_m": 3.041041265792163e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_02",
+          "anchor": "Truss_02_Pedicel_distal_02_0",
+          "local_rot0": [
+            -0.1419256627559662,
+            0.03118552453815937,
+            0.966332733631134,
+            0.21233364939689636
+          ],
+          "local_rot1": [
+            -0.1419256627559662,
+            0.03118552453815937,
+            0.966332733631134,
+            0.21233364939689636
+          ],
+          "initial_gap_m": 1.8476667905589727e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_03",
+          "anchor": "Truss_02_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.3366178870201111,
+            0.7059893608093262,
+            0.6218427419662476,
+            0.03973662108182907
+          ],
+          "local_rot1": [
+            -0.3366178870201111,
+            0.7059893608093262,
+            0.6218427419662476,
+            0.03973662108182907
+          ],
+          "initial_gap_m": 6.697813898945125e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_04",
+          "anchor": "Truss_02_Pedicel_distal_04_0",
+          "local_rot0": [
+            -0.25719133019447327,
+            0.10271933674812317,
+            0.8923479318618774,
+            0.3563937842845917
+          ],
+          "local_rot1": [
+            -0.25719133019447327,
+            0.10271933674812317,
+            0.8923479318618774,
+            0.3563937842845917
+          ],
+          "initial_gap_m": 3.391658129068689e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_05",
+          "anchor": "Truss_02_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.32394295930862427,
+            0.6870256662368774,
+            0.6285387277603149,
+            0.1673191636800766
+          ],
+          "local_rot1": [
+            -0.32394295930862427,
+            0.6870256662368774,
+            0.6285387277603149,
+            0.1673191636800766
+          ],
+          "initial_gap_m": 1.9485460874827278e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_07",
+          "anchor": "Truss_02_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.268977552652359,
+            0.6940537691116333,
+            0.6539503931999207,
+            0.13523826003074646
+          ],
+          "local_rot1": [
+            -0.268977552652359,
+            0.6940537691116333,
+            0.6539503931999207,
+            0.13523826003074646
+          ],
+          "initial_gap_m": 1.2905397782118919e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_08",
+          "anchor": "Truss_02_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.1015639677643776,
+            0.6874451637268066,
+            0.6997748017311096,
+            0.16558736562728882
+          ],
+          "local_rot1": [
+            -0.1015639677643776,
+            0.6874451637268066,
+            0.6997748017311096,
+            0.16558736562728882
+          ],
+          "initial_gap_m": 3.085133098376406e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_09",
+          "anchor": "Truss_02_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.30359745025634766,
+            0.6681903004646301,
+            0.6386145949363708,
+            0.2313476800918579
+          ],
+          "local_rot1": [
+            -0.30359745025634766,
+            0.6681903004646301,
+            0.6386145949363708,
+            0.2313476800918579
+          ],
+          "initial_gap_m": 1.6831807535395899e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_10",
+          "anchor": "Truss_02_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.12156753987073898,
+            0.805820107460022,
+            0.17757165431976318,
+            0.551673412322998
+          ],
+          "local_rot1": [
+            0.12156753987073898,
+            0.805820107460022,
+            0.17757165431976318,
+            0.551673412322998
+          ],
+          "initial_gap_m": 3.219033486012718e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "Truss_02_Fruit_11",
+          "anchor": "Truss_02_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.18048806488513947,
+            0.7406659126281738,
+            -0.21958701312541962,
+            0.6087853908538818
+          ],
+          "local_rot1": [
+            -0.18048806488513947,
+            0.7406659126281738,
+            -0.21958701312541962,
+            0.6087853908538818
+          ],
+          "initial_gap_m": 9.724153444428304e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_01",
+          "anchor": "p18_Truss_00_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.44141921401023865,
+            0.6474292278289795,
+            0.5524030327796936,
+            0.28431564569473267
+          ],
+          "local_rot1": [
+            -0.44141921401023865,
+            0.6474292278289795,
+            0.5524030327796936,
+            0.28431564569473267
+          ],
+          "initial_gap_m": 3.556484111685756e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_02",
+          "anchor": "p18_Truss_00_Pedicel_distal_02_0",
+          "local_rot0": [
+            -0.19592124223709106,
+            0.5697013139724731,
+            0.6794224381446838,
+            0.41885608434677124
+          ],
+          "local_rot1": [
+            -0.19592124223709106,
+            0.5697013139724731,
+            0.6794224381446838,
+            0.41885608434677124
+          ],
+          "initial_gap_m": 3.8662698565794065e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_03",
+          "anchor": "p18_Truss_00_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.16443951427936554,
+            0.809795618057251,
+            -0.2691735625267029,
+            0.4947083294391632
+          ],
+          "local_rot1": [
+            -0.16443951427936554,
+            0.809795618057251,
+            -0.2691735625267029,
+            0.4947083294391632
+          ],
+          "initial_gap_m": 2.7424695188260886e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_04",
+          "anchor": "p18_Truss_00_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.1732480674982071,
+            0.7980009317398071,
+            0.2713782787322998,
+            0.5094442963600159
+          ],
+          "local_rot1": [
+            0.1732480674982071,
+            0.7980009317398071,
+            0.2713782787322998,
+            0.5094442963600159
+          ],
+          "initial_gap_m": 2.7770438248923183e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_05",
+          "anchor": "p18_Truss_00_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.4601183831691742,
+            0.6515527367591858,
+            0.5369274020195007,
+            0.27473440766334534
+          ],
+          "local_rot1": [
+            -0.4601183831691742,
+            0.6515527367591858,
+            0.5369274020195007,
+            0.27473440766334534
+          ],
+          "initial_gap_m": 3.9499704782991867e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_07",
+          "anchor": "p18_Truss_00_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.45541635155677795,
+            0.6478084325790405,
+            0.5409213900566101,
+            0.2834506332874298
+          ],
+          "local_rot1": [
+            -0.45541635155677795,
+            0.6478084325790405,
+            0.5409213900566101,
+            0.2834506332874298
+          ],
+          "initial_gap_m": 6.461235239975863e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_08",
+          "anchor": "p18_Truss_00_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.368954598903656,
+            0.5973663926124573,
+            0.6032184362411499,
+            0.3783561587333679
+          ],
+          "local_rot1": [
+            -0.368954598903656,
+            0.5973663926124573,
+            0.6032184362411499,
+            0.3783561587333679
+          ],
+          "initial_gap_m": 3.5428217301602903e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_09",
+          "anchor": "p18_Truss_00_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.43156683444976807,
+            0.6259952187538147,
+            0.5601339936256409,
+            0.3288312256336212
+          ],
+          "local_rot1": [
+            -0.43156683444976807,
+            0.6259952187538147,
+            0.5601339936256409,
+            0.3288312256336212
+          ],
+          "initial_gap_m": 7.039952250528888e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_10",
+          "anchor": "p18_Truss_00_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.12306242436170578,
+            0.7798988819122314,
+            0.1621556133031845,
+            0.5918774008750916
+          ],
+          "local_rot1": [
+            0.12306242436170578,
+            0.7798988819122314,
+            0.1621556133031845,
+            0.5918774008750916
+          ],
+          "initial_gap_m": 1.8226028324280604e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_00_Fruit_11",
+          "anchor": "p18_Truss_00_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.18644368648529053,
+            0.7193806171417236,
+            -0.21125073730945587,
+            0.6349042057991028
+          ],
+          "local_rot1": [
+            -0.18644368648529053,
+            0.7193806171417236,
+            -0.21125073730945587,
+            0.6349042057991028
+          ],
+          "initial_gap_m": 3.1177012861793853e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_01",
+          "anchor": "p18_Truss_01_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.23035530745983124,
+            0.7022656798362732,
+            0.6685330271720886,
+            0.08260098099708557
+          ],
+          "local_rot1": [
+            -0.23035530745983124,
+            0.7022656798362732,
+            0.6685330271720886,
+            0.08260098099708557
+          ],
+          "initial_gap_m": 2.9120220925880467e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_02",
+          "anchor": "p18_Truss_01_Pedicel_distal_02_0",
+          "local_rot0": [
+            -0.1427989900112152,
+            0.02690506912767887,
+            0.972278892993927,
+            0.18318919837474823
+          ],
+          "local_rot1": [
+            -0.1427989900112152,
+            0.02690506912767887,
+            0.972278892993927,
+            0.18318919837474823
+          ],
+          "initial_gap_m": 2.4072775532019565e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_03",
+          "anchor": "p18_Truss_01_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.3572550415992737,
+            0.7065750360488892,
+            0.6102203130722046,
+            0.02741779386997223
+          ],
+          "local_rot1": [
+            -0.3572550415992737,
+            0.7065750360488892,
+            0.6102203130722046,
+            0.02741779386997223
+          ],
+          "initial_gap_m": 1.815928346857062e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_04",
+          "anchor": "p18_Truss_01_Pedicel_distal_04_0",
+          "local_rot0": [
+            -0.260162889957428,
+            0.09494160860776901,
+            0.9026580452919006,
+            0.32940828800201416
+          ],
+          "local_rot1": [
+            -0.260162889957428,
+            0.09494160860776901,
+            0.9026580452919006,
+            0.32940828800201416
+          ],
+          "initial_gap_m": 3.622851825277387e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_05",
+          "anchor": "p18_Truss_01_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.34133389592170715,
+            0.6898233294487,
+            0.6192666292190552,
+            0.1553826630115509
+          ],
+          "local_rot1": [
+            -0.34133389592170715,
+            0.6898233294487,
+            0.6192666292190552,
+            0.1553826630115509
+          ],
+          "initial_gap_m": 2.898683614725215e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_07",
+          "anchor": "p18_Truss_01_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.28770706057548523,
+            0.6967734694480896,
+            0.6459292769432068,
+            0.12044398486614227
+          ],
+          "local_rot1": [
+            -0.28770706057548523,
+            0.6967734694480896,
+            0.6459292769432068,
+            0.12044398486614227
+          ],
+          "initial_gap_m": 1.7654811058635347e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_08",
+          "anchor": "p18_Truss_01_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.12056202441453934,
+            0.6919052600860596,
+            0.6967530250549316,
+            0.145832359790802
+          ],
+          "local_rot1": [
+            -0.12056202441453934,
+            0.6919052600860596,
+            0.6967530250549316,
+            0.145832359790802
+          ],
+          "initial_gap_m": 2.9692103062755477e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_09",
+          "anchor": "p18_Truss_01_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.31895124912261963,
+            0.6723719835281372,
+            0.6310864686965942,
+            0.2188970446586609
+          ],
+          "local_rot1": [
+            -0.31895124912261963,
+            0.6723719835281372,
+            0.6310864686965942,
+            0.2188970446586609
+          ],
+          "initial_gap_m": 2.237486898874485e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_10",
+          "anchor": "p18_Truss_01_Pedicel_distal_10_0",
+          "local_rot0": [
+            -0.2641415596008301,
+            0.5119525790214539,
+            0.6559185981750488,
+            0.4877546429634094
+          ],
+          "local_rot1": [
+            -0.2641415596008301,
+            0.5119525790214539,
+            0.6559185981750488,
+            0.4877546429634094
+          ],
+          "initial_gap_m": 3.3391329681385797e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_01_Fruit_11",
+          "anchor": "p18_Truss_01_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.18689927458763123,
+            0.7295289635658264,
+            -0.21988651156425476,
+            0.6200855374336243
+          ],
+          "local_rot1": [
+            -0.18689927458763123,
+            0.7295289635658264,
+            -0.21988651156425476,
+            0.6200855374336243
+          ],
+          "initial_gap_m": 2.494232846605731e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_01",
+          "anchor": "p18_Truss_02_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.338842511177063,
+            0.6107809543609619,
+            0.6206333637237549,
+            0.356295645236969
+          ],
+          "local_rot1": [
+            -0.338842511177063,
+            0.6107809543609619,
+            0.6206333637237549,
+            0.356295645236969
+          ],
+          "initial_gap_m": 3.5606765056709726e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_02",
+          "anchor": "p18_Truss_02_Pedicel_distal_02_0",
+          "local_rot0": [
+            0.19859403371810913,
+            0.7575770020484924,
+            0.26818516850471497,
+            0.5609939694404602
+          ],
+          "local_rot1": [
+            0.19859403371810913,
+            0.7575770020484924,
+            0.26818516850471497,
+            0.5609939694404602
+          ],
+          "initial_gap_m": 4.031917566913942e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_03",
+          "anchor": "p18_Truss_02_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.3432365655899048,
+            0.6739824414253235,
+            0.6182140707969666,
+            0.21388714015483856
+          ],
+          "local_rot1": [
+            -0.3432365655899048,
+            0.6739824414253235,
+            0.6182140707969666,
+            0.21388714015483856
+          ],
+          "initial_gap_m": 2.9699597627630553e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_04",
+          "anchor": "p18_Truss_02_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.2576107978820801,
+            0.6725502610206604,
+            0.27134862542152405,
+            0.6385003924369812
+          ],
+          "local_rot1": [
+            0.2576107978820801,
+            0.6725502610206604,
+            0.27134862542152405,
+            0.6385003924369812
+          ],
+          "initial_gap_m": 2.8577119185798565e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_05",
+          "anchor": "p18_Truss_02_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.3526188135147095,
+            0.6210914850234985,
+            0.6129110455513,
+            0.3380020260810852
+          ],
+          "local_rot1": [
+            -0.3526188135147095,
+            0.6210914850234985,
+            0.6129110455513,
+            0.3380020260810852
+          ],
+          "initial_gap_m": 3.9067605677325204e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_07",
+          "anchor": "p18_Truss_02_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.3518751561641693,
+            0.6156290769577026,
+            0.61333829164505,
+            0.3478517234325409
+          ],
+          "local_rot1": [
+            -0.3518751561641693,
+            0.6156290769577026,
+            0.61333829164505,
+            0.3478517234325409
+          ],
+          "initial_gap_m": 6.166994752759549e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_08",
+          "anchor": "p18_Truss_02_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.31747302412986755,
+            0.530709981918335,
+            0.6318313479423523,
+            0.46727603673934937
+          ],
+          "local_rot1": [
+            -0.31747302412986755,
+            0.530709981918335,
+            0.6318313479423523,
+            0.46727603673934937
+          ],
+          "initial_gap_m": 3.581959509233488e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_09",
+          "anchor": "p18_Truss_02_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.3499511182308197,
+            0.5845863223075867,
+            0.6144381165504456,
+            0.39781758189201355
+          ],
+          "local_rot1": [
+            -0.3499511182308197,
+            0.5845863223075867,
+            0.6144381165504456,
+            0.39781758189201355
+          ],
+          "initial_gap_m": 5.415373514325179e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_10",
+          "anchor": "p18_Truss_02_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.16929195821285248,
+            0.6918748617172241,
+            0.17213301360607147,
+            0.6804555058479309
+          ],
+          "local_rot1": [
+            0.16929195821285248,
+            0.6918748617172241,
+            0.17213301360607147,
+            0.6804555058479309
+          ],
+          "initial_gap_m": 9.791556564753909e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p18_Truss_02_Fruit_11",
+          "anchor": "p18_Truss_02_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.4870814085006714,
+            0.6598715782165527,
+            0.5125930905342102,
+            0.2541052997112274
+          ],
+          "local_rot1": [
+            -0.4870814085006714,
+            0.6598715782165527,
+            0.5125930905342102,
+            0.2541052997112274
+          ],
+          "initial_gap_m": 3.203643060642253e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_01",
+          "anchor": "p19_Truss_00_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.1201428771018982,
+            0.7476961612701416,
+            -0.1408640742301941,
+            0.6377095580101013
+          ],
+          "local_rot1": [
+            -0.1201428771018982,
+            0.7476961612701416,
+            -0.1408640742301941,
+            0.6377095580101013
+          ],
+          "initial_gap_m": 8.60055628654373e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_02",
+          "anchor": "p19_Truss_00_Pedicel_distal_02_0",
+          "local_rot0": [
+            0.6683216094970703,
+            -0.4696045517921448,
+            -0.23096798360347748,
+            -0.52865070104599
+          ],
+          "local_rot1": [
+            0.6683216094970703,
+            -0.4696045517921448,
+            -0.23096798360347748,
+            -0.52865070104599
+          ],
+          "initial_gap_m": 1.4875638722444928e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_03",
+          "anchor": "p19_Truss_00_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.22061677277088165,
+            -0.0850827693939209,
+            0.906561017036438,
+            -0.34962308406829834
+          ],
+          "local_rot1": [
+            -0.22061677277088165,
+            -0.0850827693939209,
+            0.906561017036438,
+            -0.34962308406829834
+          ],
+          "initial_gap_m": 2.8696878480929414e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_04",
+          "anchor": "p19_Truss_00_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.6763147711753845,
+            -0.35321044921875,
+            -0.20639365911483765,
+            -0.6125702857971191
+          ],
+          "local_rot1": [
+            0.6763147711753845,
+            -0.35321044921875,
+            -0.20639365911483765,
+            -0.6125702857971191
+          ],
+          "initial_gap_m": 3.413503617010019e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_05",
+          "anchor": "p19_Truss_00_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.4139460623264313,
+            0.5643342733383179,
+            0.5732788443565369,
+            0.42605963349342346
+          ],
+          "local_rot1": [
+            -0.4139460623264313,
+            0.5643342733383179,
+            0.5732788443565369,
+            0.42605963349342346
+          ],
+          "initial_gap_m": 3.9075544766054215e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_07",
+          "anchor": "p19_Truss_00_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.3778996467590332,
+            0.5326866507530212,
+            0.5976552963256836,
+            0.46502140164375305
+          ],
+          "local_rot1": [
+            -0.3778996467590332,
+            0.5326866507530212,
+            0.5976552963256836,
+            0.46502140164375305
+          ],
+          "initial_gap_m": 1.0073984348932567e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_08",
+          "anchor": "p19_Truss_00_Pedicel_distal_08_0",
+          "local_rot0": [
+            0.04227365553379059,
+            0.7026982307434082,
+            0.04189826548099518,
+            0.7089941501617432
+          ],
+          "local_rot1": [
+            0.04227365553379059,
+            0.7026982307434082,
+            0.04189826548099518,
+            0.7089941501617432
+          ],
+          "initial_gap_m": 3.500005814095793e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_09",
+          "anchor": "p19_Truss_00_Pedicel_distal_09_0",
+          "local_rot0": [
+            0.07266661524772644,
+            0.7623764872550964,
+            0.08695065230131149,
+            0.6371352076530457
+          ],
+          "local_rot1": [
+            0.07266661524772644,
+            0.7623764872550964,
+            0.08695065230131149,
+            0.6371352076530457
+          ],
+          "initial_gap_m": 4.9195341085037645e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_10",
+          "anchor": "p19_Truss_00_Pedicel_distal_10_0",
+          "local_rot0": [
+            -0.5558794140815735,
+            0.3380395472049713,
+            0.4370332956314087,
+            0.6210710406303406
+          ],
+          "local_rot1": [
+            -0.5558794140815735,
+            0.3380395472049713,
+            0.4370332956314087,
+            0.6210710406303406
+          ],
+          "initial_gap_m": 3.250042483752455e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_00_Fruit_11",
+          "anchor": "p19_Truss_00_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.3335873782634735,
+            0.6180309057235718,
+            0.6234737038612366,
+            0.34356623888015747
+          ],
+          "local_rot1": [
+            -0.3335873782634735,
+            0.6180309057235718,
+            0.6234737038612366,
+            0.34356623888015747
+          ],
+          "initial_gap_m": 3.116024678146287e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_01",
+          "anchor": "p19_Truss_01_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.13222655653953552,
+            0.723201334476471,
+            -0.14438405632972717,
+            0.6623059511184692
+          ],
+          "local_rot1": [
+            -0.13222655653953552,
+            0.723201334476471,
+            -0.14438405632972717,
+            0.6623059511184692
+          ],
+          "initial_gap_m": 1.9921576568206262e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_02",
+          "anchor": "p19_Truss_01_Pedicel_distal_02_0",
+          "local_rot0": [
+            0.6636897325515747,
+            -0.4271567165851593,
+            -0.24395890533924103,
+            -0.5635043382644653
+          ],
+          "local_rot1": [
+            0.6636897325515747,
+            -0.4271567165851593,
+            -0.24395890533924103,
+            -0.5635043382644653
+          ],
+          "initial_gap_m": 1.575647726402752e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_03",
+          "anchor": "p19_Truss_01_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.21164092421531677,
+            -0.1054464727640152,
+            0.8696773052215576,
+            -0.4333018660545349
+          ],
+          "local_rot1": [
+            -0.21164092421531677,
+            -0.1054464727640152,
+            0.8696773052215576,
+            -0.4333018660545349
+          ],
+          "initial_gap_m": 2.661250089726886e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_04",
+          "anchor": "p19_Truss_01_Pedicel_distal_04_0",
+          "local_rot0": [
+            0.6641855835914612,
+            -0.30549734830856323,
+            -0.24260574579238892,
+            -0.6377078890800476
+          ],
+          "local_rot1": [
+            0.6641855835914612,
+            -0.30549734830856323,
+            -0.24260574579238892,
+            -0.6377078890800476
+          ],
+          "initial_gap_m": 3.404772846286574e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_05",
+          "anchor": "p19_Truss_01_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.43000930547714233,
+            0.575692892074585,
+            0.5613305568695068,
+            0.41058215498924255
+          ],
+          "local_rot1": [
+            -0.43000930547714233,
+            0.575692892074585,
+            0.5613305568695068,
+            0.41058215498924255
+          ],
+          "initial_gap_m": 3.895970312931469e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_07",
+          "anchor": "p19_Truss_01_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.387737900018692,
+            0.5505804419517517,
+            0.5913199782371521,
+            0.4436904489994049
+          ],
+          "local_rot1": [
+            -0.387737900018692,
+            0.5505804419517517,
+            0.5913199782371521,
+            0.4436904489994049
+          ],
+          "initial_gap_m": 1.467891416252976e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_08",
+          "anchor": "p19_Truss_01_Pedicel_distal_08_0",
+          "local_rot0": [
+            0.04165181517601013,
+            0.7106039524078369,
+            0.04221714287996292,
+            0.7010883092880249
+          ],
+          "local_rot1": [
+            0.04165181517601013,
+            0.7106039524078369,
+            0.04221714287996292,
+            0.7010883092880249
+          ],
+          "initial_gap_m": 3.513739573011002e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_09",
+          "anchor": "p19_Truss_01_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.38863953948020935,
+            0.5089107751846313,
+            0.5907278060913086,
+            0.490927517414093
+          ],
+          "local_rot1": [
+            -0.38863953948020935,
+            0.5089107751846313,
+            0.5907278060913086,
+            0.490927517414093
+          ],
+          "initial_gap_m": 4.342489327861462e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_10",
+          "anchor": "p19_Truss_01_Pedicel_distal_10_0",
+          "local_rot0": [
+            -0.5315913558006287,
+            0.3270082175731659,
+            0.46627315878868103,
+            0.6269494891166687
+          ],
+          "local_rot1": [
+            -0.5315913558006287,
+            0.3270082175731659,
+            0.46627315878868103,
+            0.6269494891166687
+          ],
+          "initial_gap_m": 3.3566090840110607e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_01_Fruit_11",
+          "anchor": "p19_Truss_01_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.366529643535614,
+            0.6338340044021606,
+            0.6046949625015259,
+            0.3134557008743286
+          ],
+          "local_rot1": [
+            -0.366529643535614,
+            0.6338340044021606,
+            0.6046949625015259,
+            0.3134557008743286
+          ],
+          "initial_gap_m": 3.1455380655018936e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_01",
+          "anchor": "p19_Truss_02_Pedicel_distal_01_0",
+          "local_rot0": [
+            -0.1325828582048416,
+            0.6166090965270996,
+            -0.10635025799274445,
+            0.7687032222747803
+          ],
+          "local_rot1": [
+            -0.1325828582048416,
+            0.6166090965270996,
+            -0.10635025799274445,
+            0.7687032222747803
+          ],
+          "initial_gap_m": 1.3225338984341762e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_02",
+          "anchor": "p19_Truss_02_Pedicel_distal_02_0",
+          "local_rot0": [
+            -0.5969910025596619,
+            0.26988232135772705,
+            0.3789481818675995,
+            0.6535775065422058
+          ],
+          "local_rot1": [
+            -0.5969910025596619,
+            0.26988232135772705,
+            0.3789481818675995,
+            0.6535775065422058
+          ],
+          "initial_gap_m": 2.3710897222538084e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_03",
+          "anchor": "p19_Truss_02_Pedicel_distal_03_0",
+          "local_rot0": [
+            -0.3916734755039215,
+            0.5592188835144043,
+            -0.3381713032722473,
+            0.6476930379867554
+          ],
+          "local_rot1": [
+            -0.3916734755039215,
+            0.5592188835144043,
+            -0.3381713032722473,
+            0.6476930379867554
+          ],
+          "initial_gap_m": 1.757689294105722e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_04",
+          "anchor": "p19_Truss_02_Pedicel_distal_04_0",
+          "local_rot0": [
+            -0.5481722950935364,
+            0.16138646006584167,
+            0.44666221737861633,
+            0.6884434819221497
+          ],
+          "local_rot1": [
+            -0.5481722950935364,
+            0.16138646006584167,
+            0.44666221737861633,
+            0.6884434819221497
+          ],
+          "initial_gap_m": 3.6618815816158067e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_05",
+          "anchor": "p19_Truss_02_Pedicel_distal_05_0",
+          "local_rot0": [
+            -0.07748164236545563,
+            0.7615213990211487,
+            -0.09265899658203125,
+            0.6367857456207275
+          ],
+          "local_rot1": [
+            -0.07748164236545563,
+            0.7615213990211487,
+            -0.09265899658203125,
+            0.6367857456207275
+          ],
+          "initial_gap_m": 3.881726700253113e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_07",
+          "anchor": "p19_Truss_02_Pedicel_distal_07_0",
+          "local_rot0": [
+            -0.46545103192329407,
+            0.5977506637573242,
+            0.5323113203048706,
+            0.3777487576007843
+          ],
+          "local_rot1": [
+            -0.46545103192329407,
+            0.5977506637573242,
+            0.5323113203048706,
+            0.3777487576007843
+          ],
+          "initial_gap_m": 3.666583568411985e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_08",
+          "anchor": "p19_Truss_02_Pedicel_distal_08_0",
+          "local_rot0": [
+            -0.45646601915359497,
+            0.5058941841125488,
+            0.5400359034538269,
+            0.4940354824066162
+          ],
+          "local_rot1": [
+            -0.45646601915359497,
+            0.5058941841125488,
+            0.5400359034538269,
+            0.4940354824066162
+          ],
+          "initial_gap_m": 3.5023374115111695e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_09",
+          "anchor": "p19_Truss_02_Pedicel_distal_09_0",
+          "local_rot0": [
+            -0.4318385124206543,
+            0.5724437832832336,
+            0.5599245429039001,
+            0.4151001274585724
+          ],
+          "local_rot1": [
+            -0.4318385124206543,
+            0.5724437832832336,
+            0.5599245429039001,
+            0.4151001274585724
+          ],
+          "initial_gap_m": 3.9050213716182096e-11,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_10",
+          "anchor": "p19_Truss_02_Pedicel_distal_10_0",
+          "local_rot0": [
+            0.15688000619411469,
+            0.666022539138794,
+            0.14624984562397003,
+            0.7144323587417603
+          ],
+          "local_rot1": [
+            0.15688000619411469,
+            0.666022539138794,
+            0.14624984562397003,
+            0.7144323587417603
+          ],
+          "initial_gap_m": 3.182789828697714e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        },
+        {
+          "name": "p19_Truss_02_Fruit_11",
+          "anchor": "p19_Truss_02_Pedicel_distal_11_0",
+          "local_rot0": [
+            -0.14241954684257507,
+            0.78416907787323,
+            -0.19541892409324646,
+            0.5714953541755676
+          ],
+          "local_rot1": [
+            -0.14241954684257507,
+            0.78416907787323,
+            -0.19541892409324646,
+            0.5714953541755676
+          ],
+          "initial_gap_m": 3.108416732662598e-10,
+          "force_n": 3.0,
+          "torque_nm": 0.008,
+          "stiffness": [
+            0.009999999776482582,
+            0.029999999329447746,
+            0.029999999329447746
+          ],
+          "damping": 0.0001500000071246177,
+          "deadband_deg": 1.0
+        }
+      ],
+      "robot_qpos_addresses": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "robot_dof_addresses": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "actuator_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "sha256": "b10444f577082fa14317775a3d506813c5d408eb291f73ea5b193ff36061222b"
+    },
+    "initial_clock_s": 167.08914184570312,
+    "inherited_release_events": 0,
+    "qpos_qvel_eq_ctrl_damping_preserved": true,
+    "qacc_warmstart_restored": true,
+    "parent_effective_gpu_options": {
+      "solver": 2,
+      "integrator": 4,
+      "iterations": 64,
+      "ls_iterations": 50,
+      "broadphase": 0,
+      "broadphase_filter": 11,
+      "tolerance": [
+        9.99999993922529e-09
+      ],
+      "graph_conditional": true,
+      "cholesky_block_dim": 32
+    },
+    "solver_instance_restarted": true,
+    "contact_constraint_cache_rebuilt": true,
+    "measured_state_not_rolled_back": true,
+    "limitations": [
+      "Fresh solver contact/constraint caches are rebuilt; this is state-preserving segmented execution, not one persistent solver instance."
+    ],
+    "verification_scope": {
+      "schema": "s300-call-scoped-file-model-verification-v1",
+      "scope": "patrol",
+      "unique_file_sha_reads": 114,
+      "stable_sha_reuses": 212,
+      "unique_read_only_model_loads": 0,
+      "stable_read_only_model_reuses": 0,
+      "verified_local_model_loads": 0,
+      "original_bytes_hashed": 639546560,
+      "repeated_hash_bytes_avoided": 4815421568,
+      "original_file_sha_checks_preserved": true,
+      "file_identity_change_rejected": true,
+      "global_or_cross_call_cache": true,
+      "global_cache": false,
+      "models_used_only_by_read_only_verification": true,
+      "sources": [
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/physics/executed_commands.npz",
+          "sha256": "6b4603c4fdf3826cba1e66b77f83b93930af69f0097b4b651f9258a74bde2834",
+          "identity": [
+            50,
+            15081366,
+            21130,
+            1794574339343701913,
+            1794574339343701913
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/inputs/inputs.json",
+          "sha256": "4a13903b6027a726ff08c68b8324058ae972af81d08c29cd00006e436dc67d4e",
+          "identity": [
+            50,
+            15081360,
+            3192728,
+            1794574338771669071,
+            1794574338771669071
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3/inputs/input_model.mjb",
+          "sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+          "identity": [
+            50,
+            14686733,
+            585576280,
+            1794548781791044616,
+            1794548781791044616
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/inputs/initial_state.npz",
+          "sha256": "456d680ce8a6bb6aa86c754a4e8387e938017b54e55137107614bcf38d6a2d9d",
+          "identity": [
+            50,
+            15081356,
+            33737,
+            1794574338675663558,
+            1794574338675663558
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/physics/final_states.npz",
+          "sha256": "0b5081630f16643ec7b4a6292245fa2abecc4445fe7ef0a4f672c5151c950ff1",
+          "identity": [
+            50,
+            15081373,
+            7666,
+            1794574341319815365,
+            1794574341319815365
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/physics/cumulative_break_events.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "identity": [
+            50,
+            15081374,
+            3,
+            1794574341319815365,
+            1794574341319815365
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_entry_camera_20261113_214332/step_087/physics/summary.json",
+          "sha256": "d94a73617b588e67e79aa73c4ab3206d9a4ba7bf173dd70cee32c3e7ebde50b7",
+          "identity": [
+            50,
+            15081365,
+            597107,
+            1794574341343816742,
+            1794574341343816742
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_scan_patrol_v5/assets/inputs/canonical_full_state.npz",
+          "sha256": "a9734ff197e65f2645fb071a7dbb90ab76983f32663aac6853485cc05ff4c84c",
+          "identity": [
+            50,
+            14967891,
+            34440,
+            1794558451818635603,
+            1794558451818635603
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_scan_patrol_v5/assets/inputs/initial_state.npz",
+          "sha256": "f27859c702cde57a73abceae0be6462b0d2fe9652eb02675e8a51c606d5e8854",
+          "identity": [
+            50,
+            14967890,
+            33512,
+            1794558451810635189,
+            1794558451810635189
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3/inputs/input_scene.xml",
+          "sha256": "be06cfa9d5018783bf62a4e0fc12e1553504b0097449938d5ab9aaab2a23e5ef",
+          "identity": [
+            50,
+            14686732,
+            1123342,
+            1794548778722877323,
+            1794548778722877323
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/fruit_proxy_proof.json",
+          "sha256": "123deaa013266c525f68985c1a9b6bf4b2d3380470f9cb901f0a098410135a7f",
+          "identity": [
+            50,
+            13790182,
+            1693860,
+            1794318436292903114,
+            1794318436292903114
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3/inputs/commands.npz",
+          "sha256": "7876acfc81d1001d0e1d21005b9db84a86e805a99554b80d4c07d1ca03d7b7b9",
+          "identity": [
+            50,
+            14686742,
+            7077,
+            1794548783515138625,
+            1794548783515138625
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs/active_window_proof.json",
+          "sha256": "6d73bec34f882d9848e9eade4c19fdabb8531b7c41dd1f362333a3f523f91387",
+          "identity": [
+            50,
+            13790205,
+            42853,
+            1794318449473698780,
+            1794318449473698780
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0462.obj",
+          "sha256": "6974eb5a2a07e1fe75833a0bf36381e0e1a6a8776af7ef3260669d96cae9144f",
+          "identity": [
+            50,
+            13790087,
+            96027,
+            1794318414759599490,
+            1794318414759599490
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0453.obj",
+          "sha256": "90ce45a42dbb2dfaba87e420452d49317fbeb304bcc104f8aac69493ea886eae",
+          "identity": [
+            50,
+            13790086,
+            96492,
+            1794318414619590997,
+            1794318414619590997
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0489.obj",
+          "sha256": "74ebab48ea458e73f4ed51329ed90307d0ac95a7f5e98c9fee9e008fcaa1c531",
+          "identity": [
+            50,
+            13790090,
+            96265,
+            1794318415187625450,
+            1794318415187625450
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0525.obj",
+          "sha256": "be3cf176b4857d9726eb1ee88c0628c21817f9bcf49bd690feadad1e2bf7fafb",
+          "identity": [
+            50,
+            13790094,
+            96870,
+            1794318415763660382,
+            1794318415763660382
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0471.obj",
+          "sha256": "ed4395dff32a6268b9277e22e9efc8d4a8976a8cb99c8eb9527fe2aaaa5ccea7",
+          "identity": [
+            50,
+            13790088,
+            96698,
+            1794318414903608224,
+            1794318414903608224
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0498.obj",
+          "sha256": "3bfffd897f9ea8f47477668c1827822ae9e7d89ae0bc52d5649c0f31f1910d53",
+          "identity": [
+            50,
+            13790091,
+            97008,
+            1794318415331634182,
+            1794318415331634182
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0543.obj",
+          "sha256": "3ce6d5e1d5cc8ffb6863ee17dc650e738e539bf8f0ce6a3bd7b99a89315c9bdd",
+          "identity": [
+            50,
+            13790096,
+            95502,
+            1794318416051677848,
+            1794318416051677848
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0480.obj",
+          "sha256": "329bb9bc8205b96d9c2a581651f954a30647ef65f0882152ab5c7aaabb08b5ab",
+          "identity": [
+            50,
+            13790089,
+            96241,
+            1794318415047616959,
+            1794318415047616959
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0534.obj",
+          "sha256": "b56a24010422f888207b471a41102da412c0fbd5356f17683316c16701b9121f",
+          "identity": [
+            50,
+            13790095,
+            96513,
+            1794318415907669115,
+            1794318415907669115
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0507.obj",
+          "sha256": "5d3f6a65f83767f4f4e75333b7ed2679f648ac5d259326cb9ee2b2570a8fa61d",
+          "identity": [
+            50,
+            13790092,
+            96712,
+            1794318415479643159,
+            1794318415479643159
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0516.obj",
+          "sha256": "c1bf39ba23e86fa055a646a03247edf4789ec9ff97a22341072fd76b8ed585b2",
+          "identity": [
+            50,
+            13790093,
+            97092,
+            1794318415623651892,
+            1794318415623651892
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0552.obj",
+          "sha256": "3ca363b84ba0e4b5d34c5a1d4d96cbd5e96867af506cda7a170610909fa0287c",
+          "identity": [
+            50,
+            13790097,
+            95969,
+            1794318416195686581,
+            1794318416195686581
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0588.obj",
+          "sha256": "098f5fe5b6de601366d767dfec0d0e1dcb8df7f4db6a83dcb7eca18ca4c2ccb8",
+          "identity": [
+            50,
+            13790101,
+            96268,
+            1794318416767721264,
+            1794318416767721264
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0570.obj",
+          "sha256": "5d507ebe6836cbf4697f063fb607f47a4b6144788ccd6f91838cf78bb1931526",
+          "identity": [
+            50,
+            13790099,
+            96225,
+            1794318416479703800,
+            1794318416479703800
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0615.obj",
+          "sha256": "58b26a9a923b5631b37ef0b70d7b4538891e876a8f3a95f59867b06975058846",
+          "identity": [
+            50,
+            13790104,
+            96319,
+            1794318417199747457,
+            1794318417199747457
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0633.obj",
+          "sha256": "8bcc821ea8c8a8f03c38a2dcfcd51735d6c5e3da35f6f971751d95a2ea9cba94",
+          "identity": [
+            50,
+            13790106,
+            95491,
+            1794318417487764917,
+            1794318417487764917
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0579.obj",
+          "sha256": "d5949367ccd3217a9baace07d0cf18d3f15506723d3f9ead54879eeb45384f37",
+          "identity": [
+            50,
+            13790100,
+            96200,
+            1794318416623712533,
+            1794318416623712533
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0642.obj",
+          "sha256": "efad891641f57796f3afe164894429b0c016ed6c88eeae7b1a7bfa35893b1a81",
+          "identity": [
+            50,
+            13790107,
+            95872,
+            1794318417635773890,
+            1794318417635773890
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0561.obj",
+          "sha256": "f0e35acbf854311bce33f7b65ad508fbd021abc33a91eef65ddba0085e85c79e",
+          "identity": [
+            50,
+            13790098,
+            95917,
+            1794318416335695069,
+            1794318416335695069
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0624.obj",
+          "sha256": "18be700c329172d201a14323563e71c2d984d25d9932359282471517c2c63a28",
+          "identity": [
+            50,
+            13790105,
+            96485,
+            1794318417347756430,
+            1794318417347756430
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0651.obj",
+          "sha256": "8a0ed7e72a9d1a9acb6886806d89f62c1df38a0604ef7e283531a6e8c808aed0",
+          "identity": [
+            50,
+            13790108,
+            95961,
+            1794318417775782377,
+            1794318417775782377
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0606.obj",
+          "sha256": "1f589483e85e412f1820df0f13d8fac70e7f9513df2ecefe99d36c37c47a9afd",
+          "identity": [
+            50,
+            13790103,
+            96079,
+            1794318417051738484,
+            1794318417051738484
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0597.obj",
+          "sha256": "9b479f994fda62c104422d174506740e9259cb5a6726d0a2285ab1080c859c89",
+          "identity": [
+            50,
+            13790102,
+            96753,
+            1794318416911729995,
+            1794318416911729995
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0669.obj",
+          "sha256": "8f0ffb67a647609c9f0e7ac6e25533c2239b891715e7dd66aa4238f1bb12fc6a",
+          "identity": [
+            50,
+            13790110,
+            97117,
+            1794318418067800080,
+            1794318418067800080
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0660.obj",
+          "sha256": "e4769dd95503cea7112b01306ae2fe8e8bf6faa24f5640c2ca158cacc6f0f3bc",
+          "identity": [
+            50,
+            13790109,
+            96196,
+            1794318417919791108,
+            1794318417919791108
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0696.obj",
+          "sha256": "a00b6cc5c4eb4a0288d230972d3ebcb4a76a18f18bf48daf89bab940f70b68a9",
+          "identity": [
+            50,
+            13790113,
+            96027,
+            1794318418495826023,
+            1794318418495826023
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0490.obj",
+          "sha256": "cd074b55ddfab1c8077513c5281fdd4103c3710ce1c2ba1a3f902a2b2486bfca",
+          "identity": [
+            50,
+            13790117,
+            95971,
+            1794318419071860938,
+            1794318419071860938
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0678.obj",
+          "sha256": "16d9d5d46807e643cd1abf9c833e035b016fea7d0057ba826a3b9f9b35e5a325",
+          "identity": [
+            50,
+            13790111,
+            96648,
+            1794318418207808567,
+            1794318418207808567
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0687.obj",
+          "sha256": "742e21ffd01f1d5e19db7ee374c6cccd043ac69dbc7b447e26b7649bfc32a0b3",
+          "identity": [
+            50,
+            13790112,
+            96739,
+            1794318418351817296,
+            1794318418351817296
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0508.obj",
+          "sha256": "d6875204d234e56ae5f96ec7f7778c5d42a0859c3a34e237fc5f7308ca8ce615",
+          "identity": [
+            50,
+            13790119,
+            96209,
+            1794318419355878150,
+            1794318419355878150
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0499.obj",
+          "sha256": "9c41688ce7c1d78ee24b333975e8c5c27dd26865405bac4fd9766387e9c69d0d",
+          "identity": [
+            50,
+            13790118,
+            95921,
+            1794318419211869423,
+            1794318419211869423
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0714.obj",
+          "sha256": "aa72d65b87322b186991cdb39d8d4eb891e77189f2accf5557da8281ce86c1da",
+          "identity": [
+            50,
+            13790115,
+            96524,
+            1794318418779843239,
+            1794318418779843239
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0517.obj",
+          "sha256": "bdff374ac6bcf13fc8e1e8776d817fec312ea4c5dee58bd905cad9b5142d68cd",
+          "identity": [
+            50,
+            13790120,
+            96194,
+            1794318419495886634,
+            1794318419495886634
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0481.obj",
+          "sha256": "33688896a3f6fc3f1ff8c1201868125a377e8ee326b8d2d789258938ddf0764c",
+          "identity": [
+            50,
+            13790116,
+            95506,
+            1794318418927852208,
+            1794318418927852208
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/g0705.obj",
+          "sha256": "94914464443ca1ae2f61c1749f0ba0929b0d04a83482a8de24d220198bd35445",
+          "identity": [
+            50,
+            13790114,
+            96349,
+            1794318418639834752,
+            1794318418639834752
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0535.obj",
+          "sha256": "9d6cf7538504cc38ab24412f0a17df1d6fb8f24426db1ac0dac9c128296e5c5e",
+          "identity": [
+            50,
+            13790122,
+            96714,
+            1794318419783904088,
+            1794318419783904088
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0553.obj",
+          "sha256": "1343ff6cb2d81ce81bf57629884cfaa9d352977fa72753bd09198e5121ba02bf",
+          "identity": [
+            50,
+            13790124,
+            96349,
+            1794318420071921543,
+            1794318420071921543
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0544.obj",
+          "sha256": "45e211ac1499a0f737641a028d30b9c6b80cff56f27ec019e4ad4e58f50ea9d0",
+          "identity": [
+            50,
+            13790123,
+            96086,
+            1794318419927912816,
+            1794318419927912816
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0526.obj",
+          "sha256": "6c45bab14324cdb3261e9df4b212ab5a0b355d1bc669add10ee8ae156c56767d",
+          "identity": [
+            50,
+            13790121,
+            96281,
+            1794318419639895361,
+            1794318419639895361
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0580.obj",
+          "sha256": "eedb95f8fd0867e1dfbcb2a4b37b5ca806a311181434e64453b7a7c1e36b90ba",
+          "identity": [
+            50,
+            13790127,
+            95846,
+            1794318420503947720,
+            1794318420503947720
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0607.obj",
+          "sha256": "a99cdce037ba32bd43b01e279a2c6b76f1e0142ce60d5610aaa19d21bc297e47",
+          "identity": [
+            50,
+            13790130,
+            97122,
+            1794318420935973896,
+            1794318420935973896
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0571.obj",
+          "sha256": "68cbabc3311e371ec5cb8274defb4effe15968aedabf080d2aa43c3b720f3145",
+          "identity": [
+            50,
+            13790126,
+            95472,
+            1794318420359938994,
+            1794318420359938994
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0589.obj",
+          "sha256": "a38bdac7d7923afacbe331e78076035b35e0f38a3f0cb91164d1c4b764eb13f4",
+          "identity": [
+            50,
+            13790128,
+            95891,
+            1794318420647956445,
+            1794318420647956445
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0562.obj",
+          "sha256": "252a7b47b053308efcfd08875c5a5abaab995a3ed3fda6b13a2f0c3c2dc3c5c8",
+          "identity": [
+            50,
+            13790125,
+            96464,
+            1794318420215930269,
+            1794318420215930269
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0634.obj",
+          "sha256": "26751a063f11a51fb164d698ceca6a73f3fac7c9731ab7c2d49a3ea1b0fbcc47",
+          "identity": [
+            50,
+            13790133,
+            96043,
+            1794318421363999827,
+            1794318421363999827
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0598.obj",
+          "sha256": "e563ef2024723f46830d7cc9f2f561bbfcf18424110678fb67f575a3e0b7722b",
+          "identity": [
+            50,
+            13790129,
+            96206,
+            1794318420791965171,
+            1794318420791965171
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0616.obj",
+          "sha256": "f366e3f6340951f3b613eda36f7b81e7d2a0ef34247b373d45d5e77cc48c6cc6",
+          "identity": [
+            50,
+            13790131,
+            96644,
+            1794318421079982622,
+            1794318421079982622
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0661.obj",
+          "sha256": "b60bd5a46cefbb86409c043ec71bce52259924d38a18f3e93f85d81cac7b1a4c",
+          "identity": [
+            50,
+            13790136,
+            96526,
+            1794318421792025758,
+            1794318421792025758
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0625.obj",
+          "sha256": "32afcbd5903bcf84eb43f83d4837085f4325272a4be787dc81ffc0f38cd51333",
+          "identity": [
+            50,
+            13790132,
+            96748,
+            1794318421223991346,
+            1794318421223991346
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0643.obj",
+          "sha256": "2c382c67ef9ccbb5d9d884862910026543ba144142939cb7905f8bbea40ea9d8",
+          "identity": [
+            50,
+            13790134,
+            96342,
+            1794318421504008310,
+            1794318421504008310
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0652.obj",
+          "sha256": "fb5ecab2b45e89a75161b4983030f4483cb003a534cd528d8d1e7c1f8b1057ff",
+          "identity": [
+            50,
+            13790135,
+            96507,
+            1794318421648017034,
+            1794318421648017034
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0679.obj",
+          "sha256": "fdac24c2953b5fb67e5d15accb443e04d6f669f90c9564c7d11ac5c7218784fb",
+          "identity": [
+            50,
+            13790138,
+            96683,
+            1794318422076042963,
+            1794318422076042963
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0670.obj",
+          "sha256": "e3be5008cb528ab613acf7d0df1dd47f24581675865d59e7b4a68f824cf6e2c0",
+          "identity": [
+            50,
+            13790137,
+            95967,
+            1794318421936034482,
+            1794318421936034482
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0688.obj",
+          "sha256": "cc851dcd0dba472d40574a029783525df731fda256a79073f4b6dcf6ef6a5793",
+          "identity": [
+            50,
+            13790139,
+            96173,
+            1794318422220051687,
+            1794318422220051687
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0706.obj",
+          "sha256": "a588850016f4ee7001768ee6be7512d6d66531b2bd1124e67eb7b1692197d060",
+          "identity": [
+            50,
+            13790141,
+            96945,
+            1794318422504068888,
+            1794318422504068888
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0715.obj",
+          "sha256": "daaa80e36e570ee8212311d1b661492ca20457023370ac6378450be75339e954",
+          "identity": [
+            50,
+            13790142,
+            96736,
+            1794318422648077612,
+            1794318422648077612
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0724.obj",
+          "sha256": "b201024e22a2be317a1edd94d7d41f6c2689ed7b1848e53807404c1789e9060e",
+          "identity": [
+            50,
+            13790143,
+            96031,
+            1794318422788086092,
+            1794318422788086092
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0733.obj",
+          "sha256": "9f2d808a9d09d08974e6f141be2ed2bdf7ae28db86379093455e37484a989220",
+          "identity": [
+            50,
+            13790144,
+            96306,
+            1794318422932094815,
+            1794318422932094815
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0453.obj",
+          "sha256": "4b3d5e244d219669dd32619f47d743008262abfc36b12a27c82190bd472f3821",
+          "identity": [
+            50,
+            13790146,
+            96502,
+            1794318423232112982,
+            1794318423232112982
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0462.obj",
+          "sha256": "b0d1b282894e86c0586ffb916e2c37df6e96d0e16cc3d28ce4940aa27d0ab4c0",
+          "identity": [
+            50,
+            13790147,
+            96018,
+            1794318423372121462,
+            1794318423372121462
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0742.obj",
+          "sha256": "8993c5fa5182664b1a8d8945483f3a659c75f233dca3c11910b33eb4087e4dc7",
+          "identity": [
+            50,
+            13790145,
+            96495,
+            1794318423072103293,
+            1794318423072103293
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p18_g0697.obj",
+          "sha256": "0dd38b7885294c7f567217881b92eb7e65438f1054a0d0f89b6406e1755f1084",
+          "identity": [
+            50,
+            13790140,
+            96262,
+            1794318422360060166,
+            1794318422360060166
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0471.obj",
+          "sha256": "2589a828ab09908904aa9665030de018d185aed0874245576c3d3b7e4ebb6deb",
+          "identity": [
+            50,
+            13790148,
+            96671,
+            1794318423516130184,
+            1794318423516130184
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0498.obj",
+          "sha256": "4028db50f59ac29fa08e1673221973c94dff5153f88632add036c402afe0ca54",
+          "identity": [
+            50,
+            13790151,
+            96981,
+            1794318423944156106,
+            1794318423944156106
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0489.obj",
+          "sha256": "052841dc56f66df87f2f4059102ecd5893997f14e5c0098bfb1808db835c711e",
+          "identity": [
+            50,
+            13790150,
+            96239,
+            1794318423800147384,
+            1794318423800147384
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0480.obj",
+          "sha256": "7ee1b7298a4aedf67c4e3cdabb75856642970a53253a1ee7594974994489540c",
+          "identity": [
+            50,
+            13790149,
+            96193,
+            1794318423660138904,
+            1794318423660138904
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0516.obj",
+          "sha256": "fe7694d4d4b7e585e9c2dd97d28dafa5094bc23989fcd0943867415ee9096b1d",
+          "identity": [
+            50,
+            13790153,
+            97128,
+            1794318424236173786,
+            1794318424236173786
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0507.obj",
+          "sha256": "ccb8058c9b6ccfa5be3df7c79d23fb5bcba2cc94b32322bd29714687e7f9ad9b",
+          "identity": [
+            50,
+            13790152,
+            96723,
+            1794318424088164826,
+            1794318424088164826
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0561.obj",
+          "sha256": "dc2e161940689952823a1a995b63125ed21442661f1eba203b4f6e1af568bfc9",
+          "identity": [
+            50,
+            13790158,
+            96702,
+            1794318424952217145,
+            1794318424952217145
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0552.obj",
+          "sha256": "cbc64a9b060c7b5482a74f8b59d9e7bfda12902e9ff23fa0f0335ab29136749b",
+          "identity": [
+            50,
+            13790157,
+            96045,
+            1794318424808208425,
+            1794318424808208425
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0570.obj",
+          "sha256": "a99e787766bb8c517781a5c59a45460415c8b23aa6853f850ff327de91c3b802",
+          "identity": [
+            50,
+            13790159,
+            96210,
+            1794318425096225863,
+            1794318425096225863
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0579.obj",
+          "sha256": "389996ab7c4c0ad4c89ab06cf5eb4a226fac4250a4abadadfaefd42daaa9bd25",
+          "identity": [
+            50,
+            13790160,
+            96276,
+            1794318425240234581,
+            1794318425240234581
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0588.obj",
+          "sha256": "a84c4a900df664d5ca53a04ddc0ffb1d921c0863a234494b320bee95d9254b27",
+          "identity": [
+            50,
+            13790161,
+            96993,
+            1794318425404244509,
+            1794318425404244509
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0597.obj",
+          "sha256": "c09d93dfca8fedef679b58113842d419d6e1cb1b47e04780a9885f59f22a7b83",
+          "identity": [
+            50,
+            13790162,
+            96787,
+            1794318425548253228,
+            1794318425548253228
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0534.obj",
+          "sha256": "97f32cea780c58e07b4b57e76b37f12a7e3101377d2485001ad97a48634e6daf",
+          "identity": [
+            50,
+            13790155,
+            97402,
+            1794318424524191227,
+            1794318424524191227
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0525.obj",
+          "sha256": "a03a861d5cf3f3485b5044d27cd617bcd8e8441494466a06fa9f1519fa4064e9",
+          "identity": [
+            50,
+            13790154,
+            96851,
+            1794318424376182264,
+            1794318424376182264
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0543.obj",
+          "sha256": "5352cecbd180cdd1caed34f52ba9061f39309dd21a27629511d897b1b79dcb07",
+          "identity": [
+            50,
+            13790156,
+            96499,
+            1794318424664199705,
+            1794318424664199705
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0606.obj",
+          "sha256": "b0e7d45da0df5b630b3bfed4294f162418fc7413555496bc8a673665a38febfb",
+          "identity": [
+            50,
+            13790163,
+            97113,
+            1794318425692261946,
+            1794318425692261946
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0624.obj",
+          "sha256": "10a0f561f52deb97a88d042c013f849789d74c7e32d50f6489462299df975658",
+          "identity": [
+            50,
+            13790165,
+            97393,
+            1794318425980279382,
+            1794318425980279382
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0633.obj",
+          "sha256": "91be0fa0fae697166145c74da55fd5b1e9b11147849a3480f8a9979e87b0139a",
+          "identity": [
+            50,
+            13790166,
+            96549,
+            1794318426124288101,
+            1794318426124288101
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0642.obj",
+          "sha256": "7f5be7fe843225ef0e92dfaac708dbdf4a64c82298ab6e4a840a1dbc280a5bd1",
+          "identity": [
+            50,
+            13790167,
+            95962,
+            1794318426268296817,
+            1794318426268296817
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0651.obj",
+          "sha256": "dc4a87edc3317d289a665ad337bbe28bd0c4869498fd31a773178481533dc76e",
+          "identity": [
+            50,
+            13790168,
+            96698,
+            1794318426412305534,
+            1794318426412305534
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0615.obj",
+          "sha256": "213a9f904d12055480c1b27029ed097e2b9c1dc869421147bce07e3d68f77bdc",
+          "identity": [
+            50,
+            13790164,
+            96854,
+            1794318425836270664,
+            1794318425836270664
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0669.obj",
+          "sha256": "49a2283957d09f943c0097485a0d01cb08448cb2b9783d6ae08c6cd34b393a09",
+          "identity": [
+            50,
+            13790170,
+            96204,
+            1794318426704323209,
+            1794318426704323209
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0705.obj",
+          "sha256": "c91d40b443c992a148270375166835313e79697f0a55f5035b4f20ba1d918582",
+          "identity": [
+            50,
+            13790174,
+            96316,
+            1794318427292358800,
+            1794318427292358800
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0687.obj",
+          "sha256": "b664dc657b8b0239c68a02bf761bb9c3030d2166285353d03b4f6be5c6974ae7",
+          "identity": [
+            50,
+            13790172,
+            96752,
+            1794318427004341369,
+            1794318427004341369
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0696.obj",
+          "sha256": "a013b24d5e8ee19b535b887c6bf959f599f0c201ab8d7952639398868f07c39a",
+          "identity": [
+            50,
+            13790173,
+            96171,
+            1794318427148350085,
+            1794318427148350085
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0714.obj",
+          "sha256": "73be91de80f243cadf32b87a95c34dbc13867ce665a08bb9c361cb7cef671468",
+          "identity": [
+            50,
+            13790175,
+            96482,
+            1794318427436367517,
+            1794318427436367517
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0678.obj",
+          "sha256": "21272764a66a49ae733ddf8d69feddfe7ae56e57aa92564076c03fcd1b20c670",
+          "identity": [
+            50,
+            13790171,
+            96296,
+            1794318426848331928,
+            1794318426848331928
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3/inputs/source_export.json",
+          "sha256": "cf2ec0461bd516502880dca516b8f16ee610ae144ffa832d8e4f1ffa259b7256",
+          "identity": [
+            50,
+            14686741,
+            34359707,
+            1794548783459135572,
+            1794548783459135572
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/dense_trusses_20261110/patrol/up/inputs_proxy/proxy_meshes/p19_g0660.obj",
+          "sha256": "91822f7b783c5afcef5831506fb7b35f98f13a81a00efbeb2520b1001254dfed",
+          "identity": [
+            50,
+            13790169,
+            96210,
+            1794318426556314250,
+            1794318426556314250
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/side_farm_20261113_v3/inputs/sampled_plan.json",
+          "sha256": "2637b5a1f8e95306a75f2317ea9a5adc2fbbdf51fb2d02579f6440e1dc4063d5",
+          "identity": [
+            50,
+            14686740,
+            1683,
+            1794548781859048325,
+            1794548781859048325
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/assets/patrol_reuse385m_20261111/up/inputs/geometric_harvest.json",
+          "sha256": "20511c0ff5757eb32f5019980a8e590602d45c2d7e46e308c8830b174c55b34d",
+          "identity": [
+            50,
+            14686813,
+            198978,
+            1794372655472354152,
+            1794372655472354152
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/inputs/commands.npz",
+          "sha256": "2a511b5b4c2ea0718f1e97b9090172c0639816b3093043ea26fbb83ee9cc64f5",
+          "identity": [
+            50,
+            15081450,
+            91714,
+            1794574797524983366,
+            1794574797524983366
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/inputs/initial_state.npz",
+          "sha256": "bc5f0bb7c3c126be2bf3dfa37f1aabce5cfca01e45bc04770b1b8675bf64cdd5",
+          "identity": [
+            50,
+            15081448,
+            33735,
+            1794574797300972445,
+            1794574797300972445
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/inputs/sampled_plan.json",
+          "sha256": "f3cd54eb0428e5b1d698038249783e21c4ace88a6bd0050167636e816402ed30",
+          "identity": [
+            50,
+            15081449,
+            90434,
+            1794574797304972640,
+            1794574797304972640
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/physics/executed_commands.npz",
+          "sha256": "2a511b5b4c2ea0718f1e97b9090172c0639816b3093043ea26fbb83ee9cc64f5",
+          "identity": [
+            50,
+            15081456,
+            91714,
+            1794574798249018669,
+            1794574798249018669
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/inputs/inputs.json",
+          "sha256": "4916f3502a5d01f742bbe2b4f4b3741f627b4bf0ed0cf6dc06462875a346b7b9",
+          "identity": [
+            50,
+            15081452,
+            3190929,
+            1794574797596986877,
+            1794574797596986877
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/physics/final_states.npz",
+          "sha256": "715cd2a7a01607d80b90a0c2d04dfa60f742258025520e50e0628a98020fd2a9",
+          "identity": [
+            50,
+            15081463,
+            7666,
+            1794574812273703841,
+            1794574812273703841
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/physics/cumulative_break_events.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "identity": [
+            50,
+            15081464,
+            3,
+            1794574812273703841,
+            1794574812273703841
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        },
+        {
+          "path": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_alignment_repro_300/physics/summary.json",
+          "sha256": "d6c369b54a8d2464d1d978aa802b80db2207df9e294125c286a9f8a1ff98400e",
+          "identity": [
+            50,
+            15081455,
+            439843,
+            1794574812297705018,
+            1794574812297705018
+          ],
+          "read_only_model_loaded": false,
+          "model_read_path": null,
+          "verified_local_model_cache_used": false
+        }
+      ]
+    }
+  },
+  "physical_model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "maximum_active_penetration_m": 0.0,
+  "regression_tests": 137,
+  "error_status_updated": true,
+  "limits_and_physical_parameters_unchanged": true,
+  "scope": "Re-execution of the exact previously failing measured start and waypoint path with a longer pregrasp hold; no whole-route completion guarantee; geometric capture without force/detachment qualification",
+  "live": {
+    "status": "passed",
+    "pid": 953698,
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/staged_aligned_camera_20261113_220113",
+    "runtime": {
+      "mode": "v6_live_camera_patrol",
+      "recorded_replay": false,
+      "physics_clock_s": 19.958656311035156,
+      "running": true,
+      "phase": "camera_observation",
+      "station_m": 0.17480726540088654,
+      "lift_height_m": 0.7289153337478638,
+      "qpos": [
+        0.17480726540088654,
+        0.7289153337478638,
+        -0.9586791396141052,
+        0.16438966989517212,
+        2.2631173133850098,
+        -2.4206783771514893,
+        0.9640811085700989,
+        1.5705268383026123,
+        -0.02586238458752632,
+        0.026008035987615585
+      ],
+      "camera_position_world_m": [
+        0.0018789783266212785,
+        0.4266480244592592,
+        0.9791541414554521
+      ],
+      "camera_forward_world": [
+        -0.9645100638206545,
+        -0.002048553098744456,
+        -0.26403814159866784
+      ],
+      "observation_count": 13,
+      "harvest_motions": 2,
+      "geometric_harvest_count": 8,
+      "visual_native_max_position_error_m": 3.2487068343022356e-16
+    },
+    "staged_entry": [
+      {
+        "status": "passed",
+        "minimum_roller_clearance_before_entry_m": 0.10229730264548564,
+        "pregrasp_position_error_m": 0.0007981647260553278,
+        "maximum_line_error_m": 0.00420384618099788,
+        "requested_standoff_m": 0.1,
+        "stroke_m": 0.18297699377776258
+      },
+      {
+        "status": "passed",
+        "minimum_roller_clearance_before_entry_m": 0.10327640206446365,
+        "pregrasp_position_error_m": 0.0011108707524998102,
+        "maximum_line_error_m": 0.003041008257263464,
+        "requested_standoff_m": 0.1,
+        "stroke_m": 0.13384901963631438
+      }
+    ],
+    "autostart": true
+  }
+}

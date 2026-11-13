@@ -1,0 +1,50 @@
+{
+  "schema": "v6-lift-centre-scan-calibration-v2",
+  "model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "initial_command": [
+    0.0,
+    0.7289076167027491,
+    -0.9614371259574167,
+    0.16011332593427371,
+    2.2617663319089325,
+    -2.4218347583213014,
+    0.9614479001337989,
+    1.5707731723037743,
+    -0.026,
+    0.026
+  ],
+  "body_from_camera_optical": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      -5.353900742882667e-11
+    ],
+    [
+      0.0,
+      -0.25881904510252074,
+      0.9659258262890683,
+      0.017703177675747184
+    ],
+    [
+      0.0,
+      -0.9659258262890683,
+      -0.25881904510252074,
+      0.15251755822796872
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "service_centre_y_from_rail_origin_m": 0.4,
+  "source_validation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/scan_pose_probe.json",
+  "scope": "Robot joint/optical calibration only; camera X matches lift centre, crop-facing level tool, no fruit coordinates",
+  "scan_camera_position_world_m": [
+    0.00011301212914015257,
+    0.25009132930632977,
+    0.9801279272254255
+  ]
+}

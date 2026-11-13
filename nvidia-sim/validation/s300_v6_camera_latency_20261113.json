@@ -1,0 +1,226 @@
+{
+  "schema": "s300-v6-camera-latency-validation-v1",
+  "status": "passed",
+  "headless": {
+    "status": "passed",
+    "baseline": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_patrol_v5",
+    "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1",
+    "baseline_performance": {
+      "harvest_planning": {
+        "n": 25,
+        "mean_s": 2.529995925575495,
+        "maximum_s": 8.375096424948424,
+        "total_s": 63.24989813938737
+      },
+      "measured_audit": {
+        "n": 16,
+        "mean_s": 0.9469037451490294,
+        "maximum_s": 2.9804326030425727,
+        "total_s": 15.15045992238447
+      },
+      "physics_and_continuation": {
+        "n": 16,
+        "mean_s": 5.2541291175439255,
+        "maximum_s": 12.014738603960723,
+        "total_s": 84.06606588070281
+      }
+    },
+    "performance": {
+      "harvest_planning": {
+        "n": 25,
+        "mean_s": 1.7919399314466864,
+        "maximum_s": 4.418881164165214,
+        "total_s": 44.79849828616716
+      },
+      "measured_audit": {
+        "n": 16,
+        "mean_s": 0.8998130780673819,
+        "maximum_s": 2.517608553171158,
+        "total_s": 14.39700924907811
+      },
+      "physics_and_continuation": {
+        "n": 16,
+        "mean_s": 4.786357478471473,
+        "maximum_s": 9.713765525026247,
+        "total_s": 76.58171965554357
+      }
+    },
+    "baseline_wall_s": 181.0832440929953,
+    "wall_s": 153.4324534260668,
+    "baseline_simulated_s": 62.890499114990234,
+    "simulated_s": 63.636226654052734,
+    "physical_model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+    "geometric_fruits": 33,
+    "previously_verified_geometric_fruits_retained": true,
+    "actual_motion_state_checks": 13971,
+    "maximum_entry_angle_deg": 12.309956885087422,
+    "maximum_level_error_deg": 0.7468391555172953,
+    "cached_vs_native_camera_distance_maximum_error_m": 1.000001019491048e-10,
+    "camera_to_motion_latency": [
+      {
+        "step": 4,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_004/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1243909.509015072,
+        "capture_rpc_wall_s": 0.35087449895218015,
+        "harvest_planning_s": 2.2198868081904948,
+        "plan_ready_s": 2.240893976064399,
+        "input_preparation_s": 0.3353067261632532,
+        "physics_ready_s": 3.396596851060167,
+        "first_actual_arm_change_s": 3.4926389399915934,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 10,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_010/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1243931.086931094,
+        "capture_rpc_wall_s": 0.3962884040083736,
+        "harvest_planning_s": 2.969315988011658,
+        "plan_ready_s": 3.0021377198863775,
+        "input_preparation_s": 0.3760979741346091,
+        "physics_ready_s": 4.211143685039133,
+        "first_actual_arm_change_s": 4.3039981469046324,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 13,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_013/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1243948.616986384,
+        "capture_rpc_wall_s": 0.42486248002387583,
+        "harvest_planning_s": 4.175952046178281,
+        "plan_ready_s": 4.218486745143309,
+        "input_preparation_s": 0.4169868810568005,
+        "physics_ready_s": 5.520038542104885,
+        "first_actual_arm_change_s": 5.619503007037565,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 18,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_018/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1243973.07147996,
+        "capture_rpc_wall_s": 0.435481641208753,
+        "harvest_planning_s": 3.9602757471147925,
+        "plan_ready_s": 4.0103558748960495,
+        "input_preparation_s": 0.3788213338702917,
+        "physics_ready_s": 5.2846713019534945,
+        "first_actual_arm_change_s": 5.388155437773094,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 31,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_031/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1244014.558797135,
+        "capture_rpc_wall_s": 0.4581722600851208,
+        "harvest_planning_s": 4.418768797069788,
+        "plan_ready_s": 4.5015819140244275,
+        "input_preparation_s": 0.3780133849941194,
+        "physics_ready_s": 5.826071233022958,
+        "first_actual_arm_change_s": 5.924896320095286,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 33,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1/step_033/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1244032.828961619,
+        "capture_rpc_wall_s": 0.44831780600361526,
+        "harvest_planning_s": 2.3360181390307844,
+        "plan_ready_s": 2.425078719155863,
+        "input_preparation_s": 0.3815103769302368,
+        "physics_ready_s": 3.786164499120787,
+        "first_actual_arm_change_s": 3.8863731869496405,
+        "measured_motion_threshold_rad": 0.002
+      }
+    ],
+    "camera_render_mean_s": 0.10498061458846288,
+    "scope": "Same .5m/six-motion route and coverage policy; actual Newton GPU RGB-D/physics; geometric harvest, not physical detachment; headless latency excludes 1x browser presentation and is not a full realtime claim"
+  },
+  "physical_and_perception": {
+    "status": "passed",
+    "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_patrol_v1",
+    "status_at_end": "harvest_budget_reached",
+    "camera_selected_plans": 6,
+    "actual_gpu_camera": true,
+    "actual_gpu_physics": true,
+    "recorded_replay": false,
+    "harvested_motions": 6,
+    "geometric_fruits": 33,
+    "observation_count": 35,
+    "observation_instance_pixel_checks": 23583,
+    "subsequent_camera_hidden_checks": 449,
+    "state_checks": 13971,
+    "maximum_entry_angle_deg": 12.309956885087422,
+    "maximum_capture_translation_error_m": 1.6731963095172033e-05,
+    "maximum_active_penetration_m": 8.922859706217423e-06,
+    "source_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+    "last_station_m": 0.5004644393920898,
+    "simulated_s": 63.636226654052734,
+    "wall_s": 153.4324534260668,
+    "lift_working_max_m": 0.74,
+    "reach_tolerance_m": 0.005,
+    "physical_model_unchanged": true,
+    "state_preserved_between_segments": true,
+    "solver_contact_caches_rebuilt": true,
+    "scope": "Visible SIM-GT labels plus optical-Z depth; geometric harvest credit, no physical detachment; not full-route coverage or realtime qualification"
+  },
+  "live_controls": {
+    "status": "passed",
+    "start_to_physics_s": 0.2008046768605709,
+    "camera_to_motion_latency": [
+      {
+        "step": 4,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_camera_qa_20261113_203057/step_004/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1244130.319687869,
+        "capture_rpc_wall_s": 0.37387948599644005,
+        "harvest_planning_s": 2.293415531050414,
+        "plan_ready_s": 2.3170957991387695,
+        "input_preparation_s": 0.3580835049506277,
+        "physics_ready_s": 3.494462381117046,
+        "first_actual_arm_change_s": 3.6255860819946975,
+        "measured_motion_threshold_rad": 0.002
+      },
+      {
+        "step": 10,
+        "observation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/latency_camera_qa_20261113_203057/step_010/camera/observation.json",
+        "status": "actual_arm_motion_observed",
+        "camera_returned_monotonic_s": 1244155.43963018,
+        "capture_rpc_wall_s": 0.414172199787572,
+        "harvest_planning_s": 3.093032696051523,
+        "plan_ready_s": 3.1278279651887715,
+        "input_preparation_s": 0.34497918584384024,
+        "physics_ready_s": 4.318150424165651,
+        "first_actual_arm_change_s": 4.436549843056127,
+        "measured_motion_threshold_rad": 0.002
+      }
+    ],
+    "pause_clock_stable": true,
+    "pause_qpos_stable": true,
+    "completed_harvest_motions": 2,
+    "geometric_fruits": 8,
+    "maximum_display_native_error_m": 1.1857187100668868e-16
+  },
+  "offline_profile_comparison": [
+    {
+      "saved_step": 0,
+      "baseline_profiled_total_s": 3.0555934060000025,
+      "profiled_total_s": 1.7726777669999998
+    },
+    {
+      "saved_step": 4,
+      "baseline_profiled_total_s": 2.804142823000002,
+      "profiled_total_s": 2.2881880319999968
+    }
+  ],
+  "regression_tests": 135,
+  "limitations": [
+    "Geometric harvest credit; no physical detachment or force qualification",
+    "Motion preparation remains synchronous; not immediate response",
+    "Same route and retained fruit set, but not identical detailed command paths; wall time is workload evidence, not an isolated hardware speed benchmark",
+    "Live latency includes all waiting after the selected image returns; multiple failed decisions on earlier images add further delay"
+  ]
+}

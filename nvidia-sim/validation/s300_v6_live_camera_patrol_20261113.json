@@ -1,0 +1,66 @@
+{
+  "status": "passed",
+  "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_camera_patrol_v7",
+  "status_at_end": "harvest_budget_reached",
+  "camera_selected_plans": 4,
+  "actual_gpu_camera": true,
+  "actual_gpu_physics": true,
+  "recorded_replay": false,
+  "harvested_motions": 4,
+  "geometric_fruits": 27,
+  "observation_count": 18,
+  "observation_instance_pixel_checks": 12163,
+  "subsequent_camera_hidden_checks": 169,
+  "state_checks": 11419,
+  "maximum_entry_angle_deg": 14.21805024930472,
+  "maximum_capture_translation_error_m": 0.000723684624784666,
+  "maximum_active_penetration_m": 3.188008486176841e-05,
+  "source_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "last_station_m": 0.527168869972229,
+  "simulated_s": 52.03959274291992,
+  "wall_s": 91.11139904917218,
+  "lift_working_max_m": 0.74,
+  "reach_tolerance_m": 0.005,
+  "physical_model_unchanged": true,
+  "state_preserved_between_segments": true,
+  "solver_contact_caches_rebuilt": true,
+  "scope": "Visible SIM-GT labels plus optical-Z depth; geometric harvest credit, no physical detachment; not full-route coverage or realtime qualification",
+  "schema": "s300-v6-live-camera-patrol-validation-v1",
+  "date": "2026-11-13",
+  "unit_tests_passed": 112,
+  "gui": {
+    "status": "passed",
+    "actual_websocket_controls": true,
+    "checks": [
+      "initial camera ready without movement",
+      "start actual physics",
+      "pause qpos and clock stable",
+      "resume",
+      "two jaw cycles and live camera harvest completed"
+    ],
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/live_camera_qa_20261113_170747",
+    "final_clock_s": 12.322698593139648,
+    "geometric_fruits": 7,
+    "visual_native_max_error_m": 4.509747244882934e-16
+  },
+  "deployed": {
+    "port": 5906,
+    "mode": "v6_live_camera_patrol",
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/live_camera_20261113_170940",
+    "end_station_m": 3.85,
+    "waits_for_start": true
+  },
+  "perception": "Existing occlusion-aware GPU RGB-D and SIM-GT instance/ripeness labels; no learned detector or hidden fruit centres for target aim",
+  "camera_targets_fresh": true,
+  "maximum_active_penetration_limit_m": 0.001,
+  "preserved": [
+    "source physical MJB",
+    "source plant geometry",
+    "5905 service",
+    "ROS2 service"
+  ],
+  "validation_sources": [
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_camera_run_validation.json",
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_camera_live_controls_validation.json"
+  ]
+}

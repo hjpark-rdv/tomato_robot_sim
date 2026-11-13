@@ -1,0 +1,89 @@
+{
+  "schema": "s300-v6-level-entry-centre-scan-validation-v1",
+  "date": "2026-11-13",
+  "status": "passed",
+  "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_scan_patrol_v5",
+  "actual_gpu_physics": true,
+  "actual_gpu_camera": true,
+  "recorded_replay": false,
+  "unit_tests_passed": 126,
+  "source_physical_model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "physical_model_unchanged": true,
+  "camera_position_initial_world_m": [
+    0.00011301212914015257,
+    0.25009132930632977,
+    0.9801279272254255
+  ],
+  "camera_retreat_m": 0.302928,
+  "service_centre_y_m": 0.4,
+  "maximum_level_tilt_deg": 0.6593940819248089,
+  "level_limit_deg": 1.5,
+  "harvest_motions": 4,
+  "geometric_fruits": 28,
+  "last_station_m": 0.9624289870262146,
+  "simulated_s": 47.55610656738281,
+  "wall_s": 129.81848037196323,
+  "captures": [
+    {
+      "step": "step_005",
+      "fruit_count": 6,
+      "position_error_m": 2.5729790882308585e-06,
+      "level_error_deg": 0.5271634337037723,
+      "entry_normal_angle_deg": 14.26091770807474
+    },
+    {
+      "step": "step_011",
+      "fruit_count": 6,
+      "position_error_m": 1.9725331825457277e-06,
+      "level_error_deg": 0.5616402494258657,
+      "entry_normal_angle_deg": 14.232504793829827
+    },
+    {
+      "step": "step_032",
+      "fruit_count": 8,
+      "position_error_m": 2.610759432436852e-06,
+      "level_error_deg": 0.5382261320262035,
+      "entry_normal_angle_deg": 14.248024817388401
+    },
+    {
+      "step": "step_044",
+      "fruit_count": 8,
+      "position_error_m": 2.0264601607047504e-06,
+      "level_error_deg": 0.6593940819248089,
+      "entry_normal_angle_deg": 14.226149823831802
+    }
+  ],
+  "simulation_command_speed_factor": 1.35,
+  "two_jaw_cycles_preserved": true,
+  "inserted_two_cycle_duration_before_s": 5.448386676965933,
+  "inserted_two_cycle_duration_after_s": 3.1351012421969875,
+  "gui": {
+    "status": "passed",
+    "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_camera_qa_20261113_172852",
+    "start_to_first_physics_s": 0.7336900548543781,
+    "pause_preserves_clock_and_qpos": true,
+    "native_gpu_prepared_before_start": true,
+    "visual_native_max_error_m": 3.597533769998862e-16
+  },
+  "deployed": {
+    "port": 5906,
+    "pid": 583691,
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_camera_20261113_173032",
+    "waits_for_start": true,
+    "physics_clock_s": 0.0
+  },
+  "scope": "SIM-GT labels and depth select fresh visible fruit; geometric credit only. Native collision/IK/continuation checks still cause pauses; no overall realtime or throughput improvement claim. Horizontal yaw stays within original 15 degrees while vertical pitch/roll are level.",
+  "evidence": [
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_camera_controls_validation.json",
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_scan_run_validation.json"
+  ],
+  "full_run_evidence_checks": {
+    "status": "passed",
+    "observation_count": 45,
+    "observation_instance_pixel_checks": 35210,
+    "subsequent_camera_hidden_checks": 556,
+    "state_checks": 10428,
+    "maximum_active_penetration_m": 0.00047296512639150023,
+    "state_preserved_between_segments": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "v6-camera-ready-joint-calibration-v1",
+  "model_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "initial_command": [
+    0.0,
+    0.75,
+    -1.986811153803358,
+    0.01130862568532029,
+    2.2617019828378586,
+    -2.314050399729963,
+    2.0594764206421052,
+    1.0894913673421716,
+    -0.026,
+    0.026
+  ],
+  "body_from_camera_optical": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      -5.353900742882667e-11
+    ],
+    [
+      0.0,
+      -0.25881904510252074,
+      0.9659258262890683,
+      0.017703177675747184
+    ],
+    [
+      0.0,
+      -0.9659258262890683,
+      -0.25881904510252074,
+      0.15251755822796872
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "service_centre_y_from_rail_origin_m": 0.25,
+  "source_validation": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/side_farm_left_camera_start_v1/camera_validation/validation.json",
+  "scope": "Robot joint/optical calibration only; contains no fruit target coordinates"
+}

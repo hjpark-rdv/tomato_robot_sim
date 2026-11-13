@@ -1,0 +1,101 @@
+{
+  "status": "passed",
+  "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_patrol_v5",
+  "status_at_end": "harvest_budget_reached",
+  "camera_selected_plans": 6,
+  "actual_gpu_camera": true,
+  "actual_gpu_physics": true,
+  "recorded_replay": false,
+  "harvested_motions": 6,
+  "geometric_fruits": 33,
+  "observation_count": 35,
+  "observation_instance_pixel_checks": 23512,
+  "subsequent_camera_hidden_checks": 449,
+  "state_checks": 13807,
+  "maximum_entry_angle_deg": 12.411517710151143,
+  "maximum_capture_translation_error_m": 1.5376276227293392e-05,
+  "maximum_active_penetration_m": 0.00012587940727826208,
+  "source_model_mjb_sha256": "4594f6cff5cf586396162c9bc4817a54b924d359bedffc0f1c091f7ba3d4107b",
+  "last_station_m": 0.5004637241363525,
+  "simulated_s": 62.890499114990234,
+  "wall_s": 181.0832440929953,
+  "lift_working_max_m": 0.74,
+  "reach_tolerance_m": 0.005,
+  "physical_model_unchanged": true,
+  "state_preserved_between_segments": true,
+  "solver_contact_caches_rebuilt": true,
+  "scope": "Visible SIM-GT labels plus optical-Z depth; geometric harvest credit, no physical detachment; not full-route coverage or realtime qualification",
+  "schema": "s300-v6-visible-coverage-validation-v1",
+  "date": "2026-11-13",
+  "unit_tests_passed": 132,
+  "maximum_level_tilt_deg": 0.7654099266050408,
+  "level_tilt_limit_deg": 1.5,
+  "nominal_yaw_candidates_deg": [
+    0,
+    -12,
+    12
+  ],
+  "minimum_static_grasp_contact_clearance_m": 0.0005,
+  "original_motion_penetration_limit_m": 0.001,
+  "single_visible_cleanup": true,
+  "maximum_footprints_per_view": 6,
+  "changed_forward_view_minimum_m": 0.12,
+  "maximum_changed_view_reopen_count_per_truss": 1,
+  "physical_attempt_limit_per_fruit": 3,
+  "geometric_comparison": {
+    "baseline": {
+      "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/level_scan_patrol_v5",
+      "maximum_station_m": 0.502,
+      "completed_reached_grips": 2,
+      "geometric_fruit_count": 12,
+      "previously_observed_ripe_captured_count": 12
+    },
+    "updated": {
+      "run": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_patrol_v5",
+      "maximum_station_m": 0.502,
+      "completed_reached_grips": 6,
+      "geometric_fruit_count": 33,
+      "previously_observed_ripe_captured_count": 28
+    }
+  },
+  "new_observed_ripe_captured_keys": [
+    "/World/Greenhouse/Plants/Plant_17/Truss_01/Fruit_01",
+    "/World/Greenhouse/Plants/Plant_18/Truss_01/Fruit_01",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_01",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_02",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_03",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_04",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_05",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_07",
+    "/World/Greenhouse/Plants/Plant_18/Truss_02/Fruit_08",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_01",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_02",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_03",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_04",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_05",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_07",
+    "/World/Greenhouse/Plants/Plant_19/Truss_01/Fruit_08"
+  ],
+  "comparison_scope": "Earlier trace through 0.502m compared with the new 0.5m budgeted run; same source model/farm, changed policy. Counts are geometric credit, not physical detachment or a throughput benchmark.",
+  "gui": {
+    "status": "passed",
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_camera_qa_20261113_175455",
+    "start_to_first_physics_s": 0.40151172201149166,
+    "completed_harvest_motions": 2,
+    "geometric_fruits": 8,
+    "pause_clock_and_qpos_preserved": true,
+    "visual_native_max_error_m": 1.1857187100668868e-16
+  },
+  "deployed": {
+    "pid": 623883,
+    "port": 5906,
+    "output": "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_camera_20261113_175736",
+    "end_station_m": 3.85,
+    "ready_and_paused": true
+  },
+  "source_evidence": [
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_run_validation.json",
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_comparison.json",
+    "/root/farmily_runtime/newton/runs/20261113_conveyor_bin/coverage_camera_controls_validation.json"
+  ]
+}

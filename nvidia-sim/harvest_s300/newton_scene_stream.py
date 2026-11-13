@@ -25,7 +25,12 @@ def _camera_worker(connection,assets,manifest_path,index,scale,poses,body,log):
             started=time.perf_counter()
             from newton_mounted_camera import MountedCamera
             manifest=json.loads(Path(manifest_path).read_text());section=manifest['chunks'][index]
-            camera=MountedCamera(assets,scale=scale,packed=(Path(manifest_path).parent,section,manifest))
+            config=json.loads((Path(assets)/'patrol_assets.json').read_text())
+            if config.get('side_camera_patrol'):
+                from side_camera_scene import prepared_sensor_scene
+                prepared=prepared_sensor_scene(assets,manifest_path,index)
+                camera=MountedCamera(assets,scale=scale,prepared_scene=prepared)
+            else:camera=MountedCamera(assets,scale=scale,packed=(Path(manifest_path).parent,section,manifest))
             # Trigger ray tracer kernels, BVH and image allocation before READY.
             camera.capture(poses,body,0.)
             connection.send(dict(kind='ready',setup_wall_s=camera.setup_wall_s,ready_wall_s=time.perf_counter()-started))

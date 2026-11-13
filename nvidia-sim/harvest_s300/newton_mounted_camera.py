@@ -35,10 +35,13 @@ def shape_instances(shape_image, lut):
 
 
 class MountedCamera:
-    def __init__(self, assets, *, device='cuda:0', scale=1., packed=None):
+    def __init__(self, assets, *, device='cuda:0', scale=1., packed=None, prepared_scene=None):
         assets=Path(assets);started=time.perf_counter()
         self.assets=json.loads((assets/'patrol_assets.json').read_text())
-        if packed is None:
+        if prepared_scene is not None:
+            if packed is not None:raise ValueError('Choose one prepared sensor scene')
+            self.visual,catalog,scene_provenance=prepared_scene
+        elif packed is None:
             catalog=json.loads((assets/'sensor_catalog.json').read_text())
             self.visual=mj.MjModel.from_xml_path(str(assets/'model/scene.xml'))
         else:
@@ -55,10 +58,10 @@ class MountedCamera:
             raise ValueError('Sensor catalog references absent visual geometry')
         if any(int(i) not in self.objects for i in catalog['geom_to_instance'].values()):
             raise ValueError('Sensor geometry references absent instance identity')
-        self.provenance=dict(visual_xml_sha256=sha256(assets/'model/scene.xml') if packed is None else manifest['source_hashes']['model/scene.xml'],
+        self.provenance=(dict(scene_provenance) if prepared_scene is not None else dict(visual_xml_sha256=sha256(assets/'model/scene.xml') if packed is None else manifest['source_hashes']['model/scene.xml'],
             sensor_catalog_sha256=sha256(assets/'sensor_catalog.json') if packed is None else manifest['source_hashes']['sensor_catalog.json'],
             mounted_camera_sha256=(sha256(assets/'patrol_assets.json') if 'mounted_rgbd' in self.assets else
-                sha256(Path(self.assets['plants'][0]['assembly'])/'mounted_rgbd.json')))
+                sha256(Path(self.assets['plants'][0]['assembly'])/'mounted_rgbd.json'))))
         if packed is not None:self.provenance['packed_geometry_sha256']=section['geometry_sha256']
         if 'camera_relocation' in self.assets:
             relocation=self.assets['camera_relocation']
