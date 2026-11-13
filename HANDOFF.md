@@ -1,3 +1,235 @@
+## 2026-11-13 작업 저장
+
+- 사용자 요청으로 미커밋 ROS2·OMPL 연동과 5906 V1~V6 형상/컨베이어/도달 검사/중앙 카메라 장착 작업을 함께 저장한다. Python 회귀68개, ROS2 메시지·플래너 회귀8개 및 쉘 문법/diff 공백 검사 통과.
+- V6 카메라 덮개 홈의 boolean 연산에 필요한 `manifold3d==3.5.4`를 기존 Newton viewer 설치 목록에 추가했다. 현재 검증 환경과 같은 버전이며 실행 중인 5906 서비스는 유지한다.
+
+## 2026-11-13 최신: V6 카메라 안쪽 삽입 및 승인된 덮개 홈
+
+- 사용자가 카메라를 표시한 중앙 브래킷 쪽으로 최대한 넣도록 요청했다. 현재 덮개를 유지하면 약13.3mm만 더 들어갈 수 있었고, 목표 위치에서는 닫히는 윗덮개와 겹쳤다. 사용자가 명시적으로 **카메라 자리만큼 덮개에 홈을 내고 안쪽으로 장착**을 선택했다. V6/5906에서만 적용하며 원본 CAD/생산 물리/ROS/5905/V1~V5는 유지한다.
+- `preview_gripper_camera.py`: 원래 카메라 크기/세로 설치/하향15도를 유지하고 Tool_fixed Y축으로67.5mm 후퇴, Z축으로18mm 상승했다. 하우징 AABB 하단 Y=-27.5mm/Z=78mm. 상승은 이동 경로에서 카메라가 수확 중심보다10mm 이상 위에 머물도록 하기 위함이다. 장착대 길이는92→22mm로 줄였다. mount schema `v6-gripper-recessed-portrait-rgbd-v2`, posture policy `v6-recessed-camera-no-yaw-turn-v5`.
+- 두 윗덮개 g0307/g0428에만 원본 복사본의 manifold boolean 차집합을 적용한다. 완전히 닫힌 Tool 기준 홈 X±16mm/Y[-30,24]mm/Z[75,108]mm; 각 홈은 Tool_L/R의 실제 슬라이더와 함께 움직인다. 덮개 재료 제거 비율은 각각4.526%/3.813%, 남은 메시 watertight. `recessed_camera_cover_geometry.json`: 남은 CAD 정점+면 중심3260개가 보수적 거리 검사 상자들에 모두 포함됨을 확인했다. V1~V5에서는 손대지 않은 원본 덮개/카메라가 표시된다.
+- CameraClearance는 해당 두 덮개와 카메라 사이의 거리만 홈을 제외한 보수적 상자7개로 검사한다. 기존 덮개 native collider/mask는 다른 팔·환경 충돌 검사에 그대로 남겨 보수성을 유지한다. 거리 질의용 비활성 두 geom 슬롯만 사용하며 실제 접촉/질량/BVH는 바꾸지 않는다. 같은 고정 Tool에 붙은 두 X 슬라이더임을 확인한 후 정확한 턱 좌표를 키로 거리 결과를 캐시한다(반올림 없음). 덮개가 없어졌다고 가정하거나 카메라 충돌을 통째로 제외하지 않는다.
+- 회귀40개 및 컴파일/diff 공백 검사 통과. 새 회귀는 홈 밖의 재료 보존과 턱이 움직여 홈 가장자리가 카메라에 닿을 때 거절되는지를 확인한다. `camera_recess_scan*`/`camera_recess_candidate_checks*`는 설계 탐색 자료이고, 원래 source 설치 FK로 얻은 높이는 실제 V6 검증값이 아니다. 최종 검증에는 V6 설치 패치를 사용한다.
+
+- `side_motion_recessed_camera_v1`: 기존2765자세/798선분/146cycle(오른쪽67/왼쪽79)을 유지하고182365개 정밀 표본 통과. trajectory SHA는 이전과 동일. 카메라 하단-수확 중심 최소14.014202mm, 하우징/남은 덮개 등과의 최소 간격2.5mm. yaw 한 바퀴 금지/기둥100mm/기존 관절범위 유지. `recessed_camera_recertification_v1.log` 참조. 도달 범위를 새로 탐색한 것이 아니라 기존 전체 동작을 새 장착에 재검사한 것이다.
+- 5906 새 실행 PID375288, tmux `farmily_preview:viewer5906`, output `preview_recessed_camera_20261113_141456`, plan `side_motion_recessed_camera_v1/grip_motion.json`. 자동재생을 빼 장착 모습을 정적으로 확인할 수 있게 시작한다. process/launch/start_5906_latest.sh 및 hanging_preview/process.json 갱신. 이전 기록은 *_before_recessed_camera_*에 보존했다.
+
+- 새 viewer의 fresh 경로 재검사 통과. `recessed_camera_preview_validation.json`/`recessed_camera_live_samples.json`: 실제 양쪽 진입·닫기·열기·후퇴, 광학 extrinsic/리프트·어댑터 추종 및30개 재생 표본 검사. live 하우징 간격2.5mm/카메라 높이29.257041mm/기둥104.519893mm, 원본 자산 SHA 동일. Newton 동역학이나 실제 제작 강성 검사는 수행하지 않았다.
+
+- 브라우저 HTTP200/JS오류0/새 접속 정지 유지 통과(`recessed_camera_browser_validation.json`). 실제 정면/측면 렌더 `recessed_camera_mount.png`, `recessed_camera_mount_side.png`를 열어 카메라 후퇴와 중앙 장착을 확인했다. 첫 GUI QA는 CSS value 속성 선택자가 실제 입력값을 찾지 못해 timeout; 시점의 접근성 label/option으로 선택자를 고쳐 재검사 통과(제품 코드 변경 불필요). 최종 V6 시작 자세/일시정지/검사지점 숨김/1배속. 사용자 브라우저의 시점/마우스 orbit은 변경하지 않았다. 새 커밋/푸시는 하지 않았다.
+
+## 2026-11-13 최신: V6 리얼센스 중앙 브래킷 이동
+
+- 사용자 캡처의 파란 세로 박스: 손목 아래, 두 롤러 사이 중앙 브래킷에 기존 리얼센스 CAD를 옮긴다. 5906 V6만 적용. `preview_gripper_camera.py`가 원래 25×25×90mm 하우징을 재사용하고 기존 손목 장착대를 V6에서 숨긴다. 카메라는 Tool_fixed를 따라 실제 wrist3 yaw와 함께 회전한다. 세로 설치/아래15도 유지, 짧은 장착대는 가정 치수다. V1~V5 선택 시 원래 Robot_link5 카메라/장착대를 복원한다.
+- 새 mount schema `v6-gripper-central-portrait-rgbd-v1`. Tool_fixed 기준 하우징 보수적 AABB X±12.5mm, Y40~87.473mm, Z60~153.335mm. 원래 광학 보정으로 CAD를 optical frame으로 변환해 새 장착 변환을 구한다. preview/runtime JSON에 `active_camera_body`, `world_from_camera_optical`를 기록한다. 원본 CAD/입력 MJB/initial/생산 RGB-D 보정 및 ROS/5905는 변경하지 않았다.
+- 요청한 위치는 수확영역 상단과 일부 겹치므로 카메라 하단 높이 기준을 **수확영역 중심+10mm**로 바꿨고 사용자에게 설명했다(기존 전체영역 최상단+10mm와 다름). `v6-central-camera-no-yaw-turn-v4` 정책에 mount 전체를 포함해 구 mount 경로의 무검증 재사용을 차단한다. no-yaw-turn, wrist3±170도, 기둥100mm, elbow20~140도, wrist1±150도, 전완 상향10도 조건 유지.
+- 카메라는 원본 물리 모델에 충돌 geom이 없는 시각 부품이었다. `CameraClearance`가 private native MuJoCo 비활성 geom 슬롯을 OBB 거리 질의에만 사용한다. contact mask/body/BVH를 바꾸지 않고 같은 fixed body의 부품도 명시적으로 검사하며 활성 팔/그리퍼/보관함·차체 장애물과2mm 이상 여유를 요구한다. 실제 카메라 질량이나 Newton 동역학을 추가한 것은 아니다. 장착대의 강성·시야 가림·실제 RGB-D 프레임은 검증 범위 밖이다.
+- `side_motion_central_camera_v2`는 기존 v3의2765저장 자세/798선분/146수확 cycle(오른쪽67/왼쪽79)을 그대로 재검사했다. trajectory SHA `99937c34d6c83e361c042b367a84af768c998cadec17f5a1014f87aa20e71aa2` 동일. 정밀182365표본 통과, 카메라 높이 최소11.104868mm/하우징 간격5.499998mm, world yaw 약0~180도/손목3최대90.027971도. `central_camera_recertification_v2.log` 참조. 중간 v1는 카메라 거리 검사 추가 전에 중단했으므로 배포하지 않는다.
+- 관련38회귀(카메라 같은-body 간섭/Tool yaw 추종/legacy optical 유지/새 높이 기준 포함), 파이썬 컴파일 및 diff 공백 검사 통과. `시점 → 카메라 장착부`는 선택 시 한 번만 확대하며 기존 마우스 orbit을 추적 덮어쓰기 하지 않는다.
+- 5906 새 실행 PID350300, tmux `farmily_preview:viewer5906`, `preview_central_camera_20261113_135012`, `--side-plan .../side_motion_central_camera_v2/grip_motion.json`. process/launch/start_5906_latest.sh 및 hanging_preview/process.json 갱신, 이전 실행은 *_before_central_camera_*에 보존. 배포 후 전체 fresh 경로 검사와 실제 GUI 점검 결과는 아래에 기록한다.
+
+- 배포 viewer fresh 경로 검사 통과. `central_camera_preview_validation.json`/`central_camera_live_samples.json`: HTTP200, 양쪽 낮은 진입·닫기·열기·후퇴와 실제30프레임 검사. 광학 world transform은 Tool FK×새 optical extrinsic과 일치, 리프트.417325~.75m 추종. live 카메라 높이최소13.668584mm/하우징간격5.500759mm/기둥104.519893mm, source hash동일. 이 표본 최소값과 전체 경로 최소값은 구별한다.
+
+- `central_camera_browser_validation.json`: 실제 브라우저 HTTP200/JS오류0/새 접속의 일시정지 유지. `central_camera_mount.png`에서 기존 카메라가 손목 위가 아닌 두 롤러 사이 중앙 위쪽에 있는 것을 확대 확인했다. 첫 headless Chromium 실행은 페이지 접속 전 SIGSEGV로 종료되었고 재실행은 정상 통과했다. QA 브라우저만 기존 SwiftShader 설정을 사용했다. 최종 상태는 V6 시작 자세/일시정지/검사지점 숨김/1배속으로 장착 위치를 보기 쉽게 두었으며, 사용자 브라우저는 `시점 → 카메라 장착부`로 확대 가능하다. 커밋/푸시는 하지 않았다.
+
+## 2026-11-13 최신: V6 그리퍼 yaw 한 바퀴 회전 차단 완료
+
+- 사용자 추가 조건: 그리퍼가 yaw 방향으로 한 바퀴 돌아서는 안 된다. 5906 V6에만 적용했다. `side_yaw_diagnostic/diagnostic.json`으로 기존 v2 저장 경로에서 실제 Tool_fixed +Y 세계 yaw가 약360도 도는 연결4개를 확인했다. 손목3 관절만 제한해도 해결되지 않는 결합 회전이었다(일부 wrist3는-270도 동등회전 분기도 사용).
+- `preview_posture.side_posture_policy`를 `v6-camera-up-no-yaw-turn-v3`로 변경: world heading -30~210도(오른쪽0/시작90/왼쪽180), forward 수평 투영>=.25, 실제 wrist3 범위±170도. 금지된 뒤쪽 sector를 넘어 한 바퀴 돌거나 수직 방향에서 yaw 정의를 우회할 수 없다. 표시각만 wrapping하지 않으며 모든 IK/OMPL 상태·shortcut·저장 선분·역재생·fresh 로딩에 적용한다. 카메라10mm상단/기둥100mm/엘보우20~140/wrist1±150/전완상향10/진입15도 조건은 그대로다. 기존 V5 정책/원본 모델·CAD/5905/ROS는 유지했다.
+- 이전 경로는 재생하지 않고 `side_motion_v3`를 새로 생성했다. v2 좌표는 IK 씨앗으로만 사용하고 새 working bounds 안의 동등 회전을 고른 뒤 모든 경로를 새 검사한다. 실제 재생 각도를 순간 정규화하지 않는다. 회전 동등값이 범위에 없으면 명시적으로 거절한다. viewer에 'yaw 한 바퀴 회전 금지 · 이동 경로 전체 검사'를 표시한다.
+- 새450점 중 local164개, 완전연결146개(오른쪽67/왼쪽79; 이전152개보다6개 감소). 양쪽55cm 낮은 지점은 유지했다. 경로 독립 collision/posture 정밀 표본 182,365개 통과. 카메라 최소 119.3006mm, wrist3 절대최대 90.027971도, 최대 진입편차 14.001576도, 최대 표본 관통 0.876900mm. 제한된 탐색 실패는 기하학적으로 불가능하다는 증명이 아니다.
+- 별도 `side_yaw_path_validation.json`: 같은 저장 선분 182,365표본의 native FK를 다시 계산하고 unwrap한 실제 tool yaw를 검사. 정·역 전체 yaw 범위 [-0.0005068361113377491, 180.00029513316917], 한 구간 최대 yaw 폭 90.000017도,360도 구간0, 정역 순회 net0. `side_yaw_summary.json`에 높이별/기존비교/전체 제약 결과 기록.
+- 35개 회귀 통과: endpoint는 같지만 내부에서360도 도는 경로 차단, 좌우180도 전환/역방향 허용, 수직yaw우회 차단, wrist3±360 alias명령 거절, yaw검사 없는 구V6계획 재계획 요구. GUI 파이썬 컴파일 및 diff 공백 검사 통과.
+- 현재5906 PID325455, tmux `farmily_preview:viewer5906`, 출력 `preview_side_yaw_20261113_132539`, `--side-plan .../side_motion_v3/grip_motion.json --autoplay`. process/launch/start_5906_latest.sh 및 hanging_preview/process.json 갱신, 이전 기록 *_before_side_yaw_*에 보존. 새 viewer 로딩에서 전체 선분을 다시 검사했다.
+- 실제 GUI `side_yaw_preview_validation.json`/`side_yaw_live_samples.json`: 양쪽 낮은 진입·닫기·열기·후퇴/리프트·카메라·기둥·yaw·실제손목각 검사, 29개 재생 표본. 브라우저 HTTP200/JS오류0/새 접속 일시정지 보존, `side_yaw_lower_pose.png` 화면 확인. 마지막은 검사지점 표시 켬/1배속/처음부터 재생. 새 Newton 동역학·토마토 접촉력·실기 검증이나 커밋/푸시는 하지 않았다.
+
+## 2026-11-13 최신: V6 카메라 상단 유지와 하단 도달 개선 완료
+
+- 사용자 요청: 카메라가 그리퍼 아래로 내려가는 자세 금지, 리프트와 조합해 표시 영역 하단 도달 개선. 5906 V6만 변경했다. V1~V5/5905/ROS/원본 CAD·물리 자산은 유지한다. V6 리프트 모터/상판은 이전처럼 숨김이다.
+- `preview_posture.side_posture_policy(scene)`는 실제 link5 카메라 하우징 CAD `s300_g0092`의 보수적 body AABB를 기록한다. 카메라 최하단이 수확 영역 최상단보다10mm 이상 높아야 하며 모든 저장·보간·진입·턱 동작·후퇴·연결 상태에 적용한다. 기존 기둥100mm/엘보우20~140도/wrist1±150도/전완상향10도 조건 유지. V5 POSTURE_POLICY는 그대로이고 V6는 `v6-camera-above-grip-and-mast-clearance-v2`로 이전 V6 계획의 재사용을 거절한다. 이전80개 cycle 중18개는 카메라가 아래인 자세였다(`side_camera_diagnostic/camera_diagnostic.json`).
+- 기존 chassis mesh g0045/g0050/g0052는 떨어진 휠·데크·콘솔 부품들을 합친 convex hull이라 빈 공간까지 막았다. `preview_side_collision.py`: V6 private collision 복사본에서만 연결된 CAD 부품별 보수적 AABB로 대체한다. 복잡한 부품은 최소 추가 체적 병합으로64박스 이하. L자 리프트 받침2개는25mm 높이 단위로 triangle edge를 clipping해 빈 모서리 공간을 보존한다. 모든 박스에1mm 여유를 더하며 CAD를 삭제·축소하지 않는다. V6 장애물162개/native slots224개. 새 박스가 원래 CAD의666,303개 정점+면 중심을 모두 포함함을 `side_camera_diagnostic/cad_coverage_validation.json`에 확인했다.
+- `preview_side_search.py`: 같은 엘보우 부호에서 실제 리프트0~.75m와 진입 pitch/yaw0/±14도를 명시적으로 탐색하고 전체 local cycle까지 검사한다. 기존350점에60/65cm 높이100점을 추가해450점 검사. `side_motion_v2/grip_motion.json`: local153개, 연결포함152개(오른쪽73/왼쪽79), 동일 기존350점에서는80→116개. 지면 기준 수확 중심55cm에서 양쪽3개씩,60cm 양쪽8개씩,65cm 양쪽10개씩 통과.40cm 구간은 통과 경로를 못 찾음(보관함 벽/롤러/기둥 간섭 등). 유한 후보 탐색이며 빨강은 기하학적 불가능의 증명이 아니다.
+- 최종203,480개 정밀 표본 감사 통과. 카메라 최소 높이 여유10.2325mm, 기둥100mm 조건, 전완상향 최대9.904413도, elbow47.8997~139.9184도, wrist1최대149.79572도, 최대 관통.8769mm(1mm 기준 미만), 진입각14.001576도, 리프트.30~.75m. 전체 생성581.636초. 보고서 `side_camera_summary.json`; 원본 모델/initial/CAD SHA 동일, 기존 V5 collision patch SHA 동일. 관련30개 회귀 통과.
+- 현재5906 PID293154, tmux `farmily_preview:viewer5906`, 출력 `preview_side_camera_20261113_125258`. `process.json`/`launch_command.json`/`start_5906_latest.sh`와 hanging_preview/process.json 갱신. `--side-plan .../side_motion_v2/grip_motion.json --autoplay` 실행. 이전 실행 기록은 *_before_side_camera_20261113_125258.*에 보존. 로딩 시에도203,480개 상태를 새로 검사해 output/side_validation/loaded_plan_validation.json 기록.
+- 실제 GUI의 '오른쪽 아래 보기'/'왼쪽 아래 보기' 버튼을 추가했다. `side_camera_preview_validation.json`/`side_camera_live_samples.json`: 양쪽 낮은 목표에서 진입·닫기·열기·후퇴, 정지·홈·재생 및29개 실제 재생 표본을 독립 native FK/geomDistance로 검사. 카메라 여유 최소130.3675mm, 기둥 최소104.5199mm, 실제 리프트.417325~.75m; 이는 live29개 값이고 전체 경로 경계값은 앞 항목과 다르다. 어댑터 위치 검사는 Viser position setter의 np.allclose(rtol1e-5/atol1e-8) 생략 허용오차를 사용한다. 처음1e-10으로 검사했을 때7.4µm 표시 갱신 생략 때문에 QA가 실패했으나 코드의 알려진 표시 허용오차로 확인했다.
+- 브라우저 `side_camera_browser_validation.json`, 스크린샷 `side_camera_lower_pose.png`: HTTP200/JS오류0, 왼쪽 낮은 close 자세 표시. 첫 브라우저 QA는 실행 상태가 바뀌어 정지 보존 assertion에 실패했으며 원인을 단정하지 않는다. 재검사에서는 새 브라우저 정지 보존/낮은 자세 표시를 통과했다. headless QA만 소프트웨어 렌더링, 사용자 GPU 설정은 그대로다. 마지막은 검사지점 켬/1배속/처음부터 재생이다.
+- 재생은 저장된 `--side-plan` 사용. 같은 탐색을 다시 만들 때 `--side-workspace --side-seed-coverage .../side_motion_v1/grip_coverage.json`으로 이전 결과를 IK 씨앗으로만 쓸 수 있다(목표와 모든 경로 새 검사). 실제 실행한 오프라인 생성 스크립트 `/tmp/plan_side_motion_v2.py`. 새 GPU 동역학·접촉력·실제 과실 파지 검증은 하지 않았다. 새 커밋/푸시는 하지 않았다.
+
+## 2026-11-13 최신: V6 모터 제거 및 양쪽 수확 모션
+
+- 사용자 요청: V6의 리프트 모터를 일단 제거하고 모션을 다시 테스트한다. 이전 턴의 정지 형상만 표시 제약은 이번 요청으로 해제됐다. 5906만 변경한다. V1~V5 형상/기존 V5 계획/5905·ROS·production·원본 CAD는 유지했다.
+- `preview_robot_mount.py`: V6에서만 모터와 수평 상판을 숨긴다. 형상용 q가 native chassis hull과 겹쳐 시작 q를 [-60,0,60,-60,90,0]deg로 바꿨다. 이전의 기둥10cm 조건을 충족하도록 어댑터 두께12→20mm(8mm 증가)로 조정했다. `--side-workspace`는 새350점 검사, `--side-plan`은 V6 전용 계획 로딩/fresh 감사 및 수확/턱/리프트 재생이다. 원래 반대편 경로를 재활용하지 않았다. 어댑터는 매 프레임 리프트를 따라가고 시작 자세 보기/양쪽 구간 선택/정지/재개를 지원한다. V6 기본 카메라는 기존 보관함 사선 시점, 세계Z up 유지.
+- `preview_workspace_motion.collision_model(...,layout_key='side')`: private 복사본에서 제거된 수평 상판의 native collision proxy도 끈다. `preview_grip_workspace.layout_boxes(...,layout_key='side')`: 모터 AABB를 빼고 실제 이동 캐리지와20mm 어댑터 AABB를 리프트 추종 장애물로 추가한다. side도 기존 POSTURE_POLICY(기둥.1m,엘보우20–140,wrist1±150,forearm상향≤10)를 적용한다. 생성·독립 저장 경로 감사·fresh 로딩 모두 같은 설치와 장애물 구성을 사용한다.
+- 최종 `side_motion_v1`: 같은 로봇 양옆 영역350점 중 자세118개(오른쪽49/왼쪽69), 연결→40mm 진입→닫기→열기→후퇴 전체 cycle80개(오른쪽34/왼쪽46). **132,467개 정밀 표본** 통과, 최대 표본 관통.888666mm(기존1mm 미만), 진입 방향14.000109도, 리프트.342765~.75m, elbow24.1355~139.9175도/wrist1최대140.0886도/forearm상향최대6.81693도. 전체 생성583.756초. FK 표시/충돌 구성 오차4.44e−16. 유한 탐색에서 찾은 통과점이며 나머지 점의 기하학적 불가능/영역 전체 보장은 아니다.
+- 관련16개 테스트 통과. 새 회귀1개는 원래 상판과 접촉하던 native probe가 side 복사본에서만 더 이상 접촉하지 않고 원본/기존 버전에서는 그대로 접촉함을 확인한다. `side_motion_legacy_patch_check/validation.json`에서 기존 V5 충돌 패치 SHA가 정확히 같았다. `side_motion_probe/probe.json`에는 최초 형상용 q 충돌도 기록했고 safe_start.json은 새 시작 자세 탐색 기록이다. 소스 원본 물리/초기 상태/packed CAD SHA도 그대로다.
+- 현재5906 PID260832, tmux `farmily_preview:viewer5906`, 출력 `preview_side_motion_20261113_122110`. `process.json`/`launch_command.json`/`start_5906_latest.sh`와 기존 hanging_preview/process.json 갱신. --layout side --side-plan .../side_motion_v1/grip_motion.json --autoplay로 실행한다. 기존 실행 기록은 *_before_side_motion_20261113_122110.*에 보존했다. 최종 로딩에서도132,467개 표본을 다시 검사했고 output/side_validation/loaded_plan_validation.json에 통과 기록이 있다.
+- `side_motion_preview_validation.json`/`side_motion_live_samples.json`: 실제 WebSocket GUI 양쪽 진입/닫기/열기/후퇴, 턱 이동, 정지/재개, 초기 자세/재생을 확인했다. 91개 실제 재생 표본의 native geomDistance로 기둥 최소.104519893m, forearm상향 최대−46.63075도를 별도로 측정했다. 이91개는 양쪽 첫 cycle이므로 리프트.75m 고정이다. 리프트 추종은 별도로 `side_motion_lift_validation.json`에서2배속 재생 중.75→.717454101m 이동한 뒤 정지하여 **실제 송신 Scene SetPosition/Visibility 메시지**의 캐리지·베이스·어댑터가 FK와1e−9m 이내로 맞고 모터·상판이 숨김임을 확인했다.
+- `side_motion_summary.json`은 수치 요약이다. `/tmp/verify_side_motion_browser.py`에서 최종 실제 브라우저 HTTP200/JS오류0/정지 보존과 왼쪽 close 화면을 확인했고 `side_motion_left_pose.png`/`side_motion_browser_validation.json`에 남긴다. 검사 후 검사지점 켬·1배속·처음부터 재생으로 남긴다. headless QA 브라우저만 SwiftShader를 사용한다. 새 GPU 동역학/실제 토마토 접촉력 시험은 하지 않았다. 이번 결과는 native CPU FK/IK/OMPL·표본 간섭 검사 및 관절 재생이다. 커밋은 요청되지 않아 수행하지 않았다.
+
+## 2026-11-13 최신: V6 리프트 옆면 장착 정지 형상
+
+- 사용자 최신 요청: 다음 버전은 수평 리프트 상판을 제거하고 로봇 베이스를 리프트 옆면에 붙인다. **이번에는 로봇 형상만, 모션을 실행하거나 새 경로/도달/간섭을 검증하지 않는다.** 기존 버전은 보존하며 5906 미리보기만 변경한다.
+- `preview_robot_mount.py`에 `side`/`V6 · 리프트 옆면 장착`을 추가했다. 이동 캐리지 CAD 경계를 직접 측정해 열린 방향(world −Y)의 측면에 가정 어댑터(폭200×높이220×두께12mm)를 붙인다. 베이스의 원래 밑면을 세계−Y로90도 돌려 어댑터 외측에 정확히 맞췄다. V6에서만 원래 상판 메시를 숨기며, 예전 상판 높이/설치방향 선택은 숨긴다. 캐리지/모터/베이스는 같은 리프트 기준으로 배치되며 모터는 어댑터 아래15mm에 붙는다. 카메라/90도 툴 브래킷/그리퍼, 원본 CAD 색상 및 20cm 높이 밀착 컨베이어 보관함은 유지한다.
+- 정지 형상용 임의 q(deg)=[−90,30,60,−90,90,0], 리프트 설정.75m, 베이스 장착면 중심의 지면높이1.396215642m. 이 값은 형상을 보기 위한 배치이지 도달/충돌/기존 V5 정책 검증 결과가 아니다. 새 모션·IK·OMPL·GPU 물리 시험을 실행하지 않았다. 검사점/자동재생/배출 재생 없이 정지 화면이다.
+- 현재 5906 PID232791, tmux `farmily_preview:viewer5906`, 출력 `/root/farmily_runtime/newton/runs/20261113_conveyor_bin/preview_side_mount_20261113_115316`. runtime의 `process.json`/`launch_command.json`/`start_5906_latest.sh`, 기존 hanging_preview/process.json도 갱신했다. 이번 실행에는 workspace-motion/계획 파일/배출 파일/autoplay 플래그가 없다. **V1~V5도 정지 형상 비교로 선택 가능**하며 예전의 실제 V5 모션은 저장된 실행 인자/계획을 사용해 복구할 수 있다. 이전 전체 모션 실행 인자와 스크립트는 `*_before_side_mount_20261113_115056.*`, 중간 정지 실행은 같은115316 접미사로 보존했다. 5905/ROS/production 자산은 수정하지 않았다.
+- `side_mount_layout_validation.json`: V1~V6 실제 WebSocket GUI 전환에서 상판/어댑터/보관함 표시가 맞고 V6로 복귀했다. 원본 물리/초기 상태/packed CAD 해시는 이전과 같으며 이전 V5 시작 q 및 실제 리프트.673075m의 베이스/팔/캐리지/상판/모터/기둥 변환은 오차0이다. 이전 preview.json의 lift_height_m은 슬라이더.75로 기록되지만 실제 motion 시작은 parked_pose.json의 reference_lift_m을 사용하므로 비교에도 후자를 사용했다. 단순 정지 CAD 부착면/축 일치를 확인했으며 충돌 검사는 하지 않았다.
+- `side_mount_static_validation.json`: 최종 PID/HTTP200, side mount, 상판숨김/어댑터표시/컨베이어표시, 모션 플래그 없음, running=false/physics_steps=0 확인. 브라우저 렌더링은 `side_mount_v6.png`, `side_mount_browser_validation.json`에 보존한다. headless QA 브라우저만 SwiftShader를 사용한다. py_compile 및 git diff --check 통과, 새로운 테스트/커밋은 추가하지 않았다.
+
+## 2026-11-13 최신: 작업영역을 넓히는 V5 시작 자세 비교
+
+- 사용자가 빨간 작업영역을 최대한 커버하는 시작 자세를 요청했다. 형상/보관함/기둥을 옮기거나 충돌 조건을 풀지 않고, 같은350개 작업점에서 초기 추정·리프트·엘보우 가지·연결 경로를 비교했다. V5의 기존 기둥100mm, 엘보우20~140도, wrist1 ±150도, forearm 위쪽10도 제한은 유지했다. 목표 진입 방향은 시작 자세와 분리한 세계 좌표 회전으로 저장하고 yaw/기울기를 합친 진입 방향도15도 원뿔 안으로 검사한다. 그리퍼 접근축 둘레0/180도 roll은 기존처럼 후보이며 기구학/간섭 검사이지 파지력·실기 검증은 아니다.
+- `preview_start_search.py`: 실제 리프트0~.75m의 여러 높이와 양쪽 엘보우에서 native Jacobian IK를 수행하고,40mm 진입·닫기·열기·후퇴가 통과한 국소 후보만 그래프에 넣는다. 그리퍼만의 목표 자세가 이미 보관함/기둥과 깊게 겹치는 경우 private MjData의 정확한 native 거리로 먼저 제거한다(6mm 여유를 두고 prune, 채택 후보는 전체 native 검사). 예: X=.495,Y=-.1,Z=.4m의 한 수평 자세는 Tool_fixed와 보관함 옆벽이58mm 겹쳤다. 이를 시작 자세로 해결됐다고 표시하지 않는다.
+- 초기 `start_search_v2`는 같은350점/32,702개 IK probe에서 엘보우 가지별133개 국소 cycle을 확보했다. `--resume-candidates`는 저장된 후보로부터 국소 동작을 다시 검사하므로 전체 IK 그리드를 반복하지 않는다. ±360도 표현을 일관되게 정리하고 엘보우 가지마다 어깨 기준도 분리한다. 베이스의 다른 실제 회전 표현은 별도 노드로 유지하며, 각 연결은 실제 중간 상태를 전부 검사한다. coarse 검사는 검색용이고 채택 연결은0.002rad/리프트0.5mm 표본으로 다시 검사한다. `require_continuous_segments`가2π 차이의 순간 점프도 거부한다.
+- 최종 `start_search_v4`는 관절 회전 표현 변형을 포함한235개 시작 구성 후보를 비교했다. 서로 연결된 고유 작업점 수를 우선하고, 동률에서는 양쪽 균형과 가장 긴 연결 경로 시간을 비교한다. **오른쪽27/175·왼쪽24/175, 총51곳**으로 기존32곳을 모두 유지하고19곳을 더 확보(+59.375%). 반대 엘보우의 최선 연결 후보는50곳(오른쪽26·왼쪽24)이므로51곳 쪽을 선택했다. 유한 그리드/시간 제한 탐색의 최선 후보이며 전역 최적이나 연속 부피 전체의 도달 증명이 아니다.
+- 선택 시작 리프트=.673075m(슬라이더 설정67.3cm, 지면 기준 TCP 높이가 아님), 팔 각도[base,shoulder,elbow,wrist1,wrist2,wrist3]도=[-26.3133,118.5378,-100.3915,-108.1481,90.0001,-26.3130]. 같은 새 연결 그래프에서는 기존 시작도51곳에 연결되며, 선택 시작은 최장 연결 시간 추정34.984→31.361sim초로 줄였다. 평균은17.612→17.825sim초로 약간 늘어, 모든 경로/실행속도가 빨라졌다는 주장은 하지 않는다. **32→51 개선은 탐색·연결 보완 효과를 포함하며 초기q 변경만으로 기구의 물리 도달 범위를 넓혔다고 해석하지 않는다.**
+- `start_search_v4/grip_motion.json`/`grip_coverage.json`/`grip_trajectory.npz`/`parked_pose.json`/`start_candidates.json` 및 상위 `start_search_summary.json`. 독립58,505개 표본과 서버 fresh 재검사 통과, 최대 표본 관통.625172mm(기존1mm 미만), yaw14.000177도,3D 진입 방향14.041075도, 리프트.425~.75m, 엘보우84.952~139.764도, wrist1 최대124.642도, forearm pitch 최대-51.651도. 완료 목표의 높이는 오른쪽.55~1.0m/왼쪽.70~1.0m이며 영역 상하단 전부를 커버했다고 표시하지 않는다. 색상은 이전과 같은 초록=전체 연결 cycle, 파랑=자세 후보, 빨강=제한 탐색에서 해 못 찾음이다.
+- `preview_grip_workspace.py`의 최종 export/audit를 공통 함수로 분리하고 목표 회전·3D 진입·구간 연속성도 저장/로딩 시 검사한다. `--conveyor-pose-file`의 reference_lift_m와 nominal_tool_rotation_world를 V5에 적용해 V1/V4 시작 설정을 바꾸지 않는다. GUI에32→51 및 시작 리프트를 표시하고 **선택한 시작 자세 보기** 버튼으로 초기 자세를 고정할 수 있다. GPU 배출 재생에서 돌아와도 같은 자세로 복귀한다.
+- 현재5906 PID209690/tmux farmily_preview:viewer5906, 출력 `preview_start_search_20261113_113012`. 실행 기록은 conveyor_bin의process.json/launch_command.json 및 기존 hanging_preview/process.json, 실행 스크립트start_5906_latest.sh. 기존 실행 정보는*_before_start_search.json에 남겼다. 5905/ROS/production 모델/물리 백엔드와 원본 CAD 및 V1 전체 배열은 유지했다.
+- 회귀46개 통과. `start_search_preview_validation.json`/`start_search_preview_samples.json`: HTTP200,58,505개 fresh 검사, 양쪽 GUI 진입·닫기·열기·후퇴/실제 턱 변화, 시작 버튼의 관절·리프트 초기값 일치, 정지·재개, 별도 GPU 기록120개 배출 및 배출→시작 자세 복귀를 확인했다. 재생149표본은 별도 native geomDistance로 재측정해 최소 기둥 간격0.401390m(이149표본에만 해당), 원본 CAD/V1 배열은 정확히 같았다. GUI 관측 첫 시도는2배속의.357wall초 진입이.5초 기록 사이에 빠졌다(`start_search_gui_sampling_failure.json`). 저속 재시도의 배출 시간 제한도짧아 기록했고(`start_search_preview_slow_unload_timeout.log`), 최종 검사는 그리핑.25배속/배출2배속으로 관측했다. 제품 궤적/조건을 바꿔 통과시킨 것이 아니다.
+- 실제 브라우저 HTTP200/JS오류0, 초기 자세 고정과 양쪽 화면을 `selected_start_pose.png`/`start_search_right_pose.png`/`start_search_left_pose.png`로 확인했다(`start_search_browser_validation.json`). QA 브라우저만 기존 SwiftShader를 사용했고 사용자 그래픽 설정을 변경하지 않았다. `start_coverage_comparison.png`/`.svg`는 같은350개 점의 전후 완료 동작 수 비교다. GPU 물리 전체 시험/새 영상/커밋은 수행하지 않았다. 중간start_search_v1~v3 기록은 보존하며 배포는v4만 사용한다.
+
+- 시작 자세 고정 후 두 번째 창이 연결되면 on_connect의 중복 autoplay가 다시 재생시키는 문제를 재현했다(`start_home_connection_before_fix.json`). 초기 autoplay는 이미 select_layout에서 설정하므로 접속 때 강제로 재개하던 코드만 제거했다. 최종 실행의 두 WebSocket 클라이언트와 실제 새 브라우저에서 정지/elapsed=0 유지 확인(`start_home_connection_validation.json`, `start_home_browser_validation.json`, JS오류0). 최종 화면은 시작 리프트.673075m/왼쪽 시작 자세/elapsed=0/일시정지로 남겼다. 수정 전 실행/검증은*_before_home_pause_fix.json 및 before_home_pause_fix_*에 보존했다.
+
+## 2026-11-13 최신: V5 기둥 이격과 과도하게 접히는 관절 자세 제한
+
+- 사용자가 캡처의 깊게 접힌 팔/손목을 위로 치켜드는 자세와 리프트 기둥에 가까이 붙는 자세를 금지했다. 5906 V5에만 작업 자세 제약을 추가하고 V1~V4의 이전 형상/기록과 5905/ROS/production 물리는 유지했다. 제조사 한계를 변경한 것이 아닌 시뮬레이션 작업 범위 가정이다.
+- `preview_posture.py`의 정책 `v5-mast-clearance-and-open-elbow-v1`: 기존 팔/툴 native 충돌체와 보수적인 고정 기둥 CAD AABB 사이 최소100mm, 엘보우 절댓값20~140도, wrist1 -150~150도, 엘보우→첫 손목의 위쪽 기울기 최대10도. 기둥 proxy에 positive-distance contact margin/gap을 추가해 관통하지 않더라도 가까운 자세를 거부한다. 링크/툴 전체에 이격을 적용하며 부착된 고정 상판 자체를 이격 대상 팔로 오판하지 않는다. 실제 CAD 정밀 충돌/하드웨어 인증이 아닌 native proxy와 표본 경로 검사다.
+- `GripPlanner`는 IK/7축 OMPL/연결/진입/닫기/열기/후퇴 및 독립 재검사 모두 같은 제약을 사용한다. FK로 금지된 위쪽 기울기를 먼저 거르고, IK의 리프트 여유축으로 엘보우가 위에 있도록 유도한다. 수렴했으나 충돌하는 같은 후보를 반복 검사하던 탐색을 조기 종료했다. 기존 unsafe 궤적을 단순 재생하지 않고 350개 작업점을 새로 풀었다. 이전 자세는 새 충돌/정책 검사에 통과해야만 초기 추정으로 재사용된다. V5 로더는 현재 정책이 없는 예전 계획을 거부하고 실제 저장 경로를 다시 검사한다.
+- 최종 `/root/farmily_runtime/newton/runs/20261113_conveyor_bin/near_posture_v3`: 오른쪽25/175·왼쪽28/175 자세 해, 전체 그리핑 경로는 **오른쪽17·왼쪽15, 총32곳**. 이전49곳과 동일한 목표14곳의 자세/경로를 다시 풀었고, 기존에 전체 경로를 찾지 못했던18곳도 통과했다. 제한된 탐색 실패는 불가능의 증명이 아니다. 33,788개 독립 경로 표본 및 실행 시 fresh 재검사 모두 통과. 표본 최대 관통0, yaw14.000177도, 리프트.616372~.75m. 실제 경로 엘보우86.852~137.596도, wrist1 절댓값 최대120.088도, forearm 위쪽 기울기 최대-51.651도(전 구간 아래 방향), 기둥 최소100mm 기준 통과.
+- 기존에156도 접힌 시작 자세를 V5에 재사용하지 않도록 `--conveyor-pose-file .../near_posture_v3/parked_pose.json`을 추가했다. V1/V4 `--pose-file`은 유지한다. 배출 기록을 볼 때도 새 V5 시작 자세로 고정한다. GUI 상태에 기둥10cm/자세 제약을 표시한다. 현재 tmux `farmily_preview:viewer5906`, PID35058, 출력 `preview_guarded_20261113_082330`. 실행 인자/프로세스는 conveyor_bin의 `launch_command.json`/`process.json`과 이전 hanging_preview의 process.json에 기록한다. `start_5906_latest.sh`도 새 계획/포즈를 사용한다.
+- 관련40개 회귀 통과. 새6개는 비관통7cm 간격의 거부,10cm 초과 허용, 위로 치켜드는 팔,156도 엘보우/손목 뒤집힘의 거부, 기둥 없는 검사 실패, 예전 V5 계획 로딩 차단을 확인한다. `guarded_preview_validation.json`/`guarded_preview_samples.json`에서 HTTP200, 양쪽 실제 GUI의 이동·진입·닫기·열기·후퇴 및 턱 변화/정지·재개를 확인했다. 움직이는65표본을 독립 `mj_geomDistance`로 다시 측정해 최소.288727m(이 값은 이65표본에만 해당), pitch 최대-67.649도였다. 전체 경로의 이격 보장은 위100mm 표본 기준으로 구분한다. 원본 자산 해시/CAD 전체 배열/V1 전체 궤적 배열은 정확히 같고 별도 GPU 배출 기록120개 재생도 유지했다. GPU 물리 전체 시험을 다시 실행한 것은 아니다.
+- 실제 브라우저에서 양쪽 정지 그리핑 자세를 렌더링해 `guarded_right_pose.png`/`guarded_left_pose.png`로 확인했다. `guarded_browser_validation.json`: HTTP200, JS오류0, 정책 문구 표시, 양쪽 화면 확인 후 V5 오른쪽 처음부터 재생으로 복귀했다. headless QA 브라우저만 이전과 같은 SwiftShader 소프트웨어 렌더링을 사용했으며 사용자 그래픽 설정/물리 백엔드는 바꾸지 않았다.
+- 중간 실패/중단된 near_posture_v1/v2는 보존했고 배포하지 않는다. 기구학/간섭 검사이며 파지력·토마토 접촉이나 실기 동작을 새로 검증한 것은 아니다. 새 커밋/영상 저장은 하지 않았다.
+
+## 2026-11-13 최신: 완료된 V5 뷰어 실행 복구
+
+- 사용자 요청으로 이전 작업 완료 여부를 확인했다. V5 소스/형상/경로/GPU 배출 검증 결과는 모두 저장되어 있었다. 이전 PID555121은 없었고5906 포트도 닫혀 있었다. 이전 뷰어 로그에 traceback은 없으며 현재 컨테이너 PID1 시작 시각이 이전 실행 이후다. 종료 원인을 별도의 로그 없이 단정하지 않는다. 제품 기능의 미완료가 아니라 실행 프로세스 부재를 복구했다.
+- 검증된 launch_command.json의 옵션과 원래 자산/포즈/V1·V4·V5 궤적/배출 기록을 재사용한다. 현재 실행 정보는 `/root/farmily_runtime/newton/runs/20261113_conveyor_bin/process.json`과 기존 hanging_preview/process.json에 있다. 출력은 `preview_recovered_20261113_080156`, 로그는 같은 상위폴더의 동명.log다. `tmux -L farmily_preview attach -t viewer5906`으로 접속할 수 있으며 터미널 연결과 분리해 실행한다. 컨테이너가 종료·재생성되는 경우까지 tmux가 유지해 주는 것은 아니다.
+- 관련34개 회귀를 다시 실행해 모두 통과했다. 재시작 과정에서77,975개 경로 표본을 다시 native 충돌 검사했고, 원본 모델/초기상태/CAD 해시도 이전과 같았다. HTTP200, 양쪽 진입·닫기·열기·후퇴와 실제 턱 위치 변화, 정지·재개, GPU 시험 기록의 문/벨트 동작 및120개 배출, 그리핑 재생 복귀를 실제 GUI WebSocket 경로로 재확인했다. 결과 `viewer_recovery_validation.json`/`viewer_recovery_samples.json`/`recovery_validation.log`. 전체 GPU 물리 시험을 재실행한 것이 아니라 기존에 검증된 기록의 재생을 확인한 것이다.
+- 현재5906은 `V5 · 밀착 컨베이어 보관함`의 그리핑 재생으로 복귀시켰다. 브라우저를 새로고침해 사용할 수 있다. 이번 복구에서는 시뮬레이션 소스나5905를 변경하지 않았다.
+
+## 2026-11-13 최신: V5 틈 없는 20cm 컨베이어 보관함과 기체 바로 옆 그리핑 검사
+
+- 사용자가 보관함 받침발/틈 제거, 전체 바닥 컨베이어·롤러, 뒤쪽 개방 배출문, 높이 약20cm와 기체 바로 옆 작업영역 검사를 요청했다. `V5 · 밀착 컨베이어 보관함` (`--layout conveyor`)을 추가하고 V1~V4는 유지했다. 현재5906 출력은 `/root/farmily_runtime/newton/runs/20261113_conveyor_bin/preview_conveyor_v2`; PID/실행 인자는 같은 상위폴더 및 이전 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/process.json`에 기록한다. 농장/5905/ROS/production 충돌 정책은 수정하지 않았다.
+- `preview_conveyor_bin.py`의 공유 가정 형상: 외형560×1100×200mm, 하단Z=.314m/상단=.514m, 받침발0·차체 틈0. 원래 리프트의 앵커 발은 밀폐 하우징 내부에 남으며 새로운 보관함 받침발은 없다. 하부 구동부와 원래 앵커를 덮는 벨트 바닥Z=.400m이므로 **내부 유효 깊이는114mm**이며 외형200mm와 구분한다. 벨트516×1087mm/횡롤러31개/반경16mm, 출구는 컨트롤박스 반대쪽 세계Y-의 짧은 면이다. 위 힌지 문이 바깥쪽/위로110도 열리며 벨트 위112mm 구간을 개방한다. 닫힌 문은 벨트와2mm 이격하고 구동 하우징 아래쪽은 고정한다.
+- 첫 배출 시험에서 출구 앞 고정 프레임의 비구동 턱 위에 마지막 열매6개가 남았다. 벨트 시작Y=-.455m로 고정 프레임 외곽-.450m보다5mm 돌출시키고 끝 롤러를 옮겼다. 닫힌 문이 벨트와 겹치지 않게 문 하단을 정리했다. 이 형상을 기준으로 팔/배출 시험을 다시 수행했다. 바닥·벽·리브·문·롤러 하부의 보수적 envelope만 팔 장애물이며 열린 보관함 내부를 통째로 막는 상자는 없다.
+- `preview_grip_workspace.py`의 새 near 프로필은 그리퍼 수확영역 중심 기준 X[.30,.50]/[-.50,-.30], Y[-.15,.80], Z[.30,1.30]m다. 벽 본체에서 명목상2~22cm 옆이다. 각 면175개, 총350개를 검사했고 리프트+팔7축 IK/여러 엘보우 시드/그리퍼 접근축 둘레0·180도 roll/좌우±15도 제한을 사용한다. 실제 관절 한계와 기존1mm 충돌 기준은 넓히지 않았다. 이전 자세는 새 형상에서 매번 다시 검사하는 초기 추정으로만 재사용하며 이전 궤적을 새 형상의 검증으로 복사하지 않았다. 180도 roll을 포함한 캐시 자세의 방향 복원도 수정했다.
+- 최종 `near_v3/grip_motion.json`, `grip_coverage.json`, `grip_trajectory.npz`: 오른쪽70/175·왼쪽71/175 자세 해, 전체 이동→40mm 진입→96mm에서36mm로 닫기→열기→후퇴는 **오른쪽23곳·왼쪽26곳, 총49곳**. 독립 경로77,975표본, 최대 관통.871155mm, 최대 방향14.000426도, 실제 리프트.27765~.75m. 완료 목표 높이는 오른쪽.70~1.28m/왼쪽.85~1.28m다. 낮은.40/.55m 표본은 해를 못 찾았다. 실패는 제한된 IK/2.5초 연결 탐색에서 해를 못 찾은 것이며 불가능의 증명은 아니다. 요약 `near_reach_summary.json`. 기구학/단순 충돌체 검사이며 토마토 접촉력·파지력·실기 검증은 아니다.
+- `run_conveyor_unload.py`는 **별도의 보관함 단독 Newton → MuJoCo Warp CUDA 물리 시험**이다. GPU에 모터가 달린 문1축/롤러31축, 전체 벨트의 prescribed surface velocity, 반경18mm·20g 강체 구120개를 사용한다. 원래 로봇 전체/실제 송이/과육 손상·적재 안정성 모델은 아니다. 최종 `unload_v7/unload_report.json`: Newton solver/접촉6차원/1ms, 문110도/벨트.25m/s, 벨트 끔4.000sim초에0개 배출, 켬6.439716sim초에120개 전부 출구 통과. 출구 이전 바닥 누수0, bin 접촉 최대.045753mm, 비유한 상태/버퍼 넘침/반복 경고0. 전체 최대 관통2.174694mm는 배출 후 지면/구끼리 접촉을 포함하며 bin의1mm 기준과 구분한다. 테스트 RTF는 off .0424/on .0260으로 느리며 실시간 가속 달성으로 보고하지 않는다. 이미 출구를 통과한 뒤 차체 아래로 되굴러온 구는 바닥 누수로 오판하지 않는다. 모두 배출된 시점에 시험을 끝내며 외부 더미의 장시간 안정화는 범위 밖이다. 이전 invalid/부분 실행 `unload_v1`~`v6`는 사용하지 않는다.
+- 5906의 `GPU 배출 결과 보기`는 위 실제 GPU 상태 NPZ의 **기록 재생**이다. 그동안 팔은 초기 자세로 고정하며 robot dynamics를 실행했다고 표시하지 않는다. 문/롤러/벨트/구120개의 상태를 보간하고 실제 누적 출구 통과 수를 표시한다. `load_unload_record`는 backend/물리 valid/형상 일치/SHA/배열 모양·유한성·시각/배출 수를 확인해 실패 기록을 차단한다. 오른쪽/왼쪽 구간 버튼으로 그리핑 재생에 복귀한다. 배속/정지/재개/처음부터와 V1~V4 선택을 유지한다. 원본 약660mm 상판/매달림 설치/모터 연결/바퀴 재질은 유지한다.
+- 실제 HTTP200/브라우저 JS오류0, 양쪽 턱 위치 변화와 진입·닫기·열기·후퇴, V1/V2/V4/V5 전환, 정지·재개, 문/벨트/120개 배출 재생을 확인했다. `conveyor_browser_validation.json`/`conveyor_browser_samples.json`, 렌더 `conveyor_preview_final.png`/`conveyor_floor_full.png`/`conveyor_door_open.png`/`conveyor_unloaded.png`. 이 컨테이너의 기본 headless Chrome은 WebGL 초기화에서 멈췄다. **QA 브라우저만** VK_ICD_FILENAMES와 VK_DRIVER_FILES를 Chromium의 vk_swiftshader_icd.json으로 지정하고 LD_LIBRARY_PATH/DISPLAY를 제거했다. 소프트웨어 렌더링이므로 동작은 실제 GUI와 같은 WebSocket 명령으로 검사하고 정지 장면을 캡처했다. 로봇/물리 백엔드를 CPU로 바꾸지 않았다. 사용자 노트북 브라우저의 그래픽 설정이나 서버 패키지는 변경하지 않았다.
+- 최종 문구 수정 후 `preview_conveyor_v2`를 다시 실행하고 `conveyor_deployed_smoke.json`에서 HTTP200/JS오류0/120개 배출 재생과 그리핑 복귀를 재확인했다. 새 실제 렌더 `conveyor_preview_final.png`/`conveyor_discharge_front.png`도 확인했다. 전체 물리/궤적은 앞선 시험과 같으며 새 실행에서도77,975개 경로 표본과 원본 CAD/V1 배열 보존을 다시 확인했다.
+- 관련34개 회귀 통과(새 보관함5개 포함). 원본 모델/초기상태/CAD 정점·면·정점색 및 V1 전체 궤적 배열이 직전과 정확히 같다(`conveyor_source_preservation.json`). 새 영상/커밋은 만들지 않았다. 실행은 기존 preview-hanging에 `--layout conveyor --conveyor-plan .../near_v3/grip_motion.json --unload-report .../unload_v7/unload_report.json`을 추가한다. 현재 실행은 이전 V1 workspace-motion/left/autoplay와 V4 storage-plan도 포함한다. 큰350점 계획/배출 물리 시험은 오프라인에서 끝냈으며 접속/구간 선택 시 다시 실행하지 않는다. 계획 로딩 시 native 경로 재검사는 수행한다.
+
+## 2026-11-12 최신: V4 보관함 배치 양쪽 그리핑 영역 검사
+
+- 사용자가 V4 형상을 채택하고 탑뷰의 양쪽 빨간 영역에서 그리핑을 확인하도록 요청했다. V4 기둥/원래660mm 상판/보관함/색상을 유지한다. 그림의 작업점을 X[.30,.78] 및[-.78,-.30], Y[-.15,.80]m로 해석하고 기존 시험 높이Z[.30,1.04]m를 사용한다. 좌표는 실제 그림을 측정한 값이 아닌 가정 범위이며 그리퍼 수확영역 중심 기준이다.
+- `preview_grip_workspace.py`는 기존 `collision_model`/native FK·Jacobian IK/OMPL/검증된 경로 재생기를 재사용한다. 각 면60개, 총120개 표본의 자세를 여러 리프트 높이와 양쪽 엘보우 시드에서 탐색했다. 오른쪽26/60·왼쪽23/60에서 충돌 기준을 만족하는 자세를 찾았고, 그중 각8개 총16개 지점의70mm 진입→닫기→열기→후퇴와 연결 이동을 채택했다. 실패 표본은 제한된 탐색에서 해를 못 찾았다는 뜻이며 도달 불가능의 증명은 아니다. 표본 높이는.40/.65/.90/1.02m이고 영역 상단1.04m 자체는 유지한다.
+- 새 장애물은 보관함의 열린 내부를 유지하는35개 바닥/벽/테두리/리브/발 상자, 리프트 원본CAD5개 부품의 보수적AABB, 상판을 따라 움직이는 모터AABB다. 숨겨진 식물의 기존 BVH가 있는 비활성 지오메트리 슬롯을 private model에서만 사용한다. native 원래 로봇/기체 충돌을 유지하면서 새 상자와 움직이는 팔·베이스·상판 간 접촉만 추가한다. 부착된 차체와 보관함 자체의 접촉은 팔 간섭으로 오판하지 않는다. 새 지오메트리의 AABB/BVH와 body mask cache도 갱신하며 모터는 실제 검사 리프트 높이에 맞춘다. 이 단순화된 리프트 외곽의 보수성을 정확한 CAD 메시 충돌 검증으로 표현하지 않는다.
+- 초기 반대편 전환은 짧은 관절각 연결/단시간RRT로 통과하지 못했다. 기존 오른쪽 연결을 역순으로 따라 접은 자세로 복귀한 뒤 기체 앞쪽으로 베이스를+180도 돌리는 검사된 연결로 수정했다. 실제 한계 안에서 동등한2π 관절 회전을 선택하며 한계를 늘리지 않는다. 최초 독립 검사에서는 상단1.04m 목표가 IK의2mm 종료 오차로 영역 바깥에 측정되어 실패했다. 목표를1.02m 안쪽으로 옮기고 전체를 재계획했으며 판정 영역/1mm 기준은 넓히지 않았다. 실패 `storage_grip_scan_v1`~`v5`도 보존한다.
+- 최종 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/storage_grip_scan_v6`: `grip_motion.json`/`grip_coverage.json`/`grip_trajectory.npz`. 전체29,493개 표본 재검사에서 최대 관통.544291mm(<1mm), 최대 팔 간격.001999787rad/리프트.5mm/턱.5mm, 진입·그리핑·후퇴 최대 방향오차.002247도, 리프트.50~.75m. 전체 전진 재생 약154.2초, 연결된 정·역 반복 약306.6초다. 동역학/접촉력/토마토 유지력/실기 검증은 하지 않았다. 주황색 구는18mm반경의 시연 표식이며 실제 열매 접촉·수확 성공을 주장하지 않는다. 턱은 열린96mm에서36mm 간격까지 움직인다.
+- 현재5906은 `preview_storage_grip_v1`, 프로세스는 상위 `process.json` 참조. 실행은 기존 `preview-hanging`에 `--layout storage --storage-workspace` 또는 `--storage-plan .../storage_grip_scan_v6/grip_motion.json` 추가. 현재 실행은 기존 `lower_pose.json`/`--workspace-motion --workspace-side left --autoplay`도 지정해 V1 기존 동작을 보존한다. 계획 파일 로딩은 원본 모델/초기상태/CAD/배치 patch/장애물/파일SHA를 확인하고29,493개 표본을 다시 native 충돌 검사한 후 허용한다(`storage_validation/loaded_plan_validation.json`). V4 설치 제어는 검사 중 고정하며 `오른쪽 구간 보기`/`왼쪽 구간 보기`는 미리보기 재생 시각을 이동한다. 새 `양쪽 검사` 시점과 양쪽 빨간 영역·표본 점(초록=전체 동작/파랑=자세만/빨강=해 못 찾음)을 표시한다.
+- 실제 브라우저HTTP200/JS오류0에서 양쪽 진입·닫기·열기·후퇴와 native 턱 위치 변화, 일시정지/구간 이동, V2 정적 전환/V1 기존 모션 재개/V4 복귀, 카메라 유지 확인. `storage_grip_browser_validation.json`/`storage_grip_browser_samples.json`, 렌더 `storage_grip_viewer_final.png`/`storage_grip_left_closing.png`/`storage_grip_right_closing.png`/`storage_grip_bilateral_top.png`. 원본 모델·초기상태·450개CAD/색상 해시, 보관함 형상, V1 전체 궤적 배열이 직전과 같다(`storage_grip_source_preservation.json`). 새 장애물 활성화/모터 이동/BVH/재생5개 포함 관련29회귀 통과. 새 동영상/커밋은 만들지 않았다. 농장/5905/production 물리 자산은 수정하지 않았다.
+
+## 2026-11-12 최신: 5906 V4 기본 상판과 낮고 긴 토마토 보관함
+
+- 사용자 최종 지시는 상판 길이를 정상화하고, 차체 위 가로로 긴 빨간 영역에 하나의 큰 토마토 보관함을 만드는 것이다. `V4 · 기본 상판 + 토마토 보관함` (`--layout storage`)을 추가했다. 기둥은 V2의 컨트롤박스 밀착 위치를 유지하고, 로봇암 장착 위치도 V2로 복원한다. V3의 .80m 추가 돌출 및 약.766m 연장판은 V4에서 사용하지 않으며 원래 CAD 상판 길이659.9996mm를 유지한다. 중간에 취소된 기둥 전방 이동은 적용하지 않았다. 기존V1/V2/V3 선택은 유지한다.
+- 새로운 보관함은 실측 부품이 아닌 가정 치수 길이1100×폭560×높이280mm의 윗면이 열린 단일 통이다. 세계 좌표 외곽 X[-.28,.28]/Y[-.45,.65]/Z[.36,.64]m, 바닥18mm/벽12mm/상단 테두리와 보강 리브가 있다. 네 받침발이 차체 상면.314m에서 지지하며 보관함은 차체에 고정된다. 기존 리프트 발을 피해 바닥을46mm 올렸다. 앞쪽100mm 돌출은 배치 가정이며 적재강성 검증 결과가 아니다. V4에서 기존 파란 타워 틀은 숨기고 `토마토 보관함 표시`로 새 통을 켜고 끈다.
+- 현재5906 출력 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_storage_bin_v2`, PID/출력은 같은 상위폴더 `process.json`에 기록한다. 기본 시점 `보관함 배치`, 카메라는 계속 Z위쪽/접속자별 유지한다. V4는 정적 형상 비교이며 수동 리프트 조절만 가능하다. 토마토 투입/수확 경로/보관함 충돌/적재하중은 검증하지 않았다. 기존 농장/5905/원본 물리 자산은 수정하지 않았다. 새 영상은 만들지 않았다.
+- 실제 브라우저HTTP200/오류0에서 V4 높이.75→.55 변경 시 상판·모터·로봇 동시 이동/보관함 고정, 보관함 토글, V4→V2→V3→V1→V4 전환, V1 기존 모션 재개, 카메라 불변을 확인했다. 첫 시험에서 높이 조절 뒤 버전 선택 시 Viser가 높이 초기화 콜백을 같은 스레드에서 동기 호출하여 일반 Lock이 교착되는 문제를 재현했다. RLock으로 수정하고 같은 조작을 포함해 전체 재검증했다. 실패 출력 `preview_storage_bin_v1`도 보존한다.
+- 증거 `storage_layout_validation.json`/`storage_browser_validation.json`/`storage_source_preservation.json`, 최종 렌더 `layout_v4_storage_final.png`/`layout_v4_storage_top.png`. 리프트0/.375/.75에서 V4의 전체 몸체 변환이 V2와 정확히 같고 V3도 보존된다. 기본 자세에서 보관함 외곽 안 원래 CAD 정점0/팔 최저점과 통 상단 사이195mm를 확인했다(정확한 메시 충돌·전체 모션 검증 아님). 원본 MJB/초기 상태/450개 CAD 형상·색상 해시와 V1 전체 궤적 배열이 직전V3 출력과 정확히 같다. 관련 회귀24개 통과. 커밋은 요청되지 않았다.
+
+## 2026-11-12 최신: 5906 V3 로봇암 외측 배치
+
+- 사용자가 V2 트레이타워 앞 빨간 영역으로 로봇암을 빼도록 지시했다. V1/V2를 유지하고 `V3 · 로봇암 외측 배치` (`--layout outboard`)를 추가했다. 리프트·모터·트레이 공간은 V2 위치 그대로 두며 RB5 베이스/6축 팔/브래킷/그리퍼/카메라만 세계Y- 방향으로 기본.80m 추가 이동한다. 화면의 `로봇암 돌출거리 (m)`에서0..1.20m 조절 가능하다. 관절 각도/한계는 바꾸지 않는다.
+- 기존 상판 끝에서 새 베이스까지 이어지는 약.766m 길이의 연장 상판을 형상으로 추가했다(기존 판과20mm 겹침, 베이스 중심보다110mm 앞쪽 여유). 상판 두께/폭은 기존10mm/약230mm에 맞춘 배치 참고용이며 제작 강성/처짐/전도 검증을 한 것은 아니다. 높이 변화에 따라 연장판과 팔이 함께 이동하고 모터는 원래 상판 아래 장착을 유지한다.
+- 기존 아래쪽 후보 자세/리프트.75m에서 전체 팔·툴 시각 메시Y최댓값=-.383637m, 트레이 예정 공간 앞면Y=-.33m로 약53.64mm 분리된다. 공간 안 팔 정점0. 이는 해당 자세의 분리이며 전체 작업영역·이동경로·실제 타워 선반 충돌 검증이 아니다. 리프트0/.375/.75m에서 팔만.8m 이동, 다른 몸체/방향 유지, 연장 상판의 베이스 지지면 연결 확인. 기존V2 몸체 변환도 그대로 유지. 증거 `outboard_layout_validation.json`.
+- 현재5906 출력 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_outboard_layout`. 새 `외측 배치` 시점은 Z위쪽 회전 기준을 유지하고 초기 화면에 전체 돌출 배치가 들어오도록 설정했다. V1은 기존 모션을 유지하며 V2/V3는 정적 형상 비교다. 원본 농장/5905/물리 자산은 수정하지 않았다. 커밋은 요청되지 않았다.
+- 실제 브라우저HTTP200/오류0에서 V3→V2→V3→V1→V3 선택, 돌출.8→.9→.8m에 팔만 이동/연장판 길이 연동, 높이.75→.35m에 팔·모터·상판 동시 이동, 배치틀 토글, V1 모션 재개, 카메라 유지 확인. `outboard_browser_validation.json`, 최종 `layout_v3_outboard_final.png`를 실제 렌더로 확인했다. 기존 CAD/색상 해시 및 V1 전체 궤적 배열도 V2 출력과 정확히 같다. 새 영상은 만들지 않았다.
+
+## 2026-11-12 최신: 5906 배치 V1/V2 선택
+
+- 사용자 요청으로 5906 조립체 미리보기에 `배치 버전`을 추가했다. `V1 · 기존 배치`는 기존 좌표/모션을 유지하고, `V2 · 리프트 밀착 배치`는 리프트를 컨트롤박스 쪽 세계Y+ 방향으로.51136263465m 이동한다. 실제 CAD의 캐비닛 앞면과 리프트 고정부 외곽 사이20mm를 기준으로 구했다. 기둥/원래 지지대5개 메시를 별도 `Preview_lift_frame`으로 분리하고 상판·모터·RB5·툴을 같은 이동량으로 함께 옮긴다.
+- 트레이타워 실치수가 아직 없어 앞쪽 상판의500×400×900mm 가정 공간을 파란 선반 틀로 표시한다. V2에서 표시 토글 가능. 제작용 형상/새 물리 충돌체가 아니다. V2는 정적 배치 비교와 수동 리프트 높이 조절을 제공하며, 기존 검증 궤적을 변경 배치에서 재생하지 않는다. 기존 모션은 V1에서 유지한다. 관절 한계/기구학 원본/농장·5905 실행 자산은 변경하지 않았다.
+- 기본 `--layout original` 유지, 새 배치로 시작하려면 `preview-hanging --layout compact`. 현재5906은 기존 pose-file/workspace-motion/left/autoplay와 함께 compact로 띄운 `preview_layout_versions_v2` 출력이다. 시점은 접속자별로 유지하고 새 `배치 비교` 시점도 Z 위쪽/회전축을 유지한다. 배치 변경 시 카메라를 재설정하지 않는다.
+- 실제 CAD450개 형상의 정점/면/정점색 및 V1 세계 변환이 이전 버전과 정확히 같음(최대 변환 오차0)을 확인했다. 리프트0/.375/.75m에서 이동/고정 그룹 및 모터-상판 상대변환 검증 통과. 증거 `compact_layout_check/layout_validation.json`. V1 전체 팔/리프트 궤적 배열도 이전 `preview_camera_orbit_fix`와 정확히 같다. 기존 관련 회귀24개 통과. 새 배치 동작·간섭·적재하중 검증 완료를 주장하지 않는다.
+- 실제 브라우저HTTP200/오류0에서 compact→original→compact 전환, V2 높이.75→.35m의 팔/상판/모터 동시 이동, 배치틀 표시 토글, V1 기존 동작 재개, 카메라 유지 확인. `layout_versions_browser_validation.json`, 화면 `layout_v1_original.png`/`layout_v2_compact_final.png`/`layout_v2_lowered_lift.png`. 새 영상은 만들지 않았다.
+- 배치 비교에서 주의할 실제 발견: V2 리프트.75m/현재 아래쪽 후보 자세에서 Robot_link2/3의 시각 메시 정점11,895/40,788개가 가정 트레이타워 공간 안에 있다. 팔꿈치 부근과 예정 공간의 겹침이 확인되며, 실제 선반/프레임 충돌이나 전체 가동 범위를 검증한 것은 아니다. 타워 실치수·높이 또는 팔 자세의 추가 설계가 필요하다. 증거 `compact_tray_envelope_check.json`. 이 사실을 사용자 최종 보고에 알린다.
+
+## 2026-11-12 최신: 미리보기 카메라 회전 기준 복원
+
+- 사용자 지적의 직접 원인은 직전 '위에서' 시점의 `client.camera.up_direction=(0,1,0)` 설정이었다. 이 값이 orbit 축까지 세계Y로 바꿨다. 기존 공유 시점 드롭다운은 테스트/다른 접속자의 선택을 모든 접속자 카메라에 강제 적용하기도 했다.
+- 모든 시점의 위쪽/회전 기준을 세계Z `(0,0,1)`로 고정했다. 완전한 수직 탑뷰의 특이점을 피하려고 탑뷰 오프셋만 `[0,-.25,2.6]`으로 조금 기울였다. 시점 드롭다운은 `client.gui`로 이동해 값/카메라를 접속자마다 분리했다. 한 접속자가 시점을 바꾸거나 새로 들어와도 다른 화면은 재설정하지 않는다.
+- 실제 브라우저2개/6개 시점에서 마우스 드래그로 유효한 위치 변화, Z위쪽 유지, 다른 접속자의 카메라/선택값 불변, JS오류0 확인했다. 증거 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/camera_orbit_validation.json`, 캡처 `camera_orbit_fixed.png`. 새 영상은 생성하지 않았다.
+- 현재5906 출력 `preview_camera_orbit_fix`. 이전 `preview_opposite_workspace`와 CAD/색상 해시 및 전체 팔/리프트 궤적 배열이 정확히 같다. 기존 반대편24개 목표 기구학 미리보기를 유지하며 카메라만 수정했다. 새 커밋은 요청되지 않았다.
+
+## 2026-11-12 최신: 반대편 작업 영역 접근 미리보기
+
+- 사용자 탑뷰의 빨간 영역을 기존 녹색 박스의 차체 중심선 반대편 X=-.78..-.35/Y=-.34..-.06/Z=.30..1.04m로 대략 해석했다. `preview-hanging --workspace-motion --workspace-side left --autoplay --port 5906`으로 선택한다. 기존 `right` 기본은 유지한다. 기존 CAD/형상 색상/리프트/매달림 설치와 충돌 마스크·1mm 기준을 재사용한다.
+- 실제 IK로 반대편을 향하는 자세를 구하며 관절각을 단순 반전하지 않는다. 기존 자세에서 리프트.75m로 반대편 X=-.46/Y=-.2/Z=.95m까지 4.102초의 검사된 관절 연결 후, 반대편 목표24개를 연속 방문/역순 반복한다. 영역 안의 방향은 반대편 정면 기준±15도, 작업면을 바꾸는 최초 연결에서만180도 회전을 허용한다. 연결에서도 충돌 검사는 유지한다. 새 '위에서' 시점을 추가했다.
+- 전체 채택 경로14,291개 표본에서 기존 충돌체 관통0, 팔 최대표본.00199978rad/리프트.499693mm, 영역 안 최대방향14.92845도. 리프트.40821..75m 이동. 실제 방문한 영역 X=-.76393..-.37487/Y=-.30241..-.07682/Z=.55824...99962m. 낮은 일부 목표는 차체 간섭/도달 실패로 제외하며 빨간 박스 전체가 도달 가능하다는 주장은 아니다.
+- 현재5906 출력 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_opposite_workspace`, 원자료의 `workspace_motion.json`/`workspace_trajectory.npz`. 초기 독립 계획도 `opposite_plan_check`에 보존한다. 형상/FK/충돌 표본 기반의 기구학 미리보기이며 Newton GPU 동역학·수확·실기 실행 검증은 아니다. 새 커밋은 요청되지 않았다.
+- 실제 브라우저HTTP200/오류0,5개 시점 모두 반대편X<-.35m와 위치 변화 확인, 일시정지/재개 통과. `opposite_workspace_browser_validation.json`, 정면/탑뷰 캡처 `opposite_workspace_front.png`/`opposite_workspace_top.png`,25초1배속 실제 브라우저 영상 `opposite_workspace_live.mp4`(13px 자막). 원본webm도 `opposite_browser_recording`에 보존한다.
+
+## 2026-11-12 최신: 휠·조작부 색상 복원
+
+- 사용자 지적의 원인은 차체 `s300_g0046`/`chassis_11` 한 메시(787,707정점)의31가지 원본 정점 색을 변환 시 첫 색 `[1,1,.2157]` 하나로 축약한 것이었다. 이 때문에 바퀴뿐 아니라 화면/버튼도 모두 노랗게 보였다.
+- `robot_vertex_colors.py`가 기존 로컬 USD의 원본 색을 읽고 source/compiled 정점 및 면 인덱스 일치를 검증한 뒤 packed 파일에 정점별RGBA를 보존한다(좌표 오차6.87e-8m). `PackedScene`/`pack_scene`/`newton_viser.geom_mesh`와 정적 배치 경로도 이를 유지한다. 미리보기 준비에서 .asset-venv의 일회성 색 복원 후 최종 packed 메시를 사용한다.
+- 원본 노란 CAD 색 부분은 형상을 분리해 확인한 고무 롤러32개이므로 검정 계열 `[7,9,12]`로, 휠의 푸른 CAD 금속 부품은 회색 `[160,166,174]`으로 변경했다. 화면/비상정지는 원본의 검정/빨강을 복원한다. 최종30색, 롤러 정점35,760개/회색 금속140,808개, 휠 노란 정점0. 형상·토폴로지와 이전 리프트/팔 궤적·native collision patch는 배열/파일 해시로 정확히 같다.
+- 현재5906 출력 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_wheel_materials`. 원본 USD/MJB 및 기존 농장 실험 자산은 유지한 미리보기 색상 변경이다. 검증 `wheel_materials_validation.json`, 출력의 `robot_vertex_colors.json`. 색상 유지3회귀+기존 뷰어/장면 패킹 포함20개 통과. 새 커밋은 요청되지 않았다.
+
+## 2026-11-12: 리프트와 로봇암 동시 랜덤 동작
+
+- 이전 랜덤 미리보기는6축 팔만 명령했고 리프트는0.75m에 고정했다. 모터를 상판에 연결한 직전 변경만으로는 리프트가 자동으로 움직이지 않았다. 사용자 지적에 따라 `--workspace-motion` 기본을 리프트1축+팔6축 연동으로 수정했다. `--fixed-lift`는 이전 고정 높이 비교 모드다.
+- 목표의 높이에 맞춰 리프트를 정하고, 각 Cartesian 구간을 리프트 높이와 함께 보간하며 기존 Jacobian IK를 푼다. 혼합 단위는 별도로 처리한다(리프트 표본<=0.5mm, 팔<=.002rad). 시간은 기존 리프트.12m/s/팔 속도 한도로 정한다. 표본별 관절 한계/기존1mm 간섭/녹색 영역/좌우15도 조건을 확인한다.
+- 24개 목표/15,087개 검사 표본, 관통0, 리프트.341558..75m(약40.84cm 이동), 최대 좌우각14.9293도. 별도120개 시점에서 표시 FK와 검사 모델 오차<=1.2e-15, 모터-상판 상대 변환 오차<=5.6e-17, 두 부품 이동량 일치. 회귀4개 통과. 증거 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/coordinated_lift_path_validation.json`.
+- 현재5906 출력 `preview_lift_arm_motion`. 화면의 리프트 표시도 실제 재생 높이를 따라 바뀐다. 저장 궤적은 `joint_positions_rad`(6축)와 `lift_positions_m`를 분리한다. 모델/메시/모터 연결은 그대로이며 원본 MJB는 수정하지 않았다. 이번에도 기구학 미리보기이며 Newton 동역학 실행이 아니다.
+- 실제 브라우저HTTP200/오류0,35초 중5초 간격7표본에서도 리프트 약26cm 이동을 확인했고 상판/모터의Z 변화량과 정확히 같았다. 일시정지는 리프트/팔을 모두 정지시키고 재개했다. `coordinated_lift_browser_validation.json`,35초1배속 영상 `lift_arm_random_motion_live.mp4`(13px 자막), 화면 `coordinated_lift_preview.png`를 같은 원자료 폴더에 저장한다. 새 커밋은 요청되지 않았다.
+
+## 2026-11-12: 리프트 모터를 상판 아래에 연결
+
+- 사용자 지시에 따라 5906 조립체 미리보기의 기존 리프트 모터/감속기 및 부속40개 CAD 메시를 고정 기체 그룹에서 분리했다. 기둥/하부 지지대는 유지하고 `Preview_lift_motor`를 움직이는 상판에 고정 연결한다. 모터 상단은 상판 아랫면보다10mm 아래이며 원래 CAD 방향/XY 배치는 유지한다.
+- `preview_robot_mount.py`가 상판 좌표계의 고정 장착 변환을 사용한다. 리프트0/.375/.75m와 이전/변경 받침판 높이의6개 조합에서 모터 이동량=상판 이동량, 상대 변환 및10mm 간격 일정, 하단의 기존 모터 중복0 확인. 증거 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/motor_mount_check/motor_mount_validation.json`.
+- 현재5906은 기존24개 랜덤 동작을 유지한 `preview_moving_motor` 출력으로 재실행한다. 이전 수확용 원본 USD/MJB 및 물리 질량/접촉 정책은 변경하지 않은 형상 수정이다. 기존 CAD 모터는 시각 형상이며 새 물리 충돌체를 추가하지 않았다.
+
+## 2026-11-12: 5906 작업 영역 내 무작위 관절 동작
+
+- 사용자 표시 영역을 대략 X=0.35..0.78/Y=-0.34..-0.06/Z=0.30..1.04m의 얕은3D 박스로 해석했다. 기준점은 기존96×158×84mm 수확 영역의 중심이다. 상단 받침판/리프트.75m/매달림 자세를 유지하고24개 무작위 목표로 연속 이동한 뒤 같은 경로를 역순으로 반복한다. 기체/리프트는 이동하지 않는다.
+- 실행 `./nvidia-sim/run_s300_newton.sh preview-hanging --port 5906 --pose-file /root/farmily_runtime/newton/runs/20261112_hanging_preview/lower_pose.json --workspace-motion --autoplay`. 브라우저 접속 시 재생, 시작/계속·일시정지·처음부터·배속 선택. 기본 작업 영역 시점은 정면이다. 현재 출력 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_workspace_motion_v2`.
+- 기존 Jacobian IK를 재사용한 **기구학 관절 궤적 미리보기**다. Newton GPU 동역학/수확/실기 구동 검증이 아니다. 원본 물리 파일은 유지하고 개인 복사 모델에서 베이스/받침판 충돌체를 실제 표시 위치로 옮겨 검사했다. 숨겨진 농장은 검사에서 제외한다. 로봇 자체·리프트·기체의 기존 마스크/제외 정책과1mm 기준은 유지한다.
+- 변경한 로컬 충돌체의 BVH는 mj_setConst만으로 갱신되지 않아 직접 재계산했다. 실제 충돌 검출 회귀와 루프 연결 회귀2개 통과. 채택 경로17,572개 표본(최대.002rad)에서 관통0. 반복 전 구간30Hz5,308프레임의 영역/관절 한계 확인, 최대 좌우각14.9293도. 도달/경로 검사 실패 후보는 제외하며 박스 전체의 도달 가능성을 증명한 것은 아니다. 방문 높이.407..1.000m.
+- 원자료 `workspace_path_validation_v2.json`, 현재 출력의 `workspace_motion.json`/`workspace_trajectory.npz`. 모델 전체559MB를 반복 저장하지 않고 약간의 설치 변경 배열과16KB 궤적만 저장한다. 이전 프로토타입의 이번 작업용 모델 복사 캐시는 정리했고 기존 사용자 자산/정적 모델은 유지했다.
+- 브라우저HTTP200/오류0, 실제 위치 변화와 일시정지·재개 확인(`workspace_browser_validation_v2.json`). 실제 브라우저35초·1배속 녹화 `workspace_random_motion_live.mp4`, 화면 `workspace_motion_preview_v2.png`. 화면 구성 변경 전후 궤적/충돌 변경 배열 해시가 정확히 같다. 자막13px. 새 커밋은 요청되지 않았다.
+
+## 2026-11-12: 매달림 받침판을 상단으로 이동
+
+- 사용자 표시 위치에 맞춰 5906 형상 미리보기의 받침판을 기존 위치보다 0.35m 올렸다. 판 아랫면은 리프트0.75m에서1.446m. 리프트 기둥/뒤 캐리지는 유지하고 받침판·매달린 RB5 베이스·팔·브래킷·그리퍼·카메라를 함께 올린다. 팔 자세/방향은 직전 아래쪽 후보와 같다.
+- `preview-hanging` 기본 상단 배치, `--plate-rise-m .35`로 오프셋 지정. 화면의 '받침판 위치'에서 이전 하단/변경 상단을 비교할 수 있다. 현재 실행은 기존 `lower_pose.json`을 함께 지정했고 출력은 `/root/farmily_runtime/newton/runs/20261112_hanging_preview/preview_upper_plate_v2`다.
+- 정적 배치 확인: 모든 팔/툴/베이스 이동량 정확히350mm, 방향과 기둥 유지, 표시 받침판1개, 원본 MJB/초기 상태 해시 동일. 원자료 `upper_plate_layout_check.json`. 이번 요청은 형상 변경이며 물리 모델/수확 실행은 바꾸지 않았다. 이전 낮은 받침판에서의 정적 간섭 확인을 새 배치의 검증으로 표시하지 않는다.
+
+## 2026-11-12: 매달림형 그리퍼 아래쪽 자세 확인
+
+- 사용자가 표시한 차체 위 아래쪽 공간으로 그리퍼를 내릴 수 있는지 정적 IK를 확인했다. 매달림 변환을 native 모델의 base parent frame과 link0 collider에 적용한 FK는 기존 형상 미리보기와 최대1.1e-16 일치. 물리 적분/이동 경로 시험은 하지 않았다.
+- 같은XY Tool_fixed 목표 [.15,-.2,.42/.45/.48]m는 관절 범위 내 해가 있으나 기존 차체/일부 팔-그리퍼 간섭이 있었다. 목표Z=.54m 후보는 관통0. 팔꿈치-156.38도(모델 한계-165도까지8.62도), 손목2+90도, 손목3+71.55도. 실제 표시 박스 좌표를 측정한 것은 아니며 화면의 아래쪽 영역을 대략 해석한 후보다.
+- 5906에 `--pose-file /root/farmily_runtime/newton/runs/20261112_hanging_preview/lower_pose.json`으로 실행했다. '로봇 자세'에서 기존/그리퍼 아래쪽 후보 비교 가능. 정적 간섭 확인은 매달림/리프트.75m 기준이며 높이/설치방향 변경 시 재검사된 것으로 표시하지 않는다. 현재 실행 출력 preview_lower_pose_v2. 원본 자산/수확 모델은 유지한다.
+- 증거 lower_target_search.json, lower_clearance_search.json, hanging_static_check.mjb, lower_pose.json. 형상 캡처 lower_gripper_preview.png. 케이블/실기 구동/연결 이동 경로 검증 아님.
+
+## 2026-11-12 最新: 5906 매달림 로봇 형상 미리보기
+
+- 사용자 요청으로 ROS/자동수확 실행 대신 현재 CAD 조립체의 매달림형만 표시한다. 실행 `./nvidia-sim/run_s300_newton.sh preview-hanging --port 5906`. 기본 리프트0.75m, 기존 상판 아랫면1.096m에 RB5 베이스를 붙이고 원래 팔·90도 브래킷·그리퍼·카메라를180도 회전한다. 베이스 하우징도 함께 회전하며 리프트/기체는 정립 상태다.
+- `preview_robot_mount.py`는 기존 검증된 packed CAD 형상·색상과 native FK를 재사용한다. 설치 방향(매달림/기존 정립), 리프트 높이, 전체/정면/측면/확대 시점 선택 가능. 농장 배경 대신 기체·리프트·로봇 조립체만 표시. 원본 물리/농장 자산과 현재 patrol_current는 수정하지 않는다.
+- 형상 확인 요청에 따라 물리 스텝/모션/충돌 검증0. 브라우저에서 실제 형상 렌더와 HTTP200 확인. 원자료 `/root/farmily_runtime/newton/runs/20261112_hanging_preview`, 최종 미리보기 preview_v2, 화면캡처 hanging_preview_final.png. 정적 형상이라 동영상은 만들지 않았다. 이 변형을 실행 가능한 물리 모델로 보고하지 않는다.
+
+## 2026-11-11 최신: ROS 목표 → OMPL 경로 계획 → Newton GPU 실행
+
+- 사용자 요청으로 실제 OMPL2.0.1 RRTConnect를 연결했다. 실행 `./nvidia-sim/run_s300_newton.sh ros-control --planner ompl`, 기본5905/domain42. `setup_s300_newton.sh --planner`는 기존 물리 버전 핀을 유지한다. 이번 변경은 미커밋 상태이며 직전 ROS 제어 커밋843b066 위에서 작업했다.
+- `/farmily/sim/planner/joint_goal`(JointState,팔6축 subset), `/planner/pose_goal`(PoseStamped,world의 Tool_fixed 원점), `/planner/status`, `/planner/trajectory` 추가. 별도 Python3.12 worker가 현재 MJB를 한 번 로딩해 CPU FK/충돌/OMPL 검색; 실제 궤적은 기존 Newton GPU actuator로 실행. 자유 직선은 먼저 검사하고 막히면 RRTConnect로 우회한다. 기존 직접 trajectory 토픽은 OMPL을 거치지 않는다.
+- 모델 SHA·정지 상태·전체10축 시작 명령을 실행 직전에 원자적으로 확인한다. 계획 경로 실행 동안 기체/리프트/그리퍼 포함 다른 움직임을 거절하며 stop은 허용한다. 실제 도달 q/v로 완료 판정. 피드백 중단/프로세스 종료 감시, 상세 계획/경로/실측 로그 기록. 한도 기본2초, 정확한 경로만 허용,1mm 및 기존 plant collision 정책 유지, 경로 표본<=.002rad.
+- DDS+GPU headless55초 시험:6축/Cartesian 목표, 실행 중 리프트 거절, 잘못된 목표 거절, 취소·재계획 통과. 간단한 목표 계획57.6/60.5ms, 실제 오차.00064rad/1.17mm,12100스텝/활성 관통0. GUI 원본 농장 팔↔그리퍼 간섭 경로 우회 및 복귀 모두 완료: 계획.8878/.9008초,1774스텝8.064sim/8.131wall초, 활성 관통0, 브라우저 오류0.
+- 첫 GUI 우회 성공 직후 복귀가 레일 실측-0.000608mm를 관절 범위 이탈로 거절했다. 실패를 보존하고 측정 위치/연결 구간에 기존 제어기 추종 범위만 적용하도록 수정했다. 실제 좌표를 clamp하지 않고 충돌 검사하며 명령 시작/목표/경로 한계와1mm 기준은 엄격하게 유지한다. 동일 실패 상태 재시험 및 새 GUI 왕복 통과. native29+ROS8회귀 통과.
+- 실행/토픽 문서 `nvidia-sim/S300_NEWTON_ROS2_KO.md`, 검증 `nvidia-sim/validation/s300_ros2_ompl_20261111.json`, 원자료 `/root/farmily_runtime/newton/runs/20261111_ros2_ompl`. 작은13px 자막 실제wall-clock 영상 `ompl_detour_live.mp4`, 수정 전 `ompl_detour_before_bounds_fix.mp4`, 전체원본 gui_video_v2/gui_video 보존.5905는 새 OMPL 연결 시작 대기 화면.
+- 기존 자동수확 순회 알고리즘을 OMPL로 교체한 것은 아니다. ROS 목표 계획 연결이며 MoveIt 액션 서버/실제 하드웨어 드라이버는 미구현. 초기 농장·카메라 로딩은 개선하지 않았다. CPU 경로 계획을 GPU 물리 가속이라고 보고하지 않는다.
+
 ## 2026-11-11 최신: ROS 토픽으로 로봇암·기체·리프트·그리퍼 제어
 
 - 사용자의 추가 요청에 따라 `./nvidia-sim/run_s300_newton.sh ros-control`을 구현했다. 자동 순회 `camera-patrol --ros2`와 별도 명령 권한 모드다. 기본5905/domain42, 시작 자세 선택 후 **ROS 제어 시작**. 실제 장비 드라이버는 실행하지 않는다.

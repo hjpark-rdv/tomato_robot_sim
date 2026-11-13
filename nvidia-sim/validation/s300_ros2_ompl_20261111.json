@@ -1,0 +1,173 @@
+{
+  "date": "2026-11-11",
+  "branch": "codex/s300-newton-standalone-20261108",
+  "base_commit": "843b06660479a5192b236dfa26060411fe4be386",
+  "structure": "ROS 2 goal topics -> persistent CPU OMPL2.0.1/native FK collision model -> existing Newton GPU actuator controller",
+  "source_model_sha256": "1f79415ffc07007941023b02ab54d053ca1ba21d97734b44e4d22aa927f082ed",
+  "launch": "./nvidia-sim/run_s300_newton.sh ros-control --planner ompl",
+  "headless": {
+    "status": "completed",
+    "stop": "duration_limit",
+    "actual_steps": 12100,
+    "simulated_s": 55.00734329223633,
+    "wall_s": 55.004434913164005,
+    "maximum_active_penetration_m": 0.0,
+    "maximum_contacts": 1,
+    "camera_exposures": 55,
+    "actual_gpu_control": true,
+    "goals": [
+      {
+        "request_id": "1ea5808b9089429bab96eb20748cc014",
+        "route": "direct_validated",
+        "planning_s": 0.05761617491953075,
+        "trajectory_s": 0.6179945008403698
+      },
+      {
+        "request_id": "0ce443e8d2b043c2985fe6aacb6a2eb1",
+        "route": "direct_validated",
+        "planning_s": 0.06048178789205849,
+        "trajectory_s": 0.5862365743806734
+      },
+      {
+        "request_id": "5f0ef8d4c87840f6945144ea389d77ba",
+        "route": "direct_validated",
+        "planning_s": 0.19333243113942444,
+        "trajectory_s": 1.2462254200290386
+      },
+      {
+        "request_id": "df216584b1514242b3b89c0f93cd9907",
+        "route": "direct_validated",
+        "planning_s": 0.008386305999010801,
+        "trajectory_s": 0.19668774141655587
+      }
+    ],
+    "validation_passed": true,
+    "joint_actual_error_rad": 0.0006393146514893644,
+    "pose_position_error_m": 0.0011672368731879214,
+    "checks": [
+      "6axis goal",
+      "Tool_fixed world pose goal",
+      "lift command rejected during planned motion",
+      "invalid goal rejection",
+      "stop and resume"
+    ]
+  },
+  "gui": {
+    "status": "completed",
+    "stop": "operator_exit",
+    "actual_steps": 1774,
+    "simulated_s": 8.063835144042969,
+    "wall_s": 8.13116613891907,
+    "maximum_active_penetration_m": 0.0,
+    "maximum_contacts": 1,
+    "camera_exposures": 9,
+    "actual_gpu_control": true,
+    "goals": [
+      {
+        "request_id": "adeae0cdd80e489cbb180d8f2c4b869c",
+        "route": "rrt_connect_detour",
+        "planning_s": 0.8877861141227186,
+        "trajectory_s": 2.21254491750777
+      },
+      {
+        "request_id": "d4a6748fbd434a09922c1f15b464377a",
+        "route": "rrt_connect_detour",
+        "planning_s": 0.9008186070714146,
+        "trajectory_s": 2.3095955213562798
+      }
+    ],
+    "validation_passed": true,
+    "browser_errors": [],
+    "detour_actual_error_rad": 0.0010590457515338159
+  },
+  "regression": {
+    "initial_failure": "Return plan rejected measured rail=-0.000608mm as outside exact nominal limits after successful detour",
+    "fix": "Only measured state and measured->command connector use existing controller tracking envelope; original q collision-tested, not clamped; commanded goals/path limits strict;1mm penetration guard unchanged",
+    "evidence": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/measured_bounds_regression.json"
+  },
+  "tests": {
+    "native": 29,
+    "ros": 8,
+    "passed": true,
+    "includes": [
+      "real OMPL box detour",
+      "impossible path timeout",
+      "actual farm model hash",
+      "measured connector collision",
+      "strict command limits vs measured tracking envelope",
+      "atomic execution ownership",
+      "state/model changes reject stale plan",
+      "feedback loss requests stop"
+    ]
+  },
+  "limitations": [
+    "CPU planning and collision queries; GPU physics unchanged",
+    "Existing automatic camera-patrol algorithm not replaced",
+    "Six-arm planning holds rail/lift/gripper fixed during execution",
+    "Pose goal refers to Tool_fixed origin",
+    "Sampled collision checks are not a continuous collision guarantee",
+    "No MoveIt FollowJointTrajectory action server or hardware driver",
+    "Timings are tested goal samples, not guarantees for arbitrary goals",
+    "Initial geometry/camera loading not accelerated in this change"
+  ],
+  "evidence_root": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl",
+  "videos": [
+    "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/ompl_detour_live.mp4",
+    "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/gui_video_v2/page@4cb378c8d0dab70aaac08d1cd1fb1e65.webm",
+    "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/ompl_detour_before_bounds_fix.mp4",
+    "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/gui_video/page@b3d4e9b03fbafd10f842854f4c9aa3be.webm"
+  ],
+  "video_metadata": [
+    {
+      "source": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/gui_video_v2/page@4cb378c8d0dab70aaac08d1cd1fb1e65.webm",
+      "output": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/ompl_detour_live.mp4",
+      "source_trim_start_seconds": 48.8,
+      "speed_factor": 1.0,
+      "caption_font_px": 13,
+      "ready_video_wall_offset_metadata": 51.90760859684087,
+      "trim_note": "Visual source 49.0 s shows physics 0.0 s; source 48.8 s preserves beginning, planning pauses, motion and return. Browser wall offset is not source video timestamp.",
+      "camera_pip_note": "Original mounted camera view preserved, mainly own robot and white structure in the selected manual arm poses.",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 900,
+            "r_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "8.880000",
+          "size": "446832"
+        }
+      },
+      "sha256": "42fbb5a0634af1918264437ef7b19aa7eee96502c48f5aad2a1c4fa84fe931ff"
+    },
+    {
+      "source": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/gui_video/page@b3d4e9b03fbafd10f842854f4c9aa3be.webm",
+      "output": "/root/farmily_runtime/newton/runs/20261111_ros2_ompl/ompl_detour_before_bounds_fix.mp4",
+      "source_trim_start_seconds": 34.5,
+      "speed_factor": 1.0,
+      "caption_font_px": 13,
+      "result": "failure record: outward detour executed; return rejected by bounds validation",
+      "trim_note": "Visual source 35.0 s shows physics 0.2 s; source 34.5 s preserves initial command",
+      "probe": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 1280,
+            "height": 900,
+            "r_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "6.000000",
+          "size": "367465"
+        }
+      },
+      "sha256": "b7d131ba50100c742126deac7862758ba5472e706feeefabd8d1f0b8203f5665"
+    }
+  ]
+}

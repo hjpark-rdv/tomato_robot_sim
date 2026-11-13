@@ -49,6 +49,7 @@ class OnlineSession:
     def __init__(self,args,model,initial,camera,camera_body,ros,viewer,out,end):
         self.args=args;self.model=model;self.initial=initial;self.camera=camera;self.camera_body=camera_body
         self.ros=ros;self.viewer=viewer;self.out=out;self.end=end
+        self.planner_process=None
 
     def run(self,engine,ctrl,graph,dt,batch,initial,report,nonfinite,packed,health):
         d=engine.solver.mjw_data;qadr=initial['robot_qpos_addresses'];vadr=initial['robot_dof_addresses']
@@ -61,10 +62,11 @@ class OnlineSession:
         if trace:write(self.out/'control_trace.json',dict(dtype='<f8',columns=columns,batch=batch,dt=dt,
             fields=['time','command_2x10','qpos_10','qvel_10'],joint_names=self.ros.joint_names))
         def event(row):event_file.write(json.dumps(row,allow_nan=False)+'\n');event_file.flush()
-        commands=Commands(self.ros.joint_names,q[qadr],bounds,watchdog=self.args.cmd_vel_timeout,event_sink=event)
+        commands=Commands(self.ros.joint_names,q[qadr],bounds,watchdog=self.args.cmd_vel_timeout,event_sink=event,
+                          model_sha256=self.ros.config['model_sha256'])
         self.ros.state(q,v,stamp,force=True);self.ros.feedback(commands.feedback())
         interrupted=[False];previous=signal.signal(signal.SIGINT,lambda *_:interrupted.__setitem__(0,True))
-        started=time.perf_counter();pace=started;next_state=next_camera=next_display=0.;last_events=-1
+        started=time.perf_counter();pace=started;next_state=next_camera=next_display=next_feedback=0.;last_events=-1
         pending=None;pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='ros-camera');exposure_state=None
         total=0;images=0;stop=None;disconnect=None;max_pen=0.;max_contacts=0;max_candidates=0
         command_digest=hashlib.sha256();realtime_started=time.perf_counter()
@@ -81,6 +83,9 @@ class OnlineSession:
         try:
             while True:
                 now=time.monotonic()
+                if self.planner_process is not None and self.planner_process.poll() is not None:
+                    commands.stop('OMPL planner process exited; see planner.log')
+                    stop='planner_disconnected';break
                 for command in self.ros.commands.drain():commands.accept(command,stamp,now)
                 if (self.ros.commands.error or self.ros.sender.error) and disconnect is None:
                     disconnect=now;commands.stop('ROS connection lost')
@@ -111,8 +116,8 @@ class OnlineSession:
                     max_pen=max(max_pen,float(ctrl.active_max.numpy().max()))
                     max_contacts=max(max_contacts,int(ctrl.nacon_log.numpy().max()))
                     max_candidates=max(max_candidates,int(ctrl.ncollision_log.numpy().max()))
-                if commands.events!=last_events:
-                    self.ros.feedback(commands.feedback());last_events=commands.events
+                if commands.events!=last_events or stamp>=next_feedback:
+                    self.ros.feedback(commands.feedback());last_events=commands.events;next_feedback=stamp+.2
                 if pending is not None and pending.done():
                     observation,frame=pending.result();self.ros.camera(observation,frame,state=exposure_state)
                     if self.viewer:self.viewer.picture.visible=True;self.viewer.picture.image=frame['recognition']
@@ -163,12 +168,18 @@ def main():
     p.add_argument('--ros-domain-id',type=int,default=42);p.add_argument('--ros-namespace',default='/farmily/sim')
     p.add_argument('--ros-state-hz',type=float,default=20.);p.add_argument('--camera-hz',type=float,default=1.)
     p.add_argument('--cmd-vel-timeout',type=float,default=.5)
+    p.add_argument('--planner',choices=['none','ompl'],default='none',help='Start OMPL joint/Tool_fixed pose goal topics')
+    p.add_argument('--planning-seconds',type=float,default=2.,help='OMPL search budget per request')
     p.add_argument('--seconds',type=float,default=0.,help='Optional wall-time limit after readiness;0 runs until stopped')
     p.add_argument('--record-control-trace',action='store_true',help='Save bounded-memory raw actuator/state audit for deterministic replay checks')
     args=p.parse_args();args.scene_loading='full';args.control_mode='ros'
+    if args.planner=='ompl':
+        import importlib.util
+        if importlib.util.find_spec('ompl') is None:p.error('Install planner: ./nvidia-sim/setup_s300_newton.sh --planner')
     if not 0<=args.ros_domain_id<=232:p.error('ROS domain must be within0..232')
     if not 0<args.ros_state_hz<=60 or not 0<=args.camera_hz<=10:p.error('State rate0..60Hz, camera0..10Hz required')
     if not .1<=args.cmd_vel_timeout<=2 or not np.isfinite(args.seconds) or args.seconds<0:p.error('Invalid timeout/duration')
+    if not np.isfinite(args.planning_seconds) or not .05<=args.planning_seconds<=10:p.error('Planning budget must be0.05..10s')
     out=args.output.resolve();out.mkdir(parents=True,exist_ok=False)
     write(out/'preflight.json',preflight_patrol(args))
     viewer=None
@@ -187,9 +198,25 @@ def main():
             ros=PatrolROS2(model,initial,camera.mount,body,assets,out/'ros2',rate=args.ros_state_hz,
                 domain=args.ros_domain_id,namespace=args.ros_namespace,control=True);stack.callback(ros.close)
             ros.config.update(camera_rate='Periodic asynchronous actual exposures; original acquisition stamps retained',
-                              camera_hz=args.camera_hz,control_mode='ros')
+                              camera_hz=args.camera_hz,control_mode='ros',planner=args.planner)
+            ros.sender.put(dict(kind='configuration',configuration=ros.config))
             write(out/'ros2/config.json',ros.config)
+            if args.planner=='ompl':
+                import os
+                planner_log=stack.enter_context((out/'planner.log').open('w'))
+                planner_process=subprocess.Popen(['bash',str(ROOT/'nvidia-sim/run_s300_ros2.sh'),'planner',
+                    '--assets',str(assets),'--output',str(out/'planner'),'--namespace',args.ros_namespace,
+                    '--planning-seconds',str(args.planning_seconds)],stdout=planner_log,stderr=subprocess.STDOUT,
+                    env={**{k:v for k,v in os.environ.items() if k not in ('PYTHONPATH','VIRTUAL_ENV')},
+                         'S300_ROS_DOMAIN_ID':str(args.ros_domain_id)})
+                def close_planner():
+                    if planner_process.poll() is None:
+                        planner_process.send_signal(signal.SIGINT)
+                        try:planner_process.wait(timeout=5.)
+                        except subprocess.TimeoutExpired:planner_process.kill();planner_process.wait()
+                stack.callback(close_planner)
             session=OnlineSession(args,model,initial,camera,body,ros,viewer,out,route_end(config,args.end_station))
+            if args.planner=='ompl':session.planner_process=planner_process
             invocation=[str(ROOT/'nvidia-sim/run_s300_newton.sh'),'gpu-realtime',str(out/'inputs'),'--output',str(out/'physics'),
                 '--nconmax','1024','--njmax','1024','--dense-hessian-capacity','128','--dense-hessian-overflow-capacity','512',
                 '--solver-tolerance','1e-8','--released-gutter-diagnostic','--linear-algebra','warp','--inertia-linear-algebra','warp',

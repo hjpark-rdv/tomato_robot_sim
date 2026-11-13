@@ -26,6 +26,11 @@ class PackedScene:
             self.__dict__.update({k:arrays[k] for k in arrays.files})
         self.ngeom=len(self.geom_names);self.nbody=len(self.body_names)
         self._body_ids={str(n):i for i,n in enumerate(self.body_names)}
+        self.vertex_color_lookup = {}
+        if hasattr(self, 'vertex_color_geom_names'):
+            self.vertex_color_lookup = {str(name): self.vertex_color_rgba[
+                self.vertex_color_offsets[i]:self.vertex_color_offsets[i+1]]
+                for i, name in enumerate(self.vertex_color_geom_names)}
 
     def body(self, key):
         i=self._body_ids[key] if isinstance(key,str) else int(key)
@@ -56,6 +61,13 @@ def pack_scene(model, selected, path):
         data['mesh_'+kind]=np.concatenate(arrays) if arrays else np.empty((0,3))
         data['mesh_'+kind+'num']=lengths
         data['mesh_'+kind+'adr']=np.r_[0,np.cumsum(lengths)[:-1]].astype(int) if meshes else np.array([],dtype=int)
+    color_lookup = getattr(model, 'vertex_color_lookup', {})
+    color_names = [model.geom(i).name for i in selected if model.geom(i).name in color_lookup]
+    if color_names:
+        colors = [color_lookup[name] for name in color_names]
+        data.update(vertex_color_geom_names=np.asarray(color_names),
+            vertex_color_offsets=np.r_[0, np.cumsum([len(c) for c in colors])],
+            vertex_color_rgba=np.concatenate(colors))
     np.savez_compressed(path,**data)
 
 

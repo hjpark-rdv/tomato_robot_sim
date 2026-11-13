@@ -97,6 +97,9 @@ class PatrolROS2:
             camera_rate='Existing actual exposure events only; no additional rendering or fresh-stamped repeats',
             read_only=not control,physics_control_subscriptions=control,transport='bounded latest-slot Unix socket',
             ros_python='/usr/bin/python3',clock='/clock',camera_frame=namespace.strip('/')+'/camera_optical_frame')
+        from newton_inputs import sha256
+        self.config.update(assets=str(Path(assets).resolve()),model_sha256=sha256(Path(assets)/'inputs/input_model.mjb'))
+        self.sender.put(dict(kind='configuration',configuration=self.config))
         (self.output/'config.json').write_text(json.dumps(self.config,indent=2)+'\n')
 
     def state(self,qpos,qvel,timestamp,*,force=False):

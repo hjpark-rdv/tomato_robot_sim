@@ -1,0 +1,3 @@
+# Optional native planner in the existing Newton Python environment.
+# This dependency does not change the Newton GPU physics packages.
+ompl==2.0.1

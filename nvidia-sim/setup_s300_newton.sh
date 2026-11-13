@@ -8,13 +8,14 @@ python="$venv_dir/bin/python"
 lock="$task_dir/newton-requirements.lock.txt"
 mode="${1:-install}"
 if [[ "$mode" == '--help' || "$mode" == '-h' ]]; then
-  printf '%s\n' 'Usage: setup_s300_newton.sh [--check|--viewer]' \
+  printf '%s\n' 'Usage: setup_s300_newton.sh [--check|--viewer|--planner]' \
     'Installs pinned Newton 1.7 / MuJoCo+MJWarp 3.15 / Warp 1.17 into nvidia-sim/.newton-venv.' \
     '--check only validates installed package versions and dependencies; it does not start CUDA or Isaac.' \
-    '--viewer adds the optional Viser browser display to the existing pinned physics environment.'
+    '--viewer adds the optional Viser browser display to the existing pinned physics environment.' \
+    '--planner adds the pinned OMPL path planner without changing the physics packages.'
   exit 0
 fi
-if [[ "$mode" != 'install' && "$mode" != '--check' && "$mode" != '--viewer' ]]; then
+if [[ "$mode" != 'install' && "$mode" != '--check' && "$mode" != '--viewer' && "$mode" != '--planner' ]]; then
   printf 'Unknown setup mode: %s\n' "$mode" >&2
   exit 2
 fi
@@ -43,6 +44,9 @@ if [[ ! -x "$python" ]]; then
 fi
 if [[ "$mode" == '--viewer' ]]; then
   env -u PYTHONPATH "$python" -m pip install -c "$lock" -r "$task_dir/newton-viewer-requirements.txt"
+fi
+if [[ "$mode" == '--planner' ]]; then
+  env -u PYTHONPATH "$python" -m pip install -c "$lock" -r "$task_dir/newton-planner-requirements.txt"
 fi
 env -u PYTHONPATH "$python" - "$lock" <<'PY'
 from importlib.metadata import version

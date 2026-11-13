@@ -17,7 +17,8 @@ if [[ "$mode" == '--help' || "$mode" == '-h' || "$mode" == 'help' ]]; then
     '       run_s300_newton.sh standalone [INPUTS] [--headless] [runner options]' \
     '       run_s300_newton.sh prepare-standalone [OUTPUT] [builder options]' \
     '       run_s300_newton.sh camera-patrol [ASSETS] [--headless] [--ros2] [patrol options]' \
-    '       run_s300_newton.sh ros-control [ASSETS] [--headless] [ROS control options]' \
+    '       run_s300_newton.sh ros-control [ASSETS] [--headless] [--planner ompl] [ROS control options]' \
+    '       run_s300_newton.sh preview-hanging [ASSETS] [--port 5906] [--lift-height .75] [--workspace-motion --autoplay]' \
     '       run_s300_newton.sh render-patrol RUN --output VIDEO.mp4 [--fps 6]' \
     '       run_s300_newton.sh prepare-patrol OUTPUT [--end-station METRES]' \
     '       run_s300_newton.sh prepare-route REFERENCE_ASSETS OUTPUT --end-station METRES' \
@@ -51,6 +52,13 @@ if [[ ! -x "$python" ]]; then
 fi
 export PYTHONNOUSERSITE=1
 case "$mode" in
+  preview-hanging)
+    runtime="${S300_NEWTON_RUNTIME:-/root/farmily_runtime/newton}"
+    preview_assets="${S300_NEWTON_PATROL_ASSETS:-$runtime/assets/patrol_current}"
+    if (($#)) && [[ "$1" != -* ]]; then preview_assets="$1"; shift; fi
+    exec env -u PYTHONPATH "$python" -u "$scripts/preview_robot_mount.py" "$preview_assets" \
+      --output "$runtime/runs/$(date +%Y%m%d_%H%M%S)_hanging_preview" "$@"
+    ;;
   render-patrol)
     exec env -u PYTHONPATH "$python" -u "$scripts/render_newton_patrol.py" "$@"
     ;;

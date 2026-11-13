@@ -87,6 +87,72 @@ cd /root/farmily_tomato
 ROS 제어 예제는 현재 위치를 확인한 뒤 사용한다. `JointTrajectory` 토픽 입력을 지원하며,
 MoveIt/ros2_control의 `FollowJointTrajectory` 액션 서버나 실제 모터 드라이버 연결까지 구현한 것은 아니다.
 
+## OMPL로 경로를 계획하고 실행하기
+
+최초 한 번 선택 의존성을 설치한 뒤 `--planner ompl`로 실행한다.
+기존 Newton 물리 패키지는 유지하고 OMPL 2.0.1을 추가한다.
+
+```bash
+cd /root/farmily_tomato
+./nvidia-sim/setup_s300_newton.sh --planner
+./nvidia-sim/run_s300_newton.sh ros-control --planner ompl
+```
+
+5905 화면에서 **ROS 제어 시작**을 누르고 `planner/status`가 준비 상태가 되면 목표를 보낸다.
+아래는 기본 엘보우 위 시작 자세에서 손목만 조금 움직이는 관절 목표다.
+나머지 다섯 관절의 목표는 현재 명령 위치를 유지한다. 장애물 우회 과정에서는 여섯 축을 사용할 수 있다.
+
+```bash
+./nvidia-sim/run_s300_ros2.sh topic pub --once \
+  /farmily/sim/planner/joint_goal sensor_msgs/msg/JointState \
+  "{name: [wrist3], position: [-1.17]}"
+
+./nvidia-sim/run_s300_ros2.sh topic echo /farmily/sim/planner/status
+./nvidia-sim/run_s300_ros2.sh topic echo /farmily/sim/planner/trajectory --once
+```
+
+| 토픽 | 형식과 동작 |
+| --- | --- |
+| `/farmily/sim/planner/joint_goal` | `sensor_msgs/JointState`: `name`에 로봇암 6축 중 일부/전부, `position`에 대응하는 rad 목표. 계획 성공 후 자동 실행 |
+| `/farmily/sim/planner/pose_goal` | `geometry_msgs/PoseStamped`: `header.frame_id: world`, 위치 m와 정규화된 quaternion으로 `Tool_fixed` 원점의 목표 자세 지정. 제한 시간 안에 IK와 충돌 경로 계획 후 실행 |
+| `/farmily/sim/planner/trajectory` | `trajectory_msgs/JointTrajectory`: 검증한 경로의 미리보기. 각 점에서 정지하는 quintic 보간을 사용 |
+| `/farmily/sim/planner/status` | `std_msgs/String` JSON: 준비·계획·실행·완료·거절, 계산 시간·충돌 검사 수·모델 해시 |
+| `/farmily/sim/planner/execute_trajectory` | `std_msgs/String` JSON: 플래너가 제어기로 보내는 내부 실행 요청. 경로와 시작 명령 위치·모델 해시·요청 ID를 함께 검증 |
+
+Cartesian 목표의 기준은 그리퍼의 노란 수확 박스 중심이 아니라 `/farmily/sim/tool_pose`로
+발행되는 **`Tool_fixed` 원점**이다. 그 위치·회전을 먼저 확인하고 원하는 월드 목표를 계산한다.
+다른 frame의 자동 TF 변환이나 MoveIt의 `FollowJointTrajectory` 액션 서버는 아직 제공하지 않는다.
+기존 `/arm_controller/joint_trajectory`에 직접 보내는 경로는 OMPL을 거치지 않는다.
+
+OMPL RRTConnect·IK·충돌 검사는 별도 **CPU 작업 프로세스**, 실제 움직임·접촉 물리 적분은
+기존 **Newton GPU**가 맡는다. 모델은 준비 때 한 번 로딩해 이후 요청에서 재사용한다.
+기본 계획 제한은 2초이며 `ros-control --planner ompl --planning-seconds 3`처럼 변경한다
+(허용 0.05~10초). 근사 경로나 시간 초과 경로는 실행하지 않는다.
+
+계획 시작 시 로봇이 정지해 있어야 하며, 실행 직전에도 전체 10축의 시작 명령 위치와
+현재 위치·정지 상태·원본 모델 해시를 다시 검사한다. 계획 중 다른 명령으로 상태가 바뀌면
+오래된 경로를 거절한다. 계획 경로 실행 중에는 기체·리프트·그리퍼를 유지하고 새 이동 명령을
+거절한다. `/stop`으로 경로를 취소할 수 있다.
+
+원본 모델의 충돌 마스크·제외 규칙을 사용하며 로봇 관련 접촉의 **1mm 초과 관통**을 거절한다.
+팔 경로는 관절 공간 거리 최대 **0.002rad**마다 검사하고, 실제 측정 위치에서 시작 명령 위치로
+연결하는 구간의 직동 축은 최대 0.5mm 간격으로 검사한다. 이는 유한 간격의 충돌 검사이며,
+실행 중 기존 GPU 충돌 중단 검사도 유지한다. 열매·잎·가는 가지의 기존 충돌 제외 정책을 바꾸지 않는다.
+
+측정 관절은 부드러운 물리 제약 때문에 관절 한계 밖으로 미세하게 흔들릴 수 있다.
+측정 시작점과 명령 시작점까지의 연결 구간은 기존 제어기의 추종 범위(레일·리프트2mm,
+팔0.01rad, 그리퍼1mm) 안에서 실제 측정 좌표를 그대로 충돌 검사한다.
+좌표를 잘라내거나 충돌 기준을 완화하지 않으며, 명령 시작점·목표·경로에는 엄격한 관절 한계를 적용한다.
+한계 초과량은 계획 보고서에 남는다. 실행 중 명령 피드백 단절 시 정지를 요청하며,
+플래너 프로세스가 종료되면 시뮬레이터도 해당 오류로 멈춘다.
+
+2026-11-11 실제 ROS→OMPL→GPU 시험에서 관절·Cartesian 목표가 모두 완료됐다.
+계획 시간은 각각 57.6ms·60.5ms, 완료 오차는 관절 약0.00064rad·Cartesian 위치 약1.17mm였다.
+실제 GUI 농장 시험에서는 직선 경로의 팔↔그리퍼 충돌을 피하는 우회 이동과 복귀를
+모두 GPU 물리로 완료했다. 계획은 각각0.888초·0.901초였고 활성 관통0이었다.
+이 수치는 해당 목표의 표본이며 임의 목표의 지연 보장은 아니다.
+검증 기록은 `validation/s300_ros2_ompl_20261111.json`에 정리했다.
+
 ## 자동 순회 + 상태 발행 실행
 
 저장소 `/root/farmily_tomato`에서 최초 1회:

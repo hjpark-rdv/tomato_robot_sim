@@ -33,7 +33,7 @@ class Segment:
 
 
 class Commands:
-    def __init__(self,names,q,bounds,*,watchdog=.5,event_sink=None):
+    def __init__(self,names,q,bounds,*,watchdog=.5,event_sink=None,model_sha256=None):
         self.names=list(names);self.q=np.array(q,float);self.v=np.zeros(10);self.a=np.zeros(10)
         self.bounds=np.array(bounds,float);self.watchdog=watchdog;self.event_sink=event_sink
         if len(self.names)!=10 or len(set(self.names))!=10:raise ValueError('Ten unique simulator joints required')
@@ -45,6 +45,19 @@ class Commands:
         self.stopped=False;self.stop_reason=None;self.base_speed=0.;self.base_until=-math.inf
         self.base_sequence=None;self.last_sequence=0;self.last_time=0.
         self.tolerance=np.array([.002,.002]+[.01]*6+[.001,.001])
+        self.model_sha256=model_sha256
+        self.measured=self.q.copy();self.measured_velocity=np.zeros(10)
+
+    def guarded_group(self):
+        return next((g for g in self.groups.values() if g.get('guarded')),None)
+
+    def motion_active(self):
+        return bool(self.plans or self.base_sequence is not None or
+                    np.any(np.abs(self.v)>1e-8) or np.any(np.abs(self.measured_velocity)>.02))
+
+    @staticmethod
+    def request_fields(group):
+        return {'request_id':group['request_id']} if 'request_id' in group else {}
 
     def event(self,sequence,kind,status,reason='',**values):
         self.events+=1
@@ -57,7 +70,9 @@ class Commands:
         return dict(mode='ros_control',state='stopped' if self.stopped else 'ready',stop_reason=self.stop_reason,
                     recent_events=list(self.recent),target_positions=self.q.tolist(),joint_names=self.names,
                     velocity_limits=VELOCITY.tolist(),acceleration_limits=ACCELERATION.tolist(),
-                    position_limits=self.bounds.tolist(),cmd_vel_timeout_wall_s=self.watchdog)
+                    position_limits=self.bounds.tolist(),cmd_vel_timeout_wall_s=self.watchdog,
+                    motion_active=self.motion_active(),
+                    active_planning_request_id=(self.guarded_group() or {}).get('request_id'))
 
     def cancel_axes(self,axes,reason):
         for i in axes:self.plans.pop(i,None)
@@ -65,7 +80,7 @@ class Commands:
             if set(axes)&set(group['axes']):
                 # A group is one command: preempt all of its remaining axes.
                 for i in group['axes']:self.plans.pop(i,None)
-                self.event(seq,group['kind'],'preempted',reason);del self.groups[seq]
+                self.event(seq,group['kind'],'preempted',reason,**self.request_fields(group));del self.groups[seq]
         if 0 in axes and self.base_sequence is not None:
             self.event(self.base_sequence,'cmd_vel','preempted',reason);self.base_sequence=None
             self.base_speed=0.;self.base_until=-math.inf
@@ -75,6 +90,8 @@ class Commands:
 
     def accept(self,c,t,wall):
         self.last_time=t;seq=c['sequence'];kind=c['command_type']
+        request_fields=({'request_id':c['request_id']} if kind=='planned_arm_trajectory' and
+                        isinstance(c.get('request_id'),str) else {})
         try:
             if seq<=self.last_sequence:raise ValueError('Duplicate/out-of-order command sequence')
             self.last_sequence=seq
@@ -86,6 +103,10 @@ class Commands:
                 self.event(seq,kind,'accepted', 'holding; cancelled commands will not resume' if c['value'] else 'ready for new commands')
                 return True
             if self.stopped:raise ValueError('Stop is latched; publish stop=false before a new command')
+            if self.guarded_group():
+                raise ValueError('Planned trajectory owns all motion axes until completion or stop')
+            if kind=='planned_arm_trajectory':
+                self.validate_planned_start(c)
             if kind=='cmd_vel':
                 vectors=np.array(c['linear']+c['angular'],float)
                 if vectors.shape!=(6,) or not np.isfinite(vectors).all():raise ValueError('Finite Twist required')
@@ -114,18 +135,41 @@ class Commands:
                     try:plans,end=self.trajectory(trial,t);break
                     except ValueError as exc:error=exc;duration*=1.1
                 else:raise error
-            elif kind in ('arm_trajectory','joint_trajectory'):
-                if kind=='arm_trajectory' and not set(c['joint_names']).issubset(self.names[2:8]):
+            elif kind in ('arm_trajectory','joint_trajectory','planned_arm_trajectory'):
+                if kind in ('arm_trajectory','planned_arm_trajectory') and not set(c['joint_names']).issubset(self.names[2:8]):
                     raise ValueError('Arm topic accepts only base, shoulder, elbow, wrist1, wrist2, wrist3')
                 plans,end=self.trajectory(c,t);ids=list(plans)
             else:raise ValueError('Unknown command type')
             self.cancel_axes(ids,'replaced by command '+str(seq))
             self.plans.update(plans)
-            self.groups[seq]=dict(kind=kind,axes=ids,end=end,targets=[plans[i][-1].sample(end)[0] for i in ids])
-            self.event(seq,kind,'accepted',end_simulation_time=end)
+            self.groups[seq]=dict(kind=kind,axes=ids,end=end,targets=[plans[i][-1].sample(end)[0] for i in ids],
+                                 guarded=kind=='planned_arm_trajectory',**request_fields)
+            self.event(seq,kind,'accepted',end_simulation_time=end,**request_fields)
             return True
         except (ValueError,KeyError,TypeError,OverflowError) as error:
-            self.event(seq,kind,'rejected',str(error));return False
+            self.event(seq,kind,'rejected',str(error),**request_fields);return False
+
+    def validate_planned_start(self,c):
+        """Check the planner's entire start snapshot atomically before changing any axis."""
+        request=c.get('request_id')
+        if not isinstance(request,str) or not request or len(request)>128:
+            raise ValueError('Planned trajectory requires a nonempty request_id up to 128 characters')
+        if not self.model_sha256 or c.get('source_model_sha256')!=self.model_sha256:
+            raise ValueError('Planned trajectory model SHA does not match this simulator')
+        expected=np.asarray(c['expected_start_positions'],float)
+        if expected.shape!=(10,) or not np.isfinite(expected).all():
+            raise ValueError('Planned trajectory requires ten finite expected start positions')
+        if (self.plans or self.groups or self.base_sequence is not None or
+                np.any(np.abs(self.v)>1e-8) or np.any(np.abs(self.a)>1e-8)):
+            raise ValueError('Planned trajectory requires stationary command targets and no active motion')
+        if not np.isfinite(self.measured).all() or not np.isfinite(self.measured_velocity).all():
+            raise ValueError('Planned trajectory requires finite measured state')
+        if np.any(np.abs(self.measured_velocity)>.02):
+            raise ValueError('Planned trajectory requires the measured robot to be stationary')
+        if np.any(np.abs(expected-self.q)>1e-6):
+            raise ValueError('Planned trajectory start is stale: commanded positions changed')
+        if np.any(np.abs(expected-self.measured)>self.tolerance):
+            raise ValueError('Planned trajectory measured start exceeds tracking tolerance')
 
     def trajectory(self,c,t):
         names=c['joint_names'];points=c['points']
@@ -190,13 +234,16 @@ class Commands:
 
     def observe(self,t,measured,velocity):
         self.last_time=t
+        self.measured=np.asarray(measured,float).copy();self.measured_velocity=np.asarray(velocity,float).copy()
+        if self.measured.shape!=(10,) or self.measured_velocity.shape!=(10,):
+            raise ValueError('Ten measured positions and velocities required')
         for seq,g in list(self.groups.items()):
             if t<g['end']:continue
             ids=g['axes'];error=np.abs(np.asarray(measured)[ids]-g['targets'])
             if np.all(error<=self.tolerance[ids]) and np.all(np.abs(np.asarray(velocity)[ids])<=.02):
-                self.event(seq,g['kind'],'completed',maximum_tracking_error=float(error.max()))
+                self.event(seq,g['kind'],'completed',maximum_tracking_error=float(error.max()),**self.request_fields(g))
                 for i in ids:self.plans.pop(i,None)
                 del self.groups[seq]
             elif t>g['end']+3.:
-                self.event(seq,g['kind'],'tracking_failed',maximum_tracking_error=float(error.max()))
+                self.event(seq,g['kind'],'tracking_failed',maximum_tracking_error=float(error.max()),**self.request_fields(g))
                 self.stop('tracking_failed');break

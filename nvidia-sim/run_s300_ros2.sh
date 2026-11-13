@@ -26,5 +26,9 @@ case "$mode" in
   inspect)
     exec ros2 run farmily_newton_bridge inspect "$@"
     ;;
+  planner)
+    export PYTHONPATH="$repo/ros2_ws/src/farmily_newton_bridge${PYTHONPATH:+:$PYTHONPATH}"
+    exec /usr/bin/python3 -m farmily_newton_bridge.planner "$@"
+    ;;
   *) exec ros2 "$mode" "$@" ;;
 esac

@@ -41,6 +41,15 @@ def trajectory(msg):
             for p in msg.points])
 
 
+def planned_trajectory(msg):
+    value=json.loads(msg.data);path=value['trajectory']
+    if len(path['points'])>512:raise ValueError('At most 512 trajectory points')
+    request=value['request_id']
+    if not isinstance(request,str) or not 1<=len(request)<=80:raise ValueError('Invalid planning request id')
+    return dict(joint_names=path['joint_names'],points=path['points'],start_time=path.get('start_time',0.),
+        expected_start_positions=value['expected_start_positions'],source_model_sha256=value['source_model_sha256'],request_id=request)
+
+
 def attach(node, sink):
     node.command_sequence=0;node.command_subscriptions=[]
     def subscribe(cls,topic,kind,convert):
@@ -52,10 +61,12 @@ def attach(node, sink):
                 command.update(convert(msg));sink(command)
             except Exception as error:
                 event=dict(sequence=command['sequence'],command_type=kind,status='rejected',reason=str(error))
+                if command.get('request_id'):event['request_id']=command['request_id']
                 node.command_feedback.publish(String(data=json.dumps(dict(recent_events=[event]))))
         node.command_subscriptions.append(node.create_subscription(cls,topic,callback,1))
     subscribe(JointTrajectory,'arm_controller/joint_trajectory','arm_trajectory',trajectory)
     subscribe(JointTrajectory,'joint_trajectory','joint_trajectory',trajectory)
+    subscribe(String,'planner/execute_trajectory','planned_arm_trajectory',planned_trajectory)
     subscribe(Twist,'cmd_vel','cmd_vel',lambda m:dict(linear=[m.linear.x,m.linear.y,m.linear.z],
                                                     angular=[m.angular.x,m.angular.y,m.angular.z]))
     subscribe(Float64,'lift/command','lift',lambda m:dict(value=m.data))

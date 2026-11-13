@@ -79,4 +79,86 @@ class CommandTests(unittest.TestCase):
         c['sequence']+=1;c['points'][0]['accelerations']=[0.]
         self.assertTrue(self.c.accept(c,0,10))
 
+    def planned(self,request_id='plan-1'):
+        self.c.model_sha256='a'*64
+        c=self.path('wrist3',.2)
+        c.update(command_type='planned_arm_trajectory',request_id=request_id,
+                 source_model_sha256=self.c.model_sha256,expected_start_positions=self.c.q.tolist())
+        return c
+
+    def test_planned_command_rejects_changed_model_or_any_stale_axis_atomically(self):
+        c=self.planned();c['source_model_sha256']='b'*64
+        self.assertFalse(self.c.accept(c,0,10));self.assertIn('model SHA',self.c.recent[-1]['reason'])
+        c=self.planned();self.c.model_sha256=None
+        self.assertFalse(self.c.accept(c,0,10))
+        for axis in range(10):
+            c=self.planned();c['expected_start_positions'][axis]+=.00001
+            before=self.c.q.copy()
+            self.assertFalse(self.c.accept(c,0,10));self.assertIn('stale',self.c.recent[-1]['reason'])
+            np.testing.assert_array_equal(self.c.q,before);self.assertFalse(self.c.plans)
+            self.assertEqual(self.c.recent[-1]['request_id'],'plan-1')
+
+    def test_planned_command_requires_measured_rest_and_tracking_on_every_axis(self):
+        for axis in range(10):
+            velocity=np.zeros(10);velocity[axis]=.021
+            self.c.observe(0,self.c.q,velocity)
+            self.assertFalse(self.c.accept(self.planned(),0,10))
+            self.assertIn('stationary',self.c.recent[-1]['reason'])
+            measured=self.c.q.copy();measured[axis]+=self.c.tolerance[axis]*1.01
+            self.c.observe(0,measured,np.zeros(10))
+            self.assertFalse(self.c.accept(self.planned(),0,10))
+            self.assertIn('tracking tolerance',self.c.recent[-1]['reason'])
+        self.c.observe(0,self.c.q,np.zeros(10))
+        self.c.v[0]=.001
+        self.assertFalse(self.c.accept(self.planned(),0,10))
+        self.c.v[0]=0.;self.c.a[0]=.01
+        self.assertFalse(self.c.accept(self.planned(),0,10))
+
+    def test_planned_command_freezes_unplanned_axes_until_correlated_completion(self):
+        c=self.planned();self.assertTrue(self.c.accept(c,0,10))
+        feedback=self.c.feedback()
+        self.assertTrue(feedback['motion_active']);self.assertEqual(feedback['active_planning_request_id'],'plan-1')
+        for other in (self.command('lift',value=.22),self.command('gripper',value=.096),
+                      self.command('cmd_vel',linear=[.1,0,0],angular=[0,0,0]),self.path('wrist1',.1),
+                      self.planned('plan-2')):
+            other['sequence']=self.c.last_sequence+1
+            self.assertFalse(self.c.accept(other,0,10));self.assertIn('owns all motion',self.c.recent[-1]['reason'])
+        self.assertTrue(self.c.accept(self.command('stop',value=False),0,10))
+        self.assertEqual(self.c.feedback()['active_planning_request_id'],'plan-1')
+        for t in np.linspace(.01,2.,200):self.c.advance(t,10,.01)
+        np.testing.assert_array_equal(self.c.q[[0,1,8,9]],[0,.18,0,0])
+        self.c.observe(2.1,self.c.q,np.zeros(10))
+        self.assertEqual(self.c.recent[-1]['status'],'completed')
+        self.assertEqual(self.c.recent[-1]['request_id'],'plan-1')
+        self.assertIsNone(self.c.feedback()['active_planning_request_id'])
+        self.assertFalse(self.c.feedback()['motion_active'])
+        self.assertTrue(self.c.accept(self.command('lift',value=.22),2.1,10))
+
+    def test_stop_cancels_planned_lock_without_resuming_old_motion(self):
+        self.assertTrue(self.c.accept(self.planned(),0,10))
+        self.c.advance(.5,10,.01)
+        self.assertTrue(self.c.accept(self.command('stop',value=True),.5,10))
+        event=self.c.recent[-2]
+        self.assertEqual((event['status'],event['request_id']),('preempted','plan-1'))
+        self.assertIsNone(self.c.feedback()['active_planning_request_id'])
+        self.assertTrue(self.c.accept(self.command('stop',value=False),.5,10))
+        self.assertFalse(self.c.plans)
+        self.assertFalse(self.c.accept(self.planned('plan-2'),.5,10))
+        for t in np.linspace(.51,2.,150):self.c.advance(t,10,.01)
+        self.c.observe(2,self.c.q,np.zeros(10))
+        self.assertTrue(self.c.accept(self.planned('plan-3'),2,10))
+
+    def test_planned_tracking_failure_and_rejection_are_correlated(self):
+        self.assertTrue(self.c.accept(self.planned(),0,10))
+        self.c.observe(5.1,self.c.q,np.zeros(10))
+        failed=[e for e in self.c.recent if e['status']=='tracking_failed']
+        self.assertEqual(failed[0]['request_id'],'plan-1');self.assertTrue(self.c.stopped)
+        self.assertIsNone(self.c.feedback()['active_planning_request_id'])
+
+    def test_planned_command_rejects_active_target_before_it_has_started_moving(self):
+        self.assertTrue(self.c.accept(self.path('wrist1',.1),0,10))
+        self.assertFalse(self.c.accept(self.planned(),0,10))
+        self.assertIn('active motion',self.c.recent[-1]['reason'])
+        self.assertEqual(set(self.c.plans),{5})
+
 if __name__=='__main__':unittest.main()

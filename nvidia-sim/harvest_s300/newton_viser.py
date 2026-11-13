@@ -69,7 +69,13 @@ def geom_mesh(model, i, *, local_transform=True):
     transform[:3,3] = model.geom_pos[i]
     if local_transform:
         mesh.apply_transform(transform)
-    mesh.visual.vertex_colors = np.tile(np.clip(geom_color(model,i)*255, 0, 255).astype(np.uint8), (len(mesh.vertices),1))
+    authored = getattr(model, 'vertex_color_lookup', {}).get(model.geom(i).name)
+    if authored is not None:
+        if np.asarray(authored).shape != (len(mesh.vertices), 4):
+            raise ValueError('Authored vertex color count mismatch: '+model.geom(i).name)
+        mesh.visual.vertex_colors = authored
+    else:
+        mesh.visual.vertex_colors = np.tile(np.clip(geom_color(model,i)*255, 0, 255).astype(np.uint8), (len(mesh.vertices),1))
     return mesh
 
 
@@ -86,6 +92,11 @@ def populate_scene(server,model,*,include_static=True,include_dynamic=True,stati
     static = {}
     for i in range(model.ngeom) if include_static else ():
         if model.geom_bodyid[i] != 0 or geom_color(model,i)[3] <= 0: continue
+        if model.geom(i).name in getattr(model, 'vertex_color_lookup', {}):
+            server.scene.add_mesh_trimesh(f'{static_root}/colored_g{i}',
+                geom_mesh(model,i,local_transform=False),
+                wxyz=model.geom_quat[i],position=model.geom_pos[i])
+            continue
         key = (int(model.geom_type[i]), int(model.geom_dataid[i]), tuple(model.geom_size[i]))
         static.setdefault(key, []).append(i)
     for index,ids in enumerate(static.values()):

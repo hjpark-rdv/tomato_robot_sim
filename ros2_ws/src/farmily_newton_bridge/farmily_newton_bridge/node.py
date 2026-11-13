@@ -48,6 +48,7 @@ class Bridge(Node):
         self.tf = self.create_publisher(TFMessage, '/tf', 10)
         self.clock = self.create_publisher(Clock, '/clock', self.sensor_qos)
         self.status = self.create_publisher(String, 'status', retained)
+        self.configuration = self.create_publisher(String, 'configuration', retained)
         self.labels = self.create_publisher(String, 'camera/labels', retained)
         self.observations = self.create_publisher(String, 'camera/observations', self.sensor_qos)
         self.info = self.create_publisher(CameraInfo, 'camera/camera_info', self.sensor_qos)
@@ -65,6 +66,8 @@ class Bridge(Node):
 
     def publish_packet(self, data, arrays, *, exposure_state=False):
         kind = data['kind']; self.counts[kind] = self.counts.get(kind,0)+1
+        if kind == 'configuration':
+            self.configuration.publish(String(data=json.dumps(data['configuration'],allow_nan=False)));return
         if kind == 'labels':
             self.labels.publish(String(data=json.dumps(data['labels'],allow_nan=False)));return
         timestamp = stamp(data['time'])
